@@ -249,6 +249,33 @@
             background-color: #475569;
         }
 
+        .btn-part2 {
+            display: none;
+            background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+            color: #fff;
+            border: none;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+            text-decoration: none;
+            margin-top: 10px;
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+
+        .btn-part2:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(139, 92, 246, 0.6);
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4); }
+            50% { box-shadow: 0 4px 25px rgba(139, 92, 246, 0.7); }
+        }
+
         /* POSIÇÕES DA MENSAGEM */
         .pos-1 {
             left: 80px;
@@ -474,6 +501,7 @@
             <button class="btn-reset" onclick="resetAnimation()" id="btn-reset" style="display: none;">🔄 Voltar ao
                 Início</button>
             <button onclick="nextStep()" id="btn-next">Ver Passo 2 🔒</button>
+            <a href="part2.html" class="btn-part2" id="btn-part2">🧠 Ir para a Parte Complexa →</a>
         </div>
     </div>
 
@@ -621,13 +649,16 @@
             }, 300);
 
             // 4. Lógica dos Botões (O fim agora é no Passo 6)
+            const btnPart2 = document.getElementById('btn-part2');
             if (currentStep === 6) {
                 btnNext.style.display = 'none';
                 btnReset.style.display = 'block';
+                btnPart2.style.display = 'inline-block';
             } else {
                 btnNext.style.display = 'block';
                 btnNext.innerHTML = stepData.btnText;
                 btnReset.style.display = 'none';
+                btnPart2.style.display = 'none';
             }
         }
     </script>

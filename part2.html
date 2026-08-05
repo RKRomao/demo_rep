@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuantumTalk - Topologia e Mitigação de Ameaças</title>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --panel-bg: #0f111a;
+            --border: #1f2937;
+            --text-main: #e2e8f0;
+            --accent: #3b82f6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --terminal-green: #4ade80;
+            --font-mono: 'Fira Code', Consolas, 'Courier New', monospace;
+            --font-sans: 'Inter', 'Segoe UI', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        h1 {
+            font-family: var(--font-mono);
+            font-size: 24px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 20px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        /* --- DIAGRAMA DE REDE --- */
+        .network-stage {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            position: relative;
+            height: 550px;
+            overflow: hidden;
+            background-image: linear-gradient(rgba(31, 41, 55, 0.3) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(31, 41, 55, 0.3) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .node {
+            position: absolute;
+            background: #1e293b;
+            border: 2px solid #475569;
+            border-radius: 6px;
+            padding: 15px;
+            text-align: center;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+        }
+
+        .node-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--text-main);
+        }
+
+        .node-sub {
+            font-size: 10px;
+            color: #94a3b8;
+        }
+
+        /* Posições dos Nós */
+        #node-client-a {
+            top: 250px;
+            left: 30px;
+            border-color: var(--success);
+        }
+
+        #node-gateway {
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-color: var(--accent);
+            width: 140px;
+        }
+
+        #node-db {
+            top: 400px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-color: var(--warning);
+        }
+
+        #node-client-b {
+            top: 250px;
+            right: 30px;
+            border-color: #8b5cf6;
+        }
+
+        /* Nó do Hacker (APT) */
+        #node-hacker {
+            top: 20px;
+            right: 80px;
+            border-color: var(--danger);
+            background: #2a1010;
+        }
+
+        #node-hacker .node-title {
+            color: var(--danger);
+        }
+
+        /* Linhas de conexão (SVG) */
+        svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .path-line {
+            fill: none;
+            stroke: #334155;
+            stroke-width: 2;
+            stroke-dasharray: 5, 5;
+        }
+
+        .path-active {
+            stroke: var(--accent);
+            stroke-dasharray: none;
+            animation: pulseLine 1.5s infinite;
+        }
+
+        .path-p2p {
+            stroke: #10b981;
+            stroke-dasharray: none;
+        }
+
+        .path-attack {
+            stroke: var(--danger);
+            stroke-width: 3;
+            stroke-dasharray: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .path-attack.active {
+            opacity: 1;
+            animation: laserPulse 0.5s infinite alternate;
+        }
+
+        /* Pacote de Dados Animado */
+        .data-packet {
+            position: absolute;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--terminal-green);
+            border: 1px solid var(--terminal-green);
+            padding: 5px 10px;
+            border-radius: 4px;
+            z-index: 20;
+            opacity: 0;
+            transition: all 1s ease-in-out;
+            white-space: nowrap;
+        }
+
+        .is-encrypted {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: var(--accent);
+            color: #93c5fd;
+        }
+
+        .is-hacked {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: var(--danger);
+            color: #fca5a5;
+        }
+
+        /* --- TERMINAL & EXPLICAÇÃO --- */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .terminal {
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 6px;
+            height: 280px;
+            padding: 10px;
+            overflow-y: auto;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--terminal-green);
+            box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.1);
+        }
+
+        .terminal p {
+            margin: 3px 0;
+        }
+
+        .log-time {
+            color: #64748b;
+            margin-right: 8px;
+        }
+
+        .log-sys {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .log-alert {
+            color: var(--danger);
+            font-weight: bold;
+        }
+
+        .log-mitigation {
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .log-warning {
+            color: var(--warning);
+        }
+
+        .explanation-panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 20px;
+            flex-grow: 1;
+        }
+
+        .step-title {
+            font-family: var(--font-mono);
+            font-size: 14px;
+            color: var(--accent);
+            margin-bottom: 10px;
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 5px;
+        }
+
+        .step-title.alert {
+            color: var(--danger);
+            border-bottom-color: var(--danger);
+        }
+
+        .step-desc {
+            font-size: 13px;
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+
+        .step-desc code {
+            background: #1e293b;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: #f8fafc;
+        }
+
+        .step-desc b {
+            color: #fff;
+        }
+
+        .controls {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            background: #1e293b;
+            color: #f8fafc;
+            border: 1px solid #475569;
+            padding: 10px 16px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-grow: 1;
+        }
+
+        button:hover {
+            background: #334155;
+            border-color: var(--accent);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        button.primary {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: var(--accent);
+            color: #93c5fd;
+        }
+
+        button.primary:hover {
+            background: rgba(59, 130, 246, 0.3);
+        }
+
+        button.danger-btn {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--danger);
+            color: #fca5a5;
+        }
+
+        button.danger-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        @keyframes pulseLine {
+            0% {
+                opacity: 0.4;
+            }
+
+            50% {
+                opacity: 1;
+                filter: drop-shadow(0 0 5px var(--accent));
+            }
+
+            100% {
+                opacity: 0.4;
+            }
+        }
+
+        @keyframes laserPulse {
+            0% {
+                filter: drop-shadow(0 0 2px var(--danger));
+                stroke-width: 2;
+            }
+
+            100% {
+                filter: drop-shadow(0 0 8px var(--danger));
+                stroke-width: 4;
+            }
+        }
+
+        @keyframes shieldBlink {
+            0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 20px rgba(16, 185, 129, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+
+        .shield-active {
+            animation: shieldBlink 1s infinite;
+            border-color: var(--success) !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>QuantumTalk // Threat Modeling & SecOps</h1>
+    </div>
+
+    <div class="dashboard">
+        <!-- Diagrama -->
+        <div class="network-stage" id="stage">
+            <svg>
+                <!-- Rotas Padrão -->
+                <path id="path-a-gateway" class="path-line" d="M 150 265 C 200 265, 300 130, 450 130" />
+                <path id="path-gateway-db" class="path-line" d="M 450 160 C 450 250, 450 350, 450 400" />
+                <path id="path-gateway-b" class="path-line" d="M 450 130 C 600 130, 700 265, 750 265" />
+
+                <!-- Raios de Ataque do Hacker -->
+                <path id="attack-mitm" class="path-attack" d="M 700 50 C 600 100, 350 150, 300 190" />
+                <!-- Aponta para a linha WSS -->
+                <path id="attack-ddos" class="path-attack" d="M 700 50 C 600 50, 500 70, 470 100" />
+                <!-- Aponta para o Gateway -->
+                <path id="attack-db" class="path-attack" d="M 700 50 C 800 150, 700 420, 520 420" />
+                <!-- Aponta para a DB -->
+                <path id="attack-tamper" class="path-attack" d="M 700 50 C 720 120, 740 180, 750 240" />
+                <!-- Aponta para Client B -->
+            </svg>
+
+            <!-- Nós -->
+            <div class="node" id="node-client-a">
+                <div class="node-title">Nó A (Vítima)</div>
+                <div class="node-sub">Web Crypto API</div>
+            </div>
+            <div class="node" id="node-gateway">
+                <div class="node-title">TLS 1.3 Gateway</div>
+                <div class="node-sub">Node.js WAF</div>
+            </div>
+            <div class="node" id="node-db">
+                <div class="node-title">Cluster MariaDB</div>
+                <div class="node-sub">Armazenamento</div>
+            </div>
+            <div class="node" id="node-client-b">
+                <div class="node-title">Nó B (Destino)</div>
+                <div class="node-sub">AES-GCM Engine</div>
+            </div>
+
+            <div class="node" id="node-hacker">
+                <div class="node-title">APT (Hacker)</div>
+                <div class="node-sub">Kali Linux / Metasploit</div>
+            </div>
+
+            <!-- Dados Animados -->
+            <div class="data-packet" id="packet" style="top:265px; left:150px;">Payload Inicial</div>
+        </div>
+
+        <!-- Terminal e Explicação -->
+        <div class="sidebar">
+            <div class="terminal" id="terminal">
+                <p><span class="log-time">[00:00:00]</span> <span class="log-sys">SYS</span> Inicializando motor de
+                    simulação de ameaças...</p>
+                <p><span class="log-time">[00:00:01]</span> <span class="log-sys">SYS</span> QuantumTalk WAF Ativo. E2EE
+                    em modo Estrito.</p>
+            </div>
+
+            <div class="explanation-panel">
+                <div class="step-title" id="step-title">Auditoria de Segurança Standby</div>
+                <div class="step-desc" id="step-desc">
+                    Inicie o fluxo para monitorizar o encapsulamento criptográfico de ponta a ponta e a resiliência da
+                    arquitetura contra 4 vetores de ataque distintos.
+                </div>
+                <div class="controls">
+                    <button id="btn-reset" onclick="resetSim()" style="display:none;">Restart Simulação</button>
+                    <button class="primary" id="btn-next" onclick="nextStep()">Iniciar Fluxo Seguro >_</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 0;
+        const terminal = document.getElementById('terminal');
+        const packet = document.getElementById('packet');
+
+        function getTime() {
+            const now = new Date();
+            return `[${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}.${now.getMilliseconds().toString().padStart(3, '0')}]`;
+        }
+
+        function log(msg, type = "sys") {
+            const p = document.createElement('p');
+            let typeSpan = type !== 'raw' ? `<span class="log-${type}">${type.toUpperCase()}</span>` : '';
+            p.innerHTML = `<span class="log-time">${getTime()}</span> ${typeSpan} ${msg}`;
+            terminal.appendChild(p);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        const steps = [
+            {
+                title: "1. KDF e Cifra Autenticada (AES-GCM)",
+                desc: "O cliente cifra a mensagem localmente usando <b>AES-256-GCM</b>. Uma <code>Authentication Tag</code> é gerada. Sem a chave derivada (PBKDF2), os dados tornam-se entropia pura.",
+                btnText: "Simular: MITM Attack",
+                btnClass: "danger-btn",
+                action: () => {
+                    packet.style.opacity = 1;
+                    packet.className = "data-packet is-encrypted";
+                    packet.innerHTML = "ENC: 0x4B7F... [AuthTag]";
+                    log("Payload cifrado (AES-256-GCM). Auth Tag anexada.", "sys");
+                }
+            },
+            {
+                title: "ATQ 1: Interceção MITM (Packet Sniffing)",
+                desc: "<b>Vetor:</b> O atacante está na mesma rede Wi-Fi e executa um ataque <i>Man-in-the-Middle</i> (ex: Wireshark) para ler o tráfego a caminho do servidor.<br><b>Mitigação:</b> O protocolo <b>TLS 1.3</b> protege o canal e a camada <b>E2EE</b> garante que o payload é ilegível.",
+                isAlert: true,
+                btnText: "Continuar Fluxo",
+                btnClass: "primary",
+                action: () => {
+                    document.getElementById('path-a-gateway').classList.add('path-active');
+                    packet.style.left = "300px"; packet.style.top = "190px"; // Move halfway
+                    document.getElementById('attack-mitm').classList.add('active');
+
+                    log("ALERTA: Tentativa de Packet Sniffing (L3) detetada.", "alert");
+                    setTimeout(() => {
+                        log("MITIGAÇÃO: TLS 1.3 Handshake validado. Tunneling opaco.", "mitigation");
+                        log("MITIGAÇÃO: Payload protegido por E2EE (Zero-Knowledge).", "mitigation");
+                        document.getElementById('attack-mitm').classList.remove('active');
+                        packet.style.left = "420px"; packet.style.top = "150px"; // Finishes move to gateway
+                        document.getElementById('node-client-a').classList.add('shield-active');
+                    }, 1500);
+                }
+            },
+            {
+                title: "ATQ 2: Ataque L7 / Negação de Serviço (DDoS)",
+                desc: "<b>Vetor:</b> O hacker tenta sobrecarregar o servidor enviando milhares de requisições maliciosas por segundo.<br><b>Mitigação:</b> O Middleware do servidor (Rate Limiting) restringe o tráfego a 100 req/min por IP, descartando o excedente instantaneamente.",
+                isAlert: true,
+                btnText: "Persistir na DB",
+                btnClass: "primary",
+                action: () => {
+                    document.getElementById('path-a-gateway').classList.remove('path-active');
+                    document.getElementById('node-client-a').classList.remove('shield-active');
+
+                    document.getElementById('attack-ddos').classList.add('active');
+                    log("ALERTA: Pico volumétrico detetado. Tentativa DoS no Endpoint WSS.", "alert");
+
+                    setTimeout(() => {
+                        log("MITIGAÇÃO: Rate Limiter disparado (Token Bucket). IP Bloqueado.", "mitigation");
+                        log("WAF: Drop 429 Too Many Requests.", "raw");
+                        document.getElementById('attack-ddos').classList.remove('active');
+                        document.getElementById('node-gateway').classList.add('shield-active');
+                    }, 1500);
+                }
+            },
+            {
+                title: "ATQ 3: Exfiltração de Base de Dados",
+                desc: "<b>Vetor:</b> O atacante compromete a máquina física do servidor ou extrai um *Dump* SQL do MariaDB para ler o histórico.<br><b>Mitigação:</b> O servidor não tem a `Pairing Key`. O hacker só extrai texto em Base64 incompreensível. <i>Extra: Um Cronjob destrói tudo ao fim de 48h.</i>",
+                isAlert: true,
+                btnText: "Encaminhar Destino",
+                btnClass: "primary",
+                action: () => {
+                    document.getElementById('node-gateway').classList.remove('shield-active');
+                    document.getElementById('path-gateway-db').classList.add('path-active');
+                    packet.style.top = "420px";
+
+                    setTimeout(() => {
+                        document.getElementById('attack-db').classList.add('active');
+                        log("ALERTA: Acesso não autorizado ao cluster MariaDB (SQL Dump).", "alert");
+                    }, 800);
+
+                    setTimeout(() => {
+                        log("MITIGAÇÃO: Extração inútil. Ciphertext Base64 sem Chave de Sessão.", "mitigation");
+                        log("SELECT ciphertext FROM messages -> 'JDFG87...'", "raw");
+                        document.getElementById('attack-db').classList.remove('active');
+                        document.getElementById('path-gateway-db').classList.remove('path-active');
+                        document.getElementById('node-db').classList.add('shield-active');
+                    }, 2200);
+                }
+            },
+            {
+                title: "ATQ 4: Payload Tampering (Injeção XSS)",
+                desc: "<b>Vetor:</b> O hacker interceta a resposta do servidor e altera bits do pacote, tentando injetar código malicioso (XSS) no dispositivo do destino.<br><b>Mitigação:</b> O motor AES-GCM no destino verifica a `Auth Tag`. A adulteração causa colisão criptográfica e o pacote é destruído nativamente.",
+                isAlert: true,
+                btnText: "Concluir Simulação",
+                btnClass: "primary",
+                action: () => {
+                    document.getElementById('node-db').classList.remove('shield-active');
+                    document.getElementById('path-gateway-b').classList.add('path-active');
+
+                    packet.style.top = "150px"; // back to gateway
+                    setTimeout(() => {
+                        packet.style.left = "650px"; packet.style.top = "265px"; // moves to client B
+                        document.getElementById('attack-tamper').classList.add('active');
+                        packet.className = "data-packet is-hacked";
+                        packet.innerHTML = "TAMPERED: 0x4B7F...";
+                        log("ALERTA: Man-in-the-Browser interceta e adultera bytes do ciphertext.", "alert");
+                    }, 600);
+
+                    setTimeout(() => {
+                        log("Cliente B executa AES-256-GCM.Decrypt()...", "sys");
+                        log("MITIGAÇÃO: Falha fatal de integridade. Authentication Tag incorreta.", "mitigation");
+                        log("DOMException: The operation failed for an operation-specific reason.", "warning");
+                        document.getElementById('attack-tamper').classList.remove('active');
+                        document.getElementById('path-gateway-b').classList.remove('path-active');
+
+                        packet.style.display = "none"; // Pacote rejeitado/destruido
+                        document.getElementById('node-client-b').classList.add('shield-active');
+
+                        document.getElementById('btn-next').style.display = "none";
+                        document.getElementById('btn-reset').style.display = "block";
+                    }, 2200);
+                }
+            }
+        ];
+
+        function nextStep() {
+            const btn = document.getElementById('btn-next');
+            if (currentStep < steps.length) {
+                btn.disabled = true;
+
+                const stepData = steps[currentStep];
+
+                // UI Atualização
+                const titleEl = document.getElementById('step-title');
+                titleEl.innerHTML = stepData.title;
+                if (stepData.isAlert) titleEl.classList.add('alert');
+                else titleEl.classList.remove('alert');
+
+                document.getElementById('step-desc').innerHTML = stepData.desc;
+                btn.className = stepData.btnClass || "primary";
+                btn.innerHTML = stepData.btnText + " >_";
+
+                // Ação
+                stepData.action();
+                currentStep++;
+
+                // Debounce e reativação do botão baseado no tempo da ação atual
+                setTimeout(() => {
+                    if (currentStep < steps.length) btn.disabled = false;
+                }, 2800);
+            }
+        }
+
+        function resetSim() {
+            currentStep = 0;
+            terminal.innerHTML = "";
+            log("Engine Reset. Reinicializando topologia...", "sys");
+
+            packet.style.display = "block";
+            packet.style.opacity = 0;
+            packet.className = "data-packet";
+            packet.style.left = "150px";
+            packet.style.top = "265px";
+            packet.innerHTML = "Payload Inicial";
+
+            document.querySelectorAll('.shield-active').forEach(el => el.classList.remove('shield-active'));
+            document.querySelectorAll('.path-active').forEach(el => el.classList.remove('path-active'));
+            document.querySelectorAll('.path-attack').forEach(el => el.classList.remove('active'));
+
+            const btn = document.getElementById('btn-next');
+            btn.style.display = "block";
+            btn.className = "primary";
+            btn.innerHTML = "Iniciar Fluxo Seguro >_";
+            btn.disabled = false;
+
+            document.getElementById('btn-reset').style.display = "none";
+            document.getElementById('step-title').innerHTML = "Auditoria de Segurança Standby";
+            document.getElementById('step-title').classList.remove('alert');
+            document.getElementById('step-desc').innerHTML = "Inicie o fluxo para monitorizar o encapsulamento criptográfico contra 4 vetores de ataque distintos.";
+        }
+    </script>
+</body>
+
+</html>
