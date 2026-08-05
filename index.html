@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Viagem Segura da Tua Mensagem</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --sender: #10b981;
+            --receiver: #8b5cf6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            margin-bottom: 35px;
+            font-size: 16px;
+        }
+
+        /* Palco Principal */
+        .stage {
+            position: relative;
+            height: 280px;
+            background: #0b1120;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            overflow: hidden;
+            border: 1px solid #334155;
+        }
+
+        /* Fio da internet */
+        .stage::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 80px;
+            right: 80px;
+            height: 4px;
+            border-top: 4px dashed #334155;
+            z-index: 1;
+        }
+
+        .device {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .device-icon {
+            font-size: 50px;
+            background: var(--card-bg);
+            border-radius: 50%;
+            padding: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .device-name {
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        /* Estações do Caminho (Hacker e Servidor) */
+        .hacker-station {
+            position: absolute;
+            left: 35%;
+            top: 0;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            z-index: 5;
+        }
+
+        .hacker {
+            position: absolute;
+            top: -60px;
+            font-size: 45px;
+            opacity: 0;
+        }
+
+        .server-station {
+            position: absolute;
+            left: 65%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .server-icon {
+            font-size: 45px;
+            background: #0b1120;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .server-eye {
+            position: absolute;
+            top: -25px;
+            font-size: 35px;
+            opacity: 0;
+        }
+
+        .server-gibberish {
+            position: absolute;
+            top: -50px;
+            color: #ef4444;
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 20px;
+            opacity: 0;
+            white-space: nowrap;
+        }
+
+        /* A Mensagem Animada (O Pacote) */
+        .message-packet {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 40px;
+            z-index: 10;
+            transition: left 1.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s ease-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .shield {
+            position: absolute;
+            font-size: 60px;
+            opacity: 0;
+            transform: scale(0.5);
+        }
+
+        /* Caixa de Explicação */
+        .explanation-box {
+            min-height: 160px;
+            margin-bottom: 25px;
+            background: #0f172a;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid var(--accent);
+            text-align: left;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .explanation-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #fff;
+        }
+
+        .explanation-text {
+            color: var(--text-muted);
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        .explanation-text b {
+            color: #e2e8f0;
+        }
+
+        /* Controlos */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        button {
+            background-color: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background-color: #475569;
+            cursor: not-allowed;
+            transform: none;
+            opacity: 0.7;
+        }
+
+        button.btn-reset {
+            background-color: #334155;
+        }
+
+        button.btn-reset:hover {
+            background-color: #475569;
+        }
+
+        /* POSIÇÕES DA MENSAGEM */
+        .pos-1 {
+            left: 80px;
+        }
+
+        .pos-2 {
+            left: 80px;
+        }
+
+        /* Fica no lugar, mas tranca */
+        .pos-3 {
+            left: 35%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Vai para o Hacker */
+        .pos-4 {
+            left: 65%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Vai para o Servidor */
+        .pos-5 {
+            left: calc(100% - 130px);
+        }
+
+        /* Chega ao amigo (Trancado) */
+        .pos-6 {
+            left: calc(100% - 130px);
+        }
+
+        /* Abre no amigo */
+
+        /* ESTILOS VISUAIS DA MENSAGEM */
+        .is-normal {
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+        }
+
+        .is-encrypted {
+            filter: drop-shadow(0 0 15px #3b82f6);
+            transform: translateY(-50%) scale(1);
+        }
+
+        .is-decrypted {
+            filter: drop-shadow(0 0 20px #10b981);
+            transform: translateY(-50%) scale(1.3);
+        }
+
+        /* ANIMAÇÕES CSS */
+        @keyframes hackerAttack {
+            0% {
+                top: -60px;
+                opacity: 0;
+            }
+
+            30% {
+                top: 35%;
+                opacity: 1;
+                transform: scale(1.1);
+            }
+
+            50% {
+                top: 45%;
+                opacity: 1;
+            }
+
+            /* Bate na mensagem */
+            70% {
+                top: 15%;
+                opacity: 1;
+                transform: rotate(-20deg) scale(0.8);
+            }
+
+            /* Recua com o choque */
+            100% {
+                top: -60px;
+                opacity: 0;
+            }
+        }
+
+        @keyframes shieldBlock {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.4);
+                filter: drop-shadow(0 0 15px #ef4444);
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes serverInspect {
+            0% {
+                opacity: 0;
+                transform: scale(0.5) translateY(0);
+            }
+
+            20% {
+                opacity: 1;
+                transform: scale(1) translateY(-15px);
+            }
+
+            40% {
+                transform: scale(1) translateY(-15px) rotate(-20deg);
+            }
+
+            60% {
+                transform: scale(1) translateY(-15px) rotate(20deg);
+            }
+
+            80% {
+                opacity: 1;
+                transform: scale(1) translateY(-15px);
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(0.5) translateY(0);
+            }
+        }
+
+        @keyframes gibberishText {
+            0% {
+                opacity: 0;
+                transform: translateY(0);
+            }
+
+            20% {
+                opacity: 1;
+                transform: translateY(-10px);
+            }
+
+            80% {
+                opacity: 1;
+                transform: translateY(-10px);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+
+        .animate-hacker {
+            animation: hackerAttack 2.5s ease-in-out;
+        }
+
+        .animate-shield {
+            animation: shieldBlock 0.8s ease-out 0.8s;
+        }
+
+        /* Sincroniza com o bater do hacker */
+        .animate-server-eye {
+            animation: serverInspect 3s ease-in-out;
+        }
+
+        .animate-gibberish {
+            animation: gibberishText 2.5s ease-in-out 0.5s;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>A Viagem da Tua Mensagem 🚀</h1>
+        <p class="subtitle">Um guia passo a passo, livre de palavras difíceis, sobre como a tua privacidade é protegida.
+        </p>
+
+        <!-- Palco Visual -->
+        <div class="stage" id="stage">
+
+            <!-- Tu -->
+            <div class="device">
+                <div class="device-icon">📱</div>
+                <div class="device-name" style="color: var(--sender)">Tu</div>
+            </div>
+
+            <!-- Zona do Hacker -->
+            <div class="hacker-station">
+                <div class="hacker" id="hacker">🦹‍♂️</div>
+            </div>
+
+            <!-- Zona do Servidor -->
+            <div class="server-station">
+                <div class="server-eye" id="server-eye">🔍</div>
+                <div class="server-gibberish" id="server-gibberish">#%&X@!</div>
+                <div class="server-icon">🤖<br><span style="font-size: 11px; color:#94a3b8;">Servidor Central</span>
+                </div>
+            </div>
+
+            <!-- Amigo -->
+            <div class="device">
+                <div class="device-icon">💻</div>
+                <div class="device-name" style="color: var(--receiver)">Amigo/a</div>
+            </div>
+
+            <!-- A Mensagem -->
+            <div class="message-packet pos-1 is-normal" id="packet">
+                <span id="packet-content">🖼️</span>
+                <div class="shield" id="shield">🛡️</div>
+            </div>
+        </div>
+
+        <!-- Área de Explicação -->
+        <div class="explanation-box">
+            <div class="explanation-title" id="exp-title">Passo 1: A Mensagem Original</div>
+            <div class="explanation-text" id="exp-text">
+                Acabaste de tirar uma foto ou escrever um segredo. Neste momento, ela ainda está dentro do teu
+                telemóvel. Tu consegues vê-la perfeitamente porque ainda não foi enviada.
+            </div>
+        </div>
+
+        <!-- Botões -->
+        <div class="controls">
+            <button class="btn-reset" onclick="resetAnimation()" id="btn-reset" style="display: none;">🔄 Voltar ao
+                Início</button>
+            <button onclick="nextStep()" id="btn-next">Ver Passo 2 🔒</button>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+
+        // Elementos do DOM
+        const packet = document.getElementById('packet');
+        const packetContent = document.getElementById('packet-content');
+        const shield = document.getElementById('shield');
+        const hacker = document.getElementById('hacker');
+        const serverEye = document.getElementById('server-eye');
+        const serverGibberish = document.getElementById('server-gibberish');
+
+        const expTitle = document.getElementById('exp-title');
+        const expText = document.getElementById('exp-text');
+        const btnNext = document.getElementById('btn-next');
+        const btnReset = document.getElementById('btn-reset');
+
+        // Dados de cada passo
+        const steps = {
+            1: {
+                title: "Passo 1: A Mensagem Original",
+                text: "Acabaste de tirar uma foto ou escrever um segredo. Neste momento, ela ainda está dentro do teu telemóvel. Tu consegues vê-la perfeitamente porque ainda não foi enviada.",
+                icon: "🖼️",
+                posClass: "pos-1",
+                extraClass: "is-normal",
+                btnText: "Proteger Mensagem 🔒",
+                delay: 0
+            },
+            2: {
+                title: "Passo 2: O Cofre Mágico (Antes de Sair)",
+                text: "A App não envia a foto nua e crua! Antes mesmo de sair do teu ecrã, a foto é transformada numa 'sopa de letras' e trancada num cofre. <b>A fechadura deste cofre é criada usando a senha da sala que combinaste com o teu amigo.</b>",
+                icon: "🔒",
+                posClass: "pos-2",
+                extraClass: "is-encrypted",
+                btnText: "Enviar para a Internet 🌐",
+                delay: 0
+            },
+            3: {
+                title: "Passo 3: O Hacker Ataca! (Wi-Fi Público)",
+                text: "O cofre entra na internet. Imagina que estás num café e um hacker tenta 'pescar' a tua foto pelo Wi-Fi. Ele ataca... <b>BAM! O escudo bloqueia-o.</b> Como ele não sabe a senha da vossa sala, é impossível abrir o cofre. Ele desiste e vai-se embora.",
+                icon: "🔒",
+                posClass: "pos-3",
+                extraClass: "is-encrypted",
+                btnText: "Chegar ao Servidor 🤖",
+                delay: 2600, // Tempo para o botão esperar pela animação do hacker
+                action: () => {
+                    hacker.classList.remove('animate-hacker');
+                    shield.classList.remove('animate-shield');
+                    void hacker.offsetWidth;
+                    hacker.classList.add('animate-hacker');
+                    shield.classList.add('animate-shield');
+                }
+            },
+            4: {
+                title: "Passo 4: O Servidor de Olhos Vendados",
+                text: "O cofre chega ao computador central (o Servidor da App). O Servidor tenta espreitar com uma lupa... mas <b>só vê lixo digital (#%&X@!)</b>. O sistema foi desenhado para que nem os próprios donos da App consigam ler o que lá está dentro!",
+                icon: "🔒",
+                posClass: "pos-4",
+                extraClass: "is-encrypted",
+                btnText: "Entregar ao Destino ➡️",
+                delay: 3100, // Tempo da animação do servidor
+                action: () => {
+                    serverEye.classList.remove('animate-server-eye');
+                    serverGibberish.classList.remove('animate-gibberish');
+                    void serverEye.offsetWidth;
+                    serverEye.classList.add('animate-server-eye');
+                    serverGibberish.classList.add('animate-gibberish');
+                }
+            },
+            5: {
+                title: "Passo 5: A Chegada (Ainda Trancado!)",
+                text: "O cofre chega finalmente ao computador do teu amigo, <b>mas repara que continua trancado!</b> Se alguém roubasse o telemóvel do teu amigo neste preciso milissegundo, e não soubesse a vossa senha, só veria um cofre fechado.",
+                icon: "🔒",
+                posClass: "pos-5",
+                extraClass: "is-encrypted",
+                btnText: "Usar a Chave Gémea ✨",
+                delay: 1500, // Tempo de viagem do servidor até ao amigo
+                action: () => { }
+            },
+            6: {
+                title: "Passo 6: A Chave Gémea (Fim) 🎉",
+                text: "Como o teu amigo usou a mesma senha para entrar na sala, <b>o computador dele tem a chave mágica que encaixa na fechadura</b>. O cofre destranca-se apenas no ecrã dele e ele vê finalmente a tua foto original em segurança!",
+                icon: "✨🖼️✨",
+                posClass: "pos-6", // Fica no mesmo sítio, apenas muda o aspeto
+                extraClass: "is-decrypted",
+                btnText: "Fim",
+                delay: 0,
+                action: () => { }
+            }
+        };
+
+        function nextStep() {
+            if (currentStep < 6) {
+                currentStep++;
+
+                // Desativa o botão enquanto a animação ocorre
+                btnNext.disabled = true;
+
+                updateUI();
+
+                // Reativa o botão consoante o tempo definido no passo (viagens longas ou ataques)
+                const stepDelay = steps[currentStep].delay;
+                setTimeout(() => {
+                    if (currentStep < 6) btnNext.disabled = false;
+                }, stepDelay);
+            }
+        }
+
+        function resetAnimation() {
+            currentStep = 1;
+
+            // Limpa as animações para não interferirem
+            hacker.classList.remove('animate-hacker');
+            shield.classList.remove('animate-shield');
+            serverEye.classList.remove('animate-server-eye');
+            serverGibberish.classList.remove('animate-gibberish');
+
+            btnNext.disabled = false;
+            updateUI();
+        }
+
+        function updateUI() {
+            const stepData = steps[currentStep];
+
+            // 1. Atualizar o Ícone e o Estilo da Mensagem (Cofre/Foto)
+            packetContent.innerHTML = stepData.icon;
+            packet.className = `message-packet ${stepData.posClass} ${stepData.extraClass}`;
+
+            // 2. Executar animações extras se o passo tiver (Hacker / Servidor)
+            if (stepData.action) stepData.action();
+
+            // 3. Efeito de Fade na caixa de texto
+            expTitle.style.opacity = 0;
+            expText.style.opacity = 0;
+
+            setTimeout(() => {
+                expTitle.innerHTML = stepData.title;
+                expText.innerHTML = stepData.text;
+                expTitle.style.opacity = 1;
+                expText.style.opacity = 1;
+                expTitle.style.transition = "opacity 0.5s";
+                expText.style.transition = "opacity 0.5s";
+            }, 300);
+
+            // 4. Lógica dos Botões (O fim agora é no Passo 6)
+            if (currentStep === 6) {
+                btnNext.style.display = 'none';
+                btnReset.style.display = 'block';
+            } else {
+                btnNext.style.display = 'block';
+                btnNext.innerHTML = stepData.btnText;
+                btnReset.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+
+</html>
