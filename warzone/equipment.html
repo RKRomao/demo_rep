@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WARZONE INTELLIGENCE - Catálogo de Armamento & Viaturas Táticas</title>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Custom Tactical CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/equipment.css">
+</head>
+<body class="equipment-body">
+
+    <!-- Top Command Navigation Header -->
+    <header class="equipment-header">
+        <div class="equipment-brand">
+            <h1><i class="fa-solid fa-shield-cat" style="color: var(--accent-cyan)"></i> WARZONE <span class="sub">EQUIPMENT & ARMOR HUB</span></h1>
+        </div>
+
+        <div class="nav-actions">
+            <a href="index.html" class="tactical-btn active">
+                <i class="fa-solid fa-map-location-dot"></i> Voltar ao Mapa Tático
+            </a>
+        </div>
+    </header>
+
+    <!-- Stats Overview Section -->
+    <section class="equipment-stats-bar">
+        <div class="stat-card">
+            <i class="fa-solid fa-tank"></i>
+            <div class="stat-info">
+                <span class="stat-value" id="statTotalEquipment">14</span>
+                <span class="stat-label">Sistemas Mapeados</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <i class="fa-solid fa-circle-nodes"></i>
+            <div class="stat-info">
+                <span class="stat-value" id="statMaxRange">400 km</span>
+                <span class="stat-label">Alcance Máximo Registado</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <i class="fa-solid fa-location-crosshairs"></i>
+            <div class="stat-info">
+                <span class="stat-value" id="statActiveSectors">7</span>
+                <span class="stat-label">Setores de Destacamento</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters & Search Section -->
+    <section class="equipment-filter-section">
+        <div class="filter-row">
+            <!-- Search Bar -->
+            <div class="equipment-search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="eqSearchInput" placeholder="Buscar por modelo (ex: Bradley, HIMARS, Leopard, T-90M), país ou armas...">
+            </div>
+
+            <!-- Faction Filter Buttons -->
+            <div class="filter-buttons-group">
+                <button class="filter-btn faction-filter-btn active" data-faction="all">
+                    <i class="fa-solid fa-globe"></i> Todas as Fações
+                </button>
+                <button class="filter-btn faction-filter-btn" data-faction="BLUFOR">
+                    <i class="fa-solid fa-shield-halved" style="color: var(--accent-cyan)"></i> BLUFOR (Ucrânia/Ocidente)
+                </button>
+                <button class="filter-btn faction-filter-btn opfor" data-faction="OPFOR">
+                    <i class="fa-solid fa-skull" style="color: var(--accent-opfor)"></i> OPFOR (Rússia)
+                </button>
+            </div>
+        </div>
+
+        <!-- Category Filter Buttons -->
+        <div class="filter-buttons-group">
+            <button class="filter-btn category-filter-btn active" data-category="all">Todas as Categorias</button>
+            <button class="filter-btn category-filter-btn" data-category="armor"><i class="fa-solid fa-tank"></i> Blindados & IFVs</button>
+            <button class="filter-btn category-filter-btn" data-category="artillery"><i class="fa-solid fa-rocket"></i> Artilharia & Mísseis</button>
+            <button class="filter-btn category-filter-btn" data-category="air_defense"><i class="fa-solid fa-shield-halved"></i> Defesa Aérea</button>
+            <button class="filter-btn category-filter-btn" data-category="drones"><i class="fa-solid fa-plane-triangle-exclamation"></i> Drones & FPV</button>
+            <button class="filter-btn category-filter-btn" data-category="aviation"><i class="fa-solid fa-plane-up"></i> Aviação</button>
+            <button class="filter-btn category-filter-btn" data-category="naval"><i class="fa-solid fa-ship"></i> Operações Navais</button>
+        </div>
+    </section>
+
+    <!-- Equipment Cards Grid -->
+    <main class="equipment-grid" id="equipmentGrid">
+        <div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i> A carregar catálogo de armamento tático...</div>
+    </main>
+
+    <script src="js/equipment.js"></script>
+</body>
+</html>

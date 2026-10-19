@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TVM - Leitor & Controlador de IPTV</title>
+  <meta name="description" content="Aplicação leitora e controladora de listas IPTV (M3U/M3U8) com suporte a HLS, categorias e controle remoto virtual.">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+  
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <!-- HLS.js Library for M3U8 Streaming -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <a href="#" class="brand">
+      <div class="brand-icon"><i class="ph-bold ph-television-simple"></i></div>
+      <span class="brand-text">TVM</span>
+      <span class="brand-tag">IPTV Player</span>
+    </a>
+
+    <div class="header-actions">
+      <button id="btn-check-health" class="btn" title="Testar e filtrar canais funcionando">
+        <i class="ph-bold ph-pulse"></i> Testar Conexões
+      </button>
+      <button id="btn-toggle-cors" class="btn btn-primary" title="Alternar Proxy Local para evitar bloqueio de CORS">
+        <i class="ph-bold ph-shield-check"></i> Proxy CORS: ON
+      </button>
+      <button id="btn-load-playlist" class="btn btn-primary">
+        <i class="ph-bold ph-folder-open"></i> Carregar Lista IPTV
+      </button>
+      <button id="btn-toggle-remote" class="btn btn-accent">
+        <i class="ph-bold ph-game-controller"></i> Controle Remoto
+      </button>
+    </div>
+  </header>
+
+  <!-- App Main Layout -->
+  <div class="app-container">
+    
+    <!-- Sidebar / Channel Guide -->
+    <aside class="sidebar">
+      <div class="search-box">
+        <i class="ph-bold ph-magnifying-glass search-icon"></i>
+        <input type="text" id="search-input" class="search-input" placeholder="Buscar canal ou grupo...">
+      </div>
+
+      <div class="category-tabs" id="category-tabs">
+        <!-- Tabs rendered dynamically -->
+      </div>
+
+      <div class="channel-list-info">
+        <span>Guia de Canais</span>
+        <span id="channel-count">0 canais</span>
+      </div>
+
+      <div class="channel-list" id="channel-list">
+        <!-- Channels rendered dynamically -->
+      </div>
+    </aside>
+
+    <!-- Main Content / Player -->
+    <main class="main-content">
+      
+      <div class="player-wrapper">
+        <video id="video-element" playsinline></video>
+
+        <!-- Player Placeholder (when idle) -->
+        <div id="player-placeholder" class="player-placeholder">
+          <i class="ph-bold ph-television"></i>
+          <h2>Nenhum Canal Selecionado</h2>
+          <p>Escolha um canal na lista ao lado ou carregue sua lista IPTV M3U/M3U8.</p>
+        </div>
+
+        <!-- Video Overlay Top -->
+        <div class="video-overlay-top">
+          <div class="now-playing-banner">
+            <span class="live-badge"><i class="ph-bold ph-circle"></i> AO VIVO</span>
+            <span id="banner-title" style="font-weight: 600; font-size: 1rem; color: #fff;">-</span>
+          </div>
+        </div>
+
+        <!-- Video Overlay Bottom (Controls) -->
+        <div class="video-overlay-bottom">
+          <div class="player-controls">
+            <div class="controls-left">
+              <button id="btn-prev" class="control-btn" title="Canal Anterior (Seta Cima)"><i class="ph-bold ph-skip-back"></i></button>
+              <button id="btn-play-pause" class="control-btn" title="Play / Pause (Espaço)"><i class="ph-bold ph-play"></i></button>
+              <button id="btn-next" class="control-btn" title="Próximo Canal (Seta Baixo)"><i class="ph-bold ph-skip-forward"></i></button>
+              <button id="btn-fav" class="control-btn" title="Favoritar"><i class="ph-fill ph-star"></i></button>
+              
+              <div class="volume-container">
+                <button id="btn-mute" class="control-btn" title="Mute (M)"><i class="ph-bold ph-speaker-high"></i></button>
+                <input type="range" id="volume-slider" class="volume-slider" min="0" max="1" step="0.05" value="1">
+              </div>
+            </div>
+
+            <div class="controls-right">
+              <button id="btn-aspect" class="control-btn" title="Proporção da Tela"><i class="ph-bold ph-frame-corners"></i></button>
+              <button id="btn-pip" class="control-btn" title="Picture in Picture"><i class="ph-bold ph-picture-in-picture"></i></button>
+              <button id="btn-fullscreen" class="control-btn" title="Tela Cheia (F)"><i class="ph-bold ph-corners-out"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Channel Info Section -->
+      <section class="info-section">
+        <div class="channel-meta">
+          <img id="current-logo" class="current-logo" src="" alt="" style="display:none;">
+          <div>
+            <h1 id="current-title" class="current-title">Aguardando Seleção</h1>
+            <div id="current-category" class="current-category">TVM Controller</div>
+          </div>
+        </div>
+
+        <div class="channel-stats">
+          <div class="stat-pill"><i class="ph-bold ph-folder"></i> <span id="stat-group">Geral</span></div>
+          <div class="stat-pill"><i class="ph-bold ph-monitor"></i> <span id="stat-quality">Auto / HLS</span></div>
+          <div class="stat-pill"><i class="ph-bold ph-broadcast"></i> <span id="stat-status">Pronto</span></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Virtual Remote Control Drawer -->
+  <div id="remote-drawer" class="remote-drawer">
+    <div class="remote-header">
+      <span class="remote-title"><i class="ph-bold ph-broadcast"></i> Controle TVM</span>
+      <button id="btn-close-remote" class="close-remote-btn"><i class="ph-bold ph-x"></i></button>
+    </div>
+
+    <div id="remote-pad-keys" class="remote-pad">
+      <!-- Power & Mute -->
+      <div class="remote-row">
+        <button class="r-btn r-btn-power" data-action="power" title="Ligar/Desligar"><i class="ph-bold ph-power"></i></button>
+        <button class="r-btn" data-action="mute" title="Mudo"><i class="ph-bold ph-speaker-slash"></i></button>
+        <button class="r-btn r-btn-accent" data-action="fav" title="Favorito"><i class="ph-fill ph-star"></i></button>
+      </div>
+
+      <!-- Channel & Volume Controls -->
+      <div class="remote-row">
+        <button class="r-btn" data-action="vol-up" title="Vol +">Vol +</button>
+        <button class="r-btn" data-action="play-pause" title="Play/Pause"><i class="ph-bold ph-play-pause"></i></button>
+        <button class="r-btn" data-action="ch-up" title="CH +">CH +</button>
+      </div>
+      <div class="remote-row">
+        <button class="r-btn" data-action="vol-down" title="Vol -">Vol -</button>
+        <button class="r-btn" data-action="ch-down" title="CH -">CH -</button>
+        <button class="r-btn" data-action="cat-fav" title="Ir para Favoritos"><i class="ph-bold ph-bookmarks"></i></button>
+      </div>
+
+      <!-- Numpad 1-9 -->
+      <div class="remote-row">
+        <button class="r-btn" data-key="1">1</button>
+        <button class="r-btn" data-key="2">2</button>
+        <button class="r-btn" data-key="3">3</button>
+      </div>
+      <div class="remote-row">
+        <button class="r-btn" data-key="4">4</button>
+        <button class="r-btn" data-key="5">5</button>
+        <button class="r-btn" data-key="6">6</button>
+      </div>
+      <div class="remote-row">
+        <button class="r-btn" data-key="7">7</button>
+        <button class="r-btn" data-key="8">8</button>
+        <button class="r-btn" data-key="9">9</button>
+      </div>
+      <div class="remote-row">
+        <button class="r-btn" data-action="cat-movies" style="color:#ff3b30;" title="Filmes">Filmes</button>
+        <button class="r-btn" data-key="0">0</button>
+        <button class="r-btn" data-action="cat-sports" style="color:#00f2fe;" title="Esportes">Esportes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Import IPTV Playlist -->
+  <div id="modal-import" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Carregar Lista IPTV (M3U / M3U8)</h3>
+        <button id="btn-close-modal" class="modal-close"><i class="ph-bold ph-x"></i></button>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">Opção 1: Via URL de Lista M3U / M3U8</label>
+        <div style="display:flex; gap:0.5rem;">
+          <input type="url" id="playlist-url-input" class="text-input" value="https://iptv-org.github.io/iptv/countries/pt.m3u" placeholder="https://iptv-org.github.io/iptv/countries/pt.m3u">
+          <button id="btn-fetch-url" class="btn btn-primary">Baixar</button>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">Opção 2: Upload de Arquivo Local (.m3u)</label>
+        <div id="file-dropzone" class="file-dropzone">
+          <i class="ph-bold ph-upload-simple" style="font-size: 1.8rem; margin-bottom: 0.3rem;"></i>
+          <p>Clique ou arraste um arquivo M3U/M3U8 aqui</p>
+          <input type="file" id="playlist-file-input" accept=".m3u,.m3u8,.txt" style="display:none;">
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">Opção 3: Inserir Conteúdo M3U Direto</label>
+        <textarea id="raw-m3u-input" class="textarea-input" rows="3" placeholder="#EXTM3U ..."></textarea>
+        <button id="btn-parse-raw" class="btn" style="margin-top: 0.5rem;">Processar Texto</button>
+      </div>
+
+      <div style="border-top: 1px solid var(--border-color); padding-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.8rem; color: var(--text-muted);">Precisa de uma lista para testar?</span>
+        <button id="btn-load-sample" class="btn btn-accent"><i class="ph-bold ph-play"></i> Usar Lista Amostra</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- JavaScript -->
+  <script src="app.js"></script>
+</body>
+</html>

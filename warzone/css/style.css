@@ -1,0 +1,1354 @@
+/* WARZONE TRACKER - SYSTEM DESIGN & TACTICAL STYLING */
+
+:root {
+    --bg-dark: #0B0F19;
+    --panel-bg: rgba(18, 24, 39, 0.85);
+    --panel-border: rgba(0, 240, 255, 0.2);
+    --accent-cyan: #00F0FF;
+    --accent-amber: #FF9900;
+    --accent-red: #FF334B;
+    --accent-green: #10B981;
+    --ukraine-blue: #0057B7;
+    --ukraine-yellow: #FFD700;
+    --russia-red: #DC2626;
+    --text-primary: #F3F4F6;
+    --text-muted: #9CA3AF;
+    --font-main: 'Inter', -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --header-height: 60px;
+    --footer-height: 70px;
+    --drawer-width: 420px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body.tactical-theme {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: var(--font-main);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-track {
+    background: rgba(11, 15, 25, 0.6);
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 240, 255, 0.3);
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-cyan);
+}
+
+/* TOP COMMAND HEADER */
+.tactical-header {
+    height: var(--header-height);
+    background: rgba(11, 15, 25, 0.95);
+    border-bottom: 1px solid var(--panel-border);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 1000;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-brand h1 {
+    font-size: 1.1rem;
+    font-family: var(--font-mono);
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: #FFF;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-brand h1 i {
+    color: var(--accent-cyan);
+}
+
+.header-brand .sub-title {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 400;
+    padding-left: 8px;
+    border-left: 2px solid var(--accent-cyan);
+}
+
+/* Radar Ping Animation */
+.radar-ping {
+    width: 12px;
+    height: 12px;
+    background-color: var(--accent-green);
+    border-radius: 50%;
+    position: relative;
+    box-shadow: 0 0 10px var(--accent-green);
+}
+.radar-ping::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    border-radius: 50%;
+    border: 2px solid var(--accent-green);
+    animation: ping 2s infinite ease-out;
+}
+@keyframes ping {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(3.5); opacity: 0; }
+}
+
+.header-status {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.status-badge {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-badge.live {
+    color: var(--accent-red);
+    border-color: rgba(255, 51, 75, 0.4);
+    background: rgba(255, 51, 75, 0.1);
+}
+
+.status-badge.db-badge {
+    color: var(--accent-cyan);
+    border-color: rgba(0, 240, 255, 0.4);
+    background: rgba(0, 240, 255, 0.1);
+}
+
+.status-badge.sync-timer {
+    color: var(--accent-amber);
+    border-color: rgba(255, 153, 0, 0.4);
+    background: rgba(255, 153, 0, 0.1);
+}
+
+.status-badge.clock {
+    color: var(--text-primary);
+}
+
+/* TACTICAL BUTTONS */
+.tactical-btn {
+    background: rgba(18, 24, 39, 0.8);
+    color: var(--text-primary);
+    border: 1px solid var(--panel-border);
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tactical-btn:hover {
+    background: rgba(0, 240, 255, 0.15);
+    border-color: var(--accent-cyan);
+    color: #FFF;
+    box-shadow: 0 0 12px rgba(0, 240, 255, 0.3);
+}
+
+.tactical-btn.active {
+    background: rgba(0, 240, 255, 0.2);
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+}
+
+.tactical-btn.btn-primary {
+    background: linear-gradient(135deg, rgba(0, 87, 183, 0.8), rgba(0, 240, 255, 0.8));
+    border: none;
+    color: #FFF;
+    font-weight: 600;
+}
+.tactical-btn.btn-primary:hover {
+    box-shadow: 0 0 16px rgba(0, 240, 255, 0.5);
+}
+
+.tactical-btn.btn-danger {
+    background: rgba(220, 38, 38, 0.2);
+    border-color: rgba(220, 38, 38, 0.5);
+    color: var(--accent-red);
+}
+.tactical-btn.btn-danger:hover {
+    background: rgba(220, 38, 38, 0.4);
+    border-color: var(--accent-red);
+}
+
+/* MAIN WORKSPACE */
+.main-container {
+    flex: 1;
+    display: flex;
+    position: relative;
+    height: calc(100vh - var(--header-height) - var(--footer-height));
+    width: 100vw;
+}
+
+/* LEAFLET MAP CONTAINER */
+.map-container {
+    flex: 1;
+    height: 100%;
+    width: 100%;
+    background-color: #0A0D14;
+    z-index: 1;
+}
+
+/* MAP LAYER QUICK CONTROLS */
+.map-layer-controls {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 500;
+    display: flex;
+    gap: 8px;
+    background: rgba(11, 15, 25, 0.9);
+    padding: 6px;
+    border-radius: 8px;
+    border: 1px solid var(--panel-border);
+    backdrop-filter: blur(8px);
+}
+
+.layer-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-muted);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.layer-btn:hover {
+    color: #FFF;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.layer-btn.active {
+    color: var(--accent-cyan);
+    background: rgba(0, 240, 255, 0.15);
+    border-color: var(--accent-cyan);
+}
+
+/* TACTICAL DRAWER / SIDEBAR */
+.tactical-drawer {
+    width: var(--drawer-width);
+    height: 100%;
+    background: var(--panel-bg);
+    border-right: 1px solid var(--panel-border);
+    backdrop-filter: blur(16px);
+    z-index: 400;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+}
+
+.tactical-drawer.collapsed {
+    transform: translateX(-100%);
+    position: absolute;
+}
+
+/* Drawer Tabs Grid Layout */
+.drawer-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    background: rgba(11, 15, 25, 0.95);
+    border-bottom: 1px solid var(--panel-border);
+    padding: 8px;
+    gap: 6px;
+}
+
+.tab-btn {
+    padding: 8px 6px;
+    background: rgba(18, 24, 39, 0.6);
+    border: 1px solid rgba(0, 240, 255, 0.15);
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.tab-btn:hover {
+    color: var(--text-primary);
+    background: rgba(0, 240, 255, 0.12);
+    border-color: rgba(0, 240, 255, 0.4);
+}
+
+.tab-btn.active {
+    color: var(--accent-cyan);
+    background: rgba(0, 240, 255, 0.2);
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.25);
+    font-weight: 700;
+}
+
+/* Tab Contents */
+.tab-content {
+    display: none;
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+}
+
+.tab-content.active {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* SEARCH & CATEGORY CHIPS */
+.filter-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-box i {
+    position: absolute;
+    left: 12px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 10px 12px 10px 36px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    color: #FFF;
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.search-box input:focus {
+    border-color: var(--accent-cyan);
+}
+
+.category-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.chip {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.chip:hover, .chip.active {
+    background: rgba(0, 240, 255, 0.15);
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+}
+
+/* EVENT FEED CARDS */
+.event-feed-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+}
+
+.event-card {
+    background: rgba(11, 15, 25, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-left: 4px solid var(--accent-cyan);
+    border-radius: 6px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.event-card:hover {
+    background: rgba(0, 240, 255, 0.08);
+    border-color: var(--accent-cyan);
+    transform: translateY(-2px);
+}
+
+.event-card.severity-critical { border-left-color: var(--accent-red); }
+.event-card.severity-high { border-left-color: var(--accent-amber); }
+.event-card.severity-medium { border-left-color: var(--accent-cyan); }
+
+.event-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.event-category-badge {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: var(--accent-cyan);
+    font-weight: 600;
+}
+
+.event-date {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+}
+
+.event-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #FFF;
+    margin-bottom: 4px;
+}
+
+.event-location {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* NON-PERMANENT DRAWING TAB STYLES */
+.drawing-box-info {
+    background: rgba(0, 240, 255, 0.05);
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    border-radius: 6px;
+    padding: 12px;
+}
+.drawing-box-info h3 {
+    font-size: 0.9rem;
+    color: var(--accent-cyan);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.drawing-box-info p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+.draw-tools-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.draw-tool-btn {
+    background: rgba(11, 15, 25, 0.8);
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
+    padding: 14px;
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.draw-tool-btn i {
+    font-size: 1.2rem;
+    color: var(--accent-cyan);
+}
+
+.draw-tool-btn span {
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+}
+
+.draw-tool-btn:hover, .draw-tool-btn.active {
+    background: rgba(0, 240, 255, 0.2);
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+}
+
+.draw-action-buttons {
+    display: flex;
+    gap: 10px;
+}
+.draw-action-buttons button {
+    flex: 1;
+}
+
+.drawings-summary {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 10px;
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+/* STATS TAB OVERVIEW CARDS */
+.stats-overview-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.stat-card {
+    background: rgba(11, 15, 25, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.stat-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.stat-value {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #FFF;
+}
+.stat-value.warning { color: var(--accent-amber); }
+.stat-value.success { color: var(--accent-green); }
+.stat-value.info { color: var(--accent-cyan); }
+
+.chart-container {
+    background: rgba(11, 15, 25, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    padding: 12px;
+}
+.chart-container h4 {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    font-family: var(--font-mono);
+}
+
+/* FOOTER TIMELINE SLIDER */
+.tactical-timeline {
+    height: var(--footer-height);
+    background: rgba(11, 15, 25, 0.95);
+    border-top: 1px solid var(--panel-border);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 20px;
+    z-index: 1000;
+}
+
+.timeline-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.tactical-btn.circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.timeline-info {
+    display: flex;
+    flex-direction: column;
+}
+.timeline-title {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+}
+.timeline-date {
+    font-size: 0.9rem;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    color: var(--accent-cyan);
+}
+
+.timeline-slider-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+#timelineSlider {
+    width: 100%;
+    appearance: none;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    outline: none;
+}
+#timelineSlider::-webkit-slider-thumb {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent-cyan);
+    cursor: pointer;
+    box-shadow: 0 0 10px var(--accent-cyan);
+    transition: transform 0.1s ease;
+}
+#timelineSlider::-webkit-slider-thumb:hover {
+    transform: scale(1.3);
+}
+
+.timeline-ticks {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+}
+
+/* MODAL OVERLAY */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--bg-dark);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    width: 90%;
+    max-width: 550px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0, 240, 255, 0.2);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+}
+.modal-header h2 {
+    font-size: 1rem;
+    font-family: var(--font-mono);
+    color: var(--accent-cyan);
+}
+.close-modal-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.4rem;
+    cursor: pointer;
+}
+.close-modal-btn:hover { color: #FFF; }
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.form-group label {
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+}
+
+.form-group input, .form-group select, .form-group textarea {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    padding: 8px 10px;
+    color: #FFF;
+    font-family: var(--font-main);
+    font-size: 0.85rem;
+    outline: none;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: var(--accent-cyan);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+/* CUSTOM LEAFLET POPUP STYLES */
+.leaflet-popup-content-wrapper {
+    background: rgba(11, 15, 25, 0.95) !important;
+    border: 1px solid var(--accent-cyan) !important;
+    color: #FFF !important;
+    border-radius: 6px !important;
+    box-shadow: 0 4px 20px rgba(0, 240, 255, 0.3) !important;
+}
+.leaflet-popup-tip {
+    background: var(--bg-dark) !important;
+}
+
+.tactical-popup {
+    padding: 4px;
+}
+.tactical-popup h4 {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--accent-cyan);
+    margin-bottom: 6px;
+}
+.tactical-popup p {
+    font-size: 0.8rem;
+    color: var(--text-primary);
+    line-height: 1.4;
+    margin-bottom: 6px;
+}
+.tactical-popup-meta {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    display: flex;
+    justify-content: space-between;
+}
+
+/* TOOLTIPS DE MEDIÇÃO DE DISTÂNCIA E ÁREA */
+.tactical-metric-tooltip {
+    background: rgba(11, 15, 25, 0.92) !important;
+    border: 1px solid var(--accent-cyan) !important;
+    color: var(--accent-cyan) !important;
+    font-family: var(--font-mono) !important;
+    font-size: 0.78rem !important;
+    padding: 4px 8px !important;
+    border-radius: 4px !important;
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.4) !important;
+    white-space: nowrap;
+}
+.tactical-metric-tooltip::before {
+    border-top-color: var(--accent-cyan) !important;
+}
+
+/* MARCADORES E ÍCONES TÁTICOS NO MAPA */
+.custom-tactical-marker {
+    background: transparent;
+    border: none;
+}
+
+.marker-pulse {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #FFF;
+    position: relative;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.8);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.marker-pulse:hover {
+    transform: scale(1.3);
+    z-index: 9999 !important;
+}
+
+.marker-pulse::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: -2px;
+    left: -2px;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    animation: markerPulse 2s infinite ease-out;
+}
+
+@keyframes markerPulse {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(2.4); opacity: 0; }
+}
+
+.marker-red {
+    background: radial-gradient(circle, #FF334B 0%, #990012 100%);
+    border: 2px solid #FF334B;
+    color: #FFF;
+    box-shadow: 0 0 15px rgba(255, 51, 75, 0.7);
+}
+
+.marker-amber {
+    background: radial-gradient(circle, #FF9900 0%, #995c00 100%);
+    border: 2px solid #FF9900;
+    color: #FFF;
+    box-shadow: 0 0 15px rgba(255, 153, 0, 0.7);
+}
+
+.marker-cyan {
+    background: radial-gradient(circle, #00F0FF 0%, #007780 100%);
+    border: 2px solid #00F0FF;
+    color: #0B0F19;
+    font-weight: bold;
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.7);
+}
+
+.marker-green {
+    background: radial-gradient(circle, #10B981 0%, #065F46 100%);
+    border: 2px solid #10B981;
+    color: #FFF;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.7);
+}
+
+/* LEGENDA TÁTICA DE DOMÍNIO NO MAPA */
+.tactical-map-legend {
+    background: rgba(11, 15, 25, 0.92);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: #FFF;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    margin-bottom: 25px !important;
+    margin-left: 15px !important;
+}
+
+.legend-header {
+    font-weight: 700;
+    color: var(--accent-cyan);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 4px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+    color: var(--text-primary);
+}
+
+.legend-box {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+.box-russia { background: rgba(255, 51, 75, 0.6); border: 1.5px solid #FF334B; }
+.box-contested { background: rgba(255, 153, 0, 0.6); border: 1.5px dashed #FF9900; }
+.box-ukraine { background: rgba(0, 87, 183, 0.5); border: 1.5px solid #FFD700; }
+.box-liberated { background: rgba(16, 185, 129, 0.5); border: 1.5px solid #10B981; }
+.box-incursion { background: rgba(0, 240, 255, 0.5); border: 1.5px dashed #00F0FF; }
+
+/* CARTÕES E BRASÕES DE UNIDADES MILITARES */
+.unit-feed-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+}
+
+.unit-card {
+    background: rgba(11, 15, 25, 0.85);
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    border-radius: 8px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.unit-card:hover {
+    background: rgba(0, 240, 255, 0.1);
+    border-color: var(--accent-cyan);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 240, 255, 0.2);
+}
+
+.unit-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.unit-crest-badge {
+    width: 38px;
+    height: 38px;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 2px solid var(--accent-cyan);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: #FFF;
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+}
+
+.unit-header-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.unit-branch-tag {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.unit-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #FFF;
+}
+
+.unit-sector, .unit-equip {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-sm {
+    padding: 4px 10px;
+    font-size: 0.7rem;
+    align-self: flex-start;
+    margin-top: 4px;
+}
+
+/* MARCADORES DE BRASÕES DE UNIDADE NO MAPA */
+.custom-unit-marker {
+    background: transparent;
+    border: none;
+}
+
+.unit-badge-marker {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: rgba(11, 15, 25, 0.9);
+    border: 2px solid var(--accent-cyan);
+    color: #FFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.9);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.unit-badge-marker:hover {
+    transform: scale(1.35) rotate(5deg);
+    z-index: 10000 !important;
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.8);
+}
+
+/* NATO APP-6D MILITARY SYMBOLOGY STYLING */
+.custom-nato-marker, .custom-label-marker {
+    background: transparent;
+    border: none;
+}
+
+.nato-app6-symbol {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.nato-app6-symbol:hover {
+    transform: scale(1.3);
+    z-index: 99999 !important;
+}
+
+.nato-cp-badge {
+    background: rgba(11, 15, 25, 0.95);
+    border: 1.5px solid var(--accent-amber);
+    color: var(--accent-amber);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+    box-shadow: 0 0 10px rgba(255, 153, 0, 0.4);
+}
+
+.nato-size-mark {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #FFF;
+    text-shadow: 0 0 4px #000;
+    line-height: 1;
+    margin-bottom: 1px;
+}
+
+/* BLUFOR RETÂNGULO AZUL */
+.nato-rect-box {
+    width: 38px;
+    height: 26px;
+    background: rgba(0, 240, 255, 0.85);
+    border: 2px solid #00F0FF;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0B0F19;
+    font-size: 13px;
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+}
+
+/* OPFOR LOSANGO VERMELHO */
+.nato-diamond-box {
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 51, 75, 0.85);
+    border: 2px solid #FF334B;
+    transform: rotate(45deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 10px rgba(255, 51, 75, 0.6);
+    margin-top: 2px;
+}
+
+.nato-diamond-box i {
+    transform: rotate(-45deg);
+    color: #FFF;
+    font-size: 12px;
+}
+
+/* NATO GRAPHIC OVERLAY LABELS */
+.nato-axis-label {
+    background: rgba(11, 15, 25, 0.9);
+    border: 1px solid var(--accent-cyan);
+    color: var(--accent-cyan);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+}
+
+.nato-line-label {
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid #FFF;
+    color: #FFF;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 1px 4px;
+    border-radius: 2px;
+}
+
+.nato-line-label.pl {
+    border-color: var(--ukraine-yellow);
+    color: var(--ukraine-yellow);
+}
+
+.nato-obj-label {
+    background: rgba(11, 15, 25, 0.9);
+    border: 1.5px solid #FFF;
+    color: #FFF;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.obj-circle {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 1.5px solid #FFF;
+}
+
+.nato-sector-label {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px #000;
+}
+.nato-sector-label.blufor { color: var(--accent-cyan); }
+.nato-sector-label.opfor { color: var(--accent-red); }
+
+/* NATO SIDEBAR PREVIEWS */
+.nato-symbol-preview-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 12px 0;
+}
+
+.nato-card-preview {
+    background: rgba(11, 15, 25, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+.nato-card-preview.blufor { border-color: rgba(0, 240, 255, 0.3); }
+.nato-card-preview.opfor { border-color: rgba(255, 51, 75, 0.3); }
+
+.nato-card-preview .nato-badge-box {
+    width: 36px;
+    height: 24px;
+    background: rgba(0, 240, 255, 0.8);
+    border: 1.5px solid #00F0FF;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0B0F19;
+    position: relative;
+}
+
+.nato-card-preview .nato-diamond-box {
+    width: 24px;
+    height: 24px;
+    background: rgba(255, 51, 75, 0.8);
+    border: 1.5px solid #FF334B;
+    transform: rotate(45deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.nato-card-preview .nato-size {
+    position: absolute;
+    top: -12px;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #FFF;
+}
+
+.nato-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    text-align: center;
+}
+
+.nato-elements-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.nato-element-item {
+    font-size: 0.75rem;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nato-tag {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: #FFF;
+}
+.nato-tag.axis { background: var(--accent-cyan); color: #0B0F19; }
+.nato-tag.loa { background: #666; border: 1px dashed #FFF; }
+.nato-tag.pl { background: var(--ukraine-yellow); color: #0B0F19; }
+.nato-tag.obj { background: rgba(255, 255, 255, 0.2); border: 1px solid #FFF; }
+
+/* CARTÕES DE OPERAÇÕES HISTÓRICAS (2022-2026) */
+.ops-feed-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.op-card {
+    background: rgba(11, 15, 25, 0.85);
+    border: 1px solid rgba(255, 215, 0, 0.25);
+    border-radius: 8px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.op-card:hover {
+    background: rgba(255, 215, 0, 0.08);
+    border-color: var(--ukraine-yellow);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.25);
+}
+
+.op-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.op-year-badge {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 800;
+    color: var(--ukraine-yellow);
+    background: rgba(255, 215, 0, 0.15);
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 215, 0, 0.4);
+}
+
+.op-phase {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.op-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #FFF;
+}
+
+.op-desc {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+.fly-op-btn {
+    border-color: var(--ukraine-yellow);
+    color: var(--ukraine-yellow);
+}
+
+.fly-op-btn:hover {
+    background: var(--ukraine-yellow);
+    color: #0B0F19;
+}
+
+
+
+
+

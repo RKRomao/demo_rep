@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WARZONE - Ukraine-Russia Conflict Tracker & Tactical Map</title>
+    
+    <!-- OpenStreetMap Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet Geoman / Drawing Tools CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css" />
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Custom Tactical CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="tactical-theme">
+
+    <!-- Top Command Navigation Header -->
+    <header class="tactical-header">
+        <div class="header-brand">
+            <div class="radar-ping"></div>
+            <h1><i class="fa-solid fa-crosshairs"></i> WARZONE <span class="sub-title">UKRAINE-RUSSIA MONITOR</span></h1>
+        </div>
+
+        <div class="header-status">
+            <span class="status-badge live"><i class="fa-solid fa-circle"></i> RADAR DIRETO</span>
+            <span class="status-badge sync-timer" id="syncTimerBadge"><i class="fa-solid fa-rotate fa-spin"></i> SCRAPING OSINT: <strong id="syncCountdownText">05:00</strong></span>
+            <span class="status-badge db-badge" id="dbStatusBadge"><i class="fa-solid fa-database"></i> MARIADB</span>
+            <span class="status-badge clock" id="currentTimeUTC"><i class="fa-regular fa-clock"></i> 00:00:00 UTC</span>
+        </div>
+
+        <div class="header-controls">
+            <a href="equipment.html" class="tactical-btn" style="border-color: var(--accent-cyan); color: var(--accent-cyan);" title="Abrir Hub de Armamento, Viaturas Blindadas e Mísseis">
+                <i class="fa-solid fa-shield-cat"></i> Catálogo de Armamento
+            </a>
+            <button id="btnForceSync" class="tactical-btn" title="Executar Web Scraping Imediato (NASA FIRMS, LiveUAmap, ISW, DeepState, Telegram)">
+                <i class="fa-solid fa-cloud-arrow-down"></i> Varrer Fontes Agora
+            </button>
+            <button id="toggleAudioBtn" class="tactical-btn" title="Ativar/Desativar Sons de Radar">
+                <i class="fa-solid fa-volume-high"></i> Sonar: ON
+            </button>
+            <button id="toggleDrawerBtn" class="tactical-btn active">
+                <i class="fa-solid fa-sliders"></i> Painel Tático
+            </button>
+            <button id="openAddEventModalBtn" class="tactical-btn btn-primary">
+                <i class="fa-solid fa-plus"></i> Novo Evento
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace Area -->
+    <main class="main-container">
+
+        <!-- Tactical Sidebar Drawer -->
+        <aside class="tactical-drawer" id="tacticalDrawer">
+            <!-- Sidebar Navigation Tabs -->
+            <nav class="drawer-tabs">
+                <button class="tab-btn active" data-tab="feedTab"><i class="fa-solid fa-list-check"></i> Eventos</button>
+                <button class="tab-btn" data-tab="opsTab"><i class="fa-solid fa-timeline"></i> Operações</button>
+                <button class="tab-btn" data-tab="unitsTab"><i class="fa-solid fa-shield-halved"></i> Unidades</button>
+                <button class="tab-btn" data-tab="natoTab"><i class="fa-solid fa-diagram-project"></i> NATO APP-6</button>
+                <button class="tab-btn" data-tab="drawTab"><i class="fa-solid fa-pen-ruler"></i> Desenho</button>
+                <button class="tab-btn" data-tab="statsTab"><i class="fa-solid fa-chart-line"></i> Estatísticas</button>
+            </nav>
+
+            <!-- Tab 1: Event Feed & Filters -->
+            <div class="tab-content active" id="feedTab">
+                <!-- Search & Filters -->
+                <div class="filter-panel">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="searchInput" placeholder="Buscar localidade, cidade, evento...">
+                    </div>
+                    
+                    <div class="category-chips" id="categoryChips">
+                        <button class="chip active" data-cat="all">Todos</button>
+                        <button class="chip" data-cat="missile_strike"><i class="fa-solid fa-explosion"></i> Mísseis</button>
+                        <button class="chip" data-cat="drone_attack"><i class="fa-solid fa-plane-triangle-exclamation"></i> Drones</button>
+                        <button class="chip" data-cat="ground_combat"><i class="fa-solid fa-person-rifle"></i> Combate</button>
+                        <button class="chip" data-cat="air_defense"><i class="fa-solid fa-shield-halved"></i> Def. Aérea</button>
+                        <button class="chip" data-cat="naval_ops"><i class="fa-solid fa-ship"></i> Naval</button>
+                        <button class="chip" data-cat="infrastructure"><i class="fa-solid fa-bolt"></i> Energia</button>
+                    </div>
+                </div>
+
+                <!-- Event Feed List -->
+                <div class="event-feed-list" id="eventFeedList">
+                    <!-- Event cards loaded dynamically -->
+                    <div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i> A carregar dados de conflito...</div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Historical Operations & Campaigns -->
+            <div class="tab-content" id="opsTab">
+                <div class="drawing-box-info">
+                    <h3><i class="fa-solid fa-timeline"></i> Campanhas & Operações Históricas (2022-2026)</h3>
+                    <p>Navegue pelas 11 maiores operações militares da guerra. Selecione uma campanha para ajustar a <strong>Linha do Tempo</strong> e focar o mapa no teatro de operações correspondente.</p>
+                </div>
+
+                <div class="ops-feed-list" id="opsFeedList">
+                    <!-- Loaded dynamically or static cards -->
+                    <div class="op-card" data-date="2022.2" data-lat="50.4501" data-lng="30.5234">
+                        <div class="op-card-header">
+                            <span class="op-year-badge">FEV - ABR 2022</span>
+                            <span class="op-phase">Fase 1</span>
+                        </div>
+                        <div class="op-title">Batalha de Kyiv & Ofensiva do Norte</div>
+                        <div class="op-desc">Defesa de Kyiv, Hostomel, Irpin e Bucha. Retirada total das forças russas do norte em Abril de 2022.</div>
+                        <button class="tactical-btn btn-sm fly-op-btn"><i class="fa-solid fa-play"></i> Ativar Período & Focar no Mapa</button>
+                    </div>
+
+                    <div class="op-card" data-date="2022.4" data-lat="47.0958" data-lng="37.5494">
+                        <div class="op-card-header">
+                            <span class="op-year-badge">MAR - MAIO 2022</span>
+                            <span class="op-phase">Fase 1</span>
+                        </div>
+                        <div class="op-title">Cerco de Mariupol & Azovstal</div>
+                        <div class="op-desc">Batalha urbana prolongada pelo controlo do Porto de Mariupol e complexo siderúrgico Azovstal.</div>
+                        <button class="tactical-btn btn-sm fly-op-btn"><i class="fa-solid fa-play"></i> Ativar Período & Focar no Mapa</button>
+                    </div>
+
+                    <div class="op-card" data-date="2022.7" data-lat="49.5492" data-lng="36.9634">
+                        <div class="op-card-header">
+                            <span class="op-year-badge">SET - OUT 2022</span>
+                            <span class="op-phase">Fase 2</span>
+                        </div>
+                        <div class="op-title">Contra-Ofensiva Relâmpago de Kharkiv</div>
+                        <div class="op-desc">Rotura de linhas e libertação de Balakliya, Izyum, Kupyansk e Lyman em menos de 14 dias.</div>
+                        <button class="tactical-btn btn-sm fly-op-btn"><i class="fa-solid fa-play"></i> Ativar Período & Focar no Mapa</button>
+                    </div>
+
+                    <div class="op-card" data-date="2022.9" data-lat="46.6350" data-lng="32.6160">
+                        <div class="op-card-header">
+                            <span class="op-year-badge">OUT - NOV 2022</span>
+                            <span class="op-phase">Fase 2</span>
+                        </div>
+                        <div class="op-title">Libertação de Kherson & Margem Direita</div>
+                        <div class="op-desc">Pressão sistemática sobre pontes e linhas de abastecimento forçando o recuo russo para a margem esquerda do Dnieper.</div>
+                        <button class="tactical-btn btn-sm fly-op-btn"><i class="fa-solid fa-play"></i> Ativar Período & Focar no Mapa</button>
+                    </div>
+
+                    <div class="op-card" data-date="2023.2" data-lat="48.5878" data-lng="37.8335">
+                        <div class="op-card-header">
+                            <span class="op-year-badge">NOV 2022 - MAIO 2023</span>
+                            <span class="op-phase">Fase 3</span>
+                        </div>
+                        <div class="op-title">Batalha de Bakhmut & Soledar</div>
+                        <div class="op-desc">Intensa guerra de trincheiras e combates urbanos de alta atrito no Donbas.</div>
+                        <button class="tactical-btn btn-sm fly-op-btn"><i class="fa-solid fa-play"></i> Ativar Período & Focar no Mapa</button>
+                    </div>
+
+                    <div class="op-card" data-date="2023.6" data-lat="47.4475" data-lng="35.8364">
+                        <div class="op-card-header">
+                            <span class="op-year-badge">JUN - OUT 2023</span>
+                            <span class="op-phase">Fase 3</span>
+                        </div>
+                        <div class="op-title">Contra-Ofensiva do Sul de Zaporizhzhia</div>
+                        <div class="op-desc">Operações de penetração da Linha Surovikin nos setores de Robotyne e Velyka Novosilka.</div>
+                        <button class="tactical-btn btn-sm fly-op-btn"><i class="fa-solid fa-play"></i> Ativar Período & Focar no Mapa</button>
+                    </div>
+
+                    <div class="op-card" data-date="2024.1" data-lat="48.1366" data-lng="37.7492">
+                        <div class="op-card-header">
+                            <span class="op-year-badge">OUT 2023 - FEV 2024</span>
+                            <span class="op-phase">Fase 4</span>
+                        </div>
+                        <div class="op-title">Batalha de Avdiivka</div>
+                        <div class="op-desc">Ofensiva de alta intensidade e cercos flanqueantes na zona industrial e fábrica de coque.</div>
+                        <button class="tactical-btn btn-sm fly-op-btn"><i class="fa-solid fa-play"></i> Ativar Período & Focar no Mapa</button>
+                    </div>
+
+                    <div class="op-card" data-date="2024.6" data-lat="51.1928" data-lng="35.2714">
+                        <div class="op-card-header">
+                            <span class="op-year-badge">AGO 2024 - 2026</span>
+                            <span class="op-phase">Fase 5</span>
+                        </div>
+                        <div class="op-title">Incursão Transfronteiriça de Kursk</div>
+                        <div class="op-desc">Operação militar surpresa e tomada do nó logístico de Sudzha em território russo.</div>
+                        <button class="tactical-btn btn-sm fly-op-btn"><i class="fa-solid fa-play"></i> Ativar Período & Focar no Mapa</button>
+                    </div>
+
+                    <div class="op-card" data-date="2026.0" data-lat="44.9521" data-lng="34.1024">
+                        <div class="op-card-header">
+                            <span class="op-year-badge">2022 - 2026</span>
+                            <span class="op-phase">Campanha Marítima</span>
+                        </div>
+                        <div class="op-title">Campanha do Mar Negro & Drones Navais</div>
+                        <div class="op-desc">Afundamento do cruzador Moskva e destruição de frota com drones Magura V5 libertando rotas de grãos.</div>
+                        <button class="tactical-btn btn-sm fly-op-btn"><i class="fa-solid fa-play"></i> Ativar Período & Focar no Mapa</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Military Units & Brigades -->
+            <div class="tab-content" id="unitsTab">
+                <div class="filter-panel">
+                    <div class="category-chips" id="unitCategoryChips">
+                        <button class="chip active" data-unit-cat="all">Todas</button>
+                        <button class="chip" data-unit-cat="artillery"><i class="fa-solid fa-bomb"></i> Artilharia</button>
+                        <button class="chip" data-unit-cat="infantry"><i class="fa-solid fa-person-rifle"></i> Infantaria</button>
+                        <button class="chip" data-unit-cat="cavalry"><i class="fa-solid fa-truck-monster"></i> Cavalaria / Blindados</button>
+                        <button class="chip" data-unit-cat="drones"><i class="fa-solid fa-paper-plane"></i> Drones / SSO</button>
+                    </div>
+                </div>
+
+                <!-- Unit List -->
+                <div class="unit-feed-list" id="unitFeedList">
+                    <div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i> A carregar unidades táticas...</div>
+                </div>
+            </div>
+
+            <!-- Tab 3: NATO APP-6 Symbology & Tactical Planning -->
+            <div class="tab-content" id="natoTab">
+                <div class="drawing-box-info">
+                    <h3><i class="fa-solid fa-diagram-project"></i> Simbologia Militar NATO (APP-6D)</h3>
+                    <p>Simbologia tática padronizada de Estado-Maior com retângulos <strong>BLUFOR</strong> (Azul), losangos <strong>OPFOR</strong> (Vermelho Inimigo), eixos de avanço (AXIS), linhas de fase (PL) e objetivos táticos (OBJ).</p>
+                </div>
+
+                <div class="nato-controls-section">
+                    <h4><i class="fa-solid fa-shield-halved"></i> Forças & Simbologia de Unidades</h4>
+                    <div class="nato-btn-group">
+                        <button class="tactical-btn active" id="btnToggleNatoMode">
+                            <i class="fa-solid fa-eye"></i> Exibir Camada NATO APP-6
+                        </button>
+                    </div>
+
+                    <div class="nato-symbol-preview-grid">
+                        <div class="nato-card-preview blufor">
+                            <div class="nato-badge-box blufor">
+                                <span class="nato-size">II</span>
+                                <i class="fa-solid fa-person-rifle"></i>
+                            </div>
+                            <span class="nato-label">BLUFOR Infantaria (II)</span>
+                        </div>
+                        <div class="nato-card-preview blufor">
+                            <div class="nato-badge-box blufor">
+                                <span class="nato-size">I</span>
+                                <i class="fa-solid fa-truck-monster"></i>
+                            </div>
+                            <span class="nato-label">BLUFOR Blindados (I)</span>
+                        </div>
+                        <div class="nato-card-preview opfor">
+                            <div class="nato-diamond-box opfor">
+                                <span class="nato-size">II</span>
+                                <i class="fa-solid fa-person-rifle"></i>
+                            </div>
+                            <span class="nato-label">OPFOR Infantaria (II)</span>
+                        </div>
+                        <div class="nato-card-preview opfor">
+                            <div class="nato-diamond-box opfor">
+                                <span class="nato-size">I</span>
+                                <i class="fa-solid fa-truck-monster"></i>
+                            </div>
+                            <span class="nato-label">OPFOR Blindados (I)</span>
+                        </div>
+                    </div>
+
+                    <h4><i class="fa-solid fa-route"></i> Elementos Táticos de Operação</h4>
+                    <div class="nato-elements-list">
+                        <div class="nato-element-item"><span class="nato-tag axis">AXIS SABRE</span> Eixo de Avanço Principal da Ofensiva</div>
+                        <div class="nato-element-item"><span class="nato-tag loa">LOA</span> Limit of Advance (Linha Limite de Avanço)</div>
+                        <div class="nato-element-item"><span class="nato-tag pl">PL ALPHA</span> Phase Line Alpha (Linha de Fase de Coordenação)</div>
+                        <div class="nato-element-item"><span class="nato-tag obj">OBJ FALCON</span> Objetivo Tático de Controlo</div>
+                        <div class="nato-element-item"><span class="nato-tag obj">OBJ RAVEN</span> Objetivo Tático Secundário</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 4: Non-Permanent Map Drawing Tools -->
+            <div class="tab-content" id="drawTab">
+                <div class="drawing-box-info">
+                    <h3><i class="fa-solid fa-draw-polygon"></i> Ferramenta de Desenho Temporário</h3>
+                    <p>Desenhe zonas táticas, eixos de avanço e raios de alcance direto no OpenStreetMap. <strong>Os desenhos são temporários e não alteram a base de dados MariaDB.</strong></p>
+                </div>
+
+                <div class="draw-tools-grid">
+                    <button class="draw-tool-btn" id="toolDrawPoly">
+                        <i class="fa-solid fa-draw-polygon"></i>
+                        <span>Polígono / Zona</span>
+                    </button>
+                    <button class="draw-tool-btn" id="toolDrawLine">
+                        <i class="fa-solid fa-route"></i>
+                        <span>Eixo de Ataque</span>
+                    </button>
+                    <button class="draw-tool-btn" id="toolDrawCircle">
+                        <i class="fa-solid fa-circle-dot"></i>
+                        <span>Raio de Artilharia</span>
+                    </button>
+                    <button class="draw-tool-btn" id="toolDrawMarker">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span>Ponto Tático</span>
+                    </button>
+                </div>
+
+                <div class="draw-action-buttons">
+                    <button id="clearDrawingsBtn" class="tactical-btn btn-danger"><i class="fa-solid fa-trash-can"></i> Limpar Desenhos</button>
+                    <button id="exportDrawingsBtn" class="tactical-btn"><i class="fa-solid fa-download"></i> Exportar GeoJSON</button>
+                </div>
+
+                <div class="drawings-summary" id="drawingsSummary">
+                    <span>Camada de Desenho: <strong id="activeDrawingsCount">0 elementos</strong></span>
+                </div>
+            </div>
+
+            <!-- Tab 3: Analytics & MariaDB Stats -->
+            <div class="tab-content" id="statsTab">
+                <div class="stats-overview-cards">
+                    <div class="stat-card">
+                        <span class="stat-label">Ocupação Territorial</span>
+                        <span class="stat-value warning" id="statOccupiedPct">17.85%</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Área Libertada</span>
+                        <span class="stat-value success" id="statLiberatedKm">42,100 km²</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Extensão da Frente</span>
+                        <span class="stat-value" id="statFrontlineKm">1,200 km</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Taxa Interceção Aérea</span>
+                        <span class="stat-value info" id="statInterceptionRate">86.4%</span>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h4>Distribuição por Categoria de Eventos</h4>
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Leaflet OpenStreetMap Container -->
+        <div id="map" class="map-container"></div>
+
+        <!-- Map Quick Overlay Controls -->
+        <div class="map-layer-controls">
+            <button class="layer-btn active" id="btnOsmDark" title="OpenStreetMap Dark Tactical"><i class="fa-solid fa-moon"></i> OSM Dark</button>
+            <button class="layer-btn" id="btnOsmStandard" title="OpenStreetMap Standard"><i class="fa-solid fa-map"></i> OSM Padronizado</button>
+            <button class="layer-btn" id="btnOsmSatellite" title="Satélite Hybrid"><i class="fa-solid fa-satellite-dish"></i> Satélite</button>
+            <button class="layer-btn" id="btnToggleNatoOverlay" title="Modo NATO APP-6 / MIL-STD-2525"><i class="fa-solid fa-diagram-project"></i> Modo NATO APP-6</button>
+        </div>
+
+    </main>
+
+    <!-- Bottom Time Machine Timeline Slider -->
+    <footer class="tactical-timeline">
+        <div class="timeline-controls">
+            <button id="timelinePlayBtn" class="tactical-btn circle"><i class="fa-solid fa-play"></i></button>
+            <div class="timeline-info">
+                <span class="timeline-title">FATOR TEMPORAL:</span>
+                <span class="timeline-date" id="currentTimelineDate">SETEMBRO 2026</span>
+            </div>
+        </div>
+
+        <div class="timeline-slider-wrapper">
+            <input type="range" id="timelineSlider" min="2022" max="2026" step="0.1" value="2026">
+            <div class="timeline-ticks">
+                <span>Fev 2022</span>
+                <span>Jan 2023</span>
+                <span>Jan 2024</span>
+                <span>Jan 2025</span>
+                <span>Presente (2026)</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal para Adicionar Evento Tático (MariaDB) -->
+    <div class="modal-overlay" id="addEventModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-crosshairs"></i> Registar Evento Tático na MariaDB</h2>
+                <button class="close-modal-btn" id="closeAddEventModalBtn">&times;</button>
+            </div>
+            <form id="addEventForm">
+                <div class="form-group">
+                    <label>Título do Evento:</label>
+                    <input type="text" id="eventTitleInput" required placeholder="Ex: Ataque de Míssil em Dnipro">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Categoria:</label>
+                        <select id="eventCategorySelect">
+                            <option value="missile_strike">Míssil / Ataque Aéreo</option>
+                            <option value="drone_attack">Ataque de Drone</option>
+                            <option value="ground_combat">Combate Terrestre</option>
+                            <option value="air_defense">Defesa Aérea</option>
+                            <option value="naval_ops">Operação Naval</option>
+                            <option value="infrastructure">Infraestrutura / Energia</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Severidade:</label>
+                        <select id="eventSeveritySelect">
+                            <option value="low">Baixa</option>
+                            <option value="medium" selected>Média</option>
+                            <option value="high">Alta</option>
+                            <option value="critical">Crítica</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Latitude:</label>
+                        <input type="number" step="0.000001" id="eventLatInput" required placeholder="48.4647">
+                    </div>
+                    <div class="form-group">
+                        <label>Longitude:</label>
+                        <input type="number" step="0.000001" id="eventLngInput" required placeholder="35.0462">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Nome do Local / Cidade:</label>
+                    <input type="text" id="eventLocationInput" required placeholder="Ex: Dnipro">
+                </div>
+                <div class="form-group">
+                    <label>Descrição detalhada:</label>
+                    <textarea id="eventDescInput" rows="3" placeholder="Informações de inteligência e detalhes do impacto..."></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="tactical-btn" id="cancelAddEventBtn">Cancelar</button>
+                    <button type="submit" class="tactical-btn btn-primary"><i class="fa-solid fa-save"></i> Guardar Evento</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- External JS Libraries -->
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Leaflet Geoman Drawing Tools JS -->
+    <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom Modules -->
+    <script src="js/data.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/timeline.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

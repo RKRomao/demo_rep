@@ -1,0 +1,2201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Penetration Test Report — https://yoda.di.ubi.pt</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg:        #080b14;
+  --surface:   #0d1117;
+  --card:      #161b27;
+  --card2:     #1c2233;
+  --border:    #21273a;
+  --border2:   #2d3a52;
+  --text:      #e2e8f4;
+  --muted:     #8892a4;
+  --accent:    #5b8dee;
+  --red:       #ff4444;
+  --orange:    #ff7b2c;
+  --yellow:    #ffc107;
+  --cyan:      #17c3b2;
+  --green:     #4ade80;
+  --purple:    #a855f7;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; font-size:15px; line-height:1.7; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width:6px; height:6px; }
+::-webkit-scrollbar-track { background:var(--surface); }
+::-webkit-scrollbar-thumb { background:var(--border2); border-radius:3px; }
+
+/* ── HEADER ─────────────────────────────────────────── */
+.header {
+  background: linear-gradient(135deg, #080b14 0%, #0f1626 40%, #080b14 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 3rem 4rem;
+  position: relative;
+  overflow: hidden;
+}
+.header::before {
+  content:'';
+  position:absolute; inset:0;
+  background: radial-gradient(ellipse 900px 400px at 60% 50%, rgba(91,141,238,.06) 0%, transparent 70%);
+  pointer-events:none;
+}
+.header-grid { display:flex; justify-content:space-between; align-items:flex-start; gap:2rem; flex-wrap:wrap; }
+.header-left h1 {
+  font-size:2.2rem; font-weight:800; letter-spacing:-.03em;
+  background: linear-gradient(135deg, #e2e8f4 0%, #8892a4 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+}
+.header-left .subtitle { color:var(--muted); font-size:.9rem; margin-top:.4rem; }
+.header-right { display:flex; flex-direction:column; gap:.5rem; align-items:flex-end; }
+.meta-pill {
+  background:var(--card); border:1px solid var(--border); border-radius:6px;
+  padding:.3rem .9rem; font-size:.8rem; color:var(--muted); display:flex; gap:.5rem; align-items:center;
+}
+.meta-pill strong { color:var(--text); }
+.risk-badge {
+  padding:.5rem 1.5rem; border-radius:8px; font-size:1rem;
+  font-weight:700; text-transform:uppercase; letter-spacing:.05em;
+}
+
+/* ── NAVIGATION ──────────────────────────────────────── */
+.toc {
+  background:var(--surface); border-bottom:1px solid var(--border);
+  padding:1rem 4rem; display:flex; gap:2rem; align-items:center;
+  flex-wrap:wrap; position:sticky; top:0; z-index:100;
+}
+.toc a {
+  color:var(--muted); text-decoration:none; font-size:.85rem;
+  font-weight:500; transition:.2s; padding:.3rem .6rem; border-radius:6px;
+}
+.toc a:hover { color:var(--text); background:var(--card); }
+.toc .logo { font-weight:800; font-size:.95rem; color:var(--accent); margin-right:auto; }
+
+/* ── LAYOUT ──────────────────────────────────────────── */
+.container { max-width:1300px; margin:0 auto; padding:2.5rem 4rem; }
+
+/* ── SECTION TITLES ──────────────────────────────────── */
+.section {  margin-bottom:3rem; }
+.section-header {
+  display:flex; align-items:center; gap:1rem;
+  padding-bottom:1rem; border-bottom:1px solid var(--border); margin-bottom:1.5rem;
+}
+.section-header h2 { font-size:1.4rem; font-weight:700; }
+.section-tag {
+  background:var(--card2); border:1px solid var(--border); border-radius:4px;
+  padding:.2rem .6rem; font-size:.75rem; color:var(--muted); font-family:'JetBrains Mono',monospace;
+}
+
+/* ── EXECUTIVE SUMMARY ───────────────────────────────── */
+.exec-grid { display:grid; grid-template-columns:2fr 1fr; gap:2rem; }
+.exec-text { color:var(--muted); line-height:1.9; }
+.exec-text strong { color:var(--text); }
+.risk-meter-card {
+  background:var(--card); border:1px solid var(--border); border-radius:12px;
+  padding:1.5rem; display:flex; flex-direction:column; align-items:center; gap:1rem;
+}
+.risk-meter { position:relative; width:160px; height:80px; }
+.risk-arc-bg, .risk-arc-fill { fill:none; stroke-linecap:round; }
+.risk-arc-bg { stroke:var(--border2); stroke-width:14; }
+.risk-arc-fill { stroke-width:14; stroke-dasharray:251.2; transition:stroke-dashoffset 1.5s ease; }
+.risk-val { text-anchor:middle; font-size:2rem; font-weight:800; font-family:'Inter',sans-serif; }
+.risk-label { text-anchor:middle; font-size:.7rem; fill:var(--muted); font-family:'Inter',sans-serif; }
+
+/* ── STAT CARDS ──────────────────────────────────────── */
+.stats { display:grid; grid-template-columns:repeat(5,1fr); gap:1rem; margin-bottom:2rem; }
+.stat {
+  background:var(--card); border:1px solid var(--border); border-radius:10px;
+  padding:1.2rem; text-align:center; transition:.2s; cursor:default;
+  border-top:3px solid;
+}
+.stat:hover { transform:translateY(-3px); box-shadow:0 8px 30px rgba(0,0,0,.4); }
+.stat .num { font-size:2.8rem; font-weight:800; line-height:1; }
+.stat .lbl { font-size:.75rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-top:.4rem; }
+.s-critical { border-top-color:var(--red); }     .s-critical .num { color:var(--red); }
+.s-high    { border-top-color:var(--orange); }   .s-high .num { color:var(--orange); }
+.s-medium  { border-top-color:var(--yellow); }   .s-medium .num { color:var(--yellow); }
+.s-low     { border-top-color:var(--cyan); }     .s-low .num { color:var(--cyan); }
+.s-info    { border-top-color:var(--green); }    .s-info .num { color:var(--green); }
+
+/* ── SCOPE TABLE ─────────────────────────────────────── */
+.table-card { background:var(--card); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+table { width:100%; border-collapse:collapse; }
+thead th {
+  background:var(--card2); padding:.75rem 1.2rem;
+  font-size:.75rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted);
+  text-align:left; border-bottom:1px solid var(--border);
+}
+tbody td { padding:.9rem 1.2rem; border-bottom:1px solid var(--border); vertical-align:top; }
+tbody tr:last-child td { border-bottom:none; }
+tbody tr:hover { background:var(--card2); }
+code {
+  background:var(--surface); border:1px solid var(--border); border-radius:4px;
+  padding:.1rem .4rem; font-family:'JetBrains Mono',monospace; font-size:.8rem; color:#7dd3fc;
+}
+
+/* ── SEVERITY BADGE ──────────────────────────────────── */
+.badge {
+  display:inline-block; padding:.2rem .7rem; border-radius:5px;
+  font-size:.72rem; font-weight:700; text-transform:uppercase;
+  letter-spacing:.06em; border:1px solid; white-space:nowrap;
+}
+.b-CRITICAL { background:rgba(255,68,68,.12); color:#ff4444; border-color:rgba(255,68,68,.25); }
+.b-HIGH     { background:rgba(255,123,44,.12); color:#ff7b2c; border-color:rgba(255,123,44,.25); }
+.b-MEDIUM   { background:rgba(255,193,7,.1);  color:#ffc107; border-color:rgba(255,193,7,.2); }
+.b-LOW      { background:rgba(23,195,178,.1); color:#17c3b2; border-color:rgba(23,195,178,.2); }
+.b-INFO     { background:rgba(74,222,128,.1); color:#4ade80; border-color:rgba(74,222,128,.2); }
+
+/* ── FINDING CARDS ───────────────────────────────────── */
+.finding-card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:12px; margin-bottom:1.5rem; overflow:hidden;
+  transition:.2s; border-left:4px solid;
+}
+.finding-card:hover { box-shadow:0 4px 24px rgba(0,0,0,.4); }
+.fc-CRITICAL { border-left-color:#ff4444; }
+.fc-HIGH     { border-left-color:#ff7b2c; }
+.fc-MEDIUM   { border-left-color:#ffc107; }
+.fc-LOW      { border-left-color:#17c3b2; }
+.fc-INFO     { border-left-color:#4ade80; }
+
+.fc-header {
+  display:flex; align-items:center; gap:.9rem; padding:1.1rem 1.5rem;
+  cursor:pointer; user-select:none;
+}
+.fc-header:hover { background:var(--card2); }
+.fc-num { font-size:.75rem; color:var(--muted); font-family:'JetBrains Mono',monospace; flex-shrink:0; }
+.fc-title { font-weight:600; font-size:1rem; flex:1; }
+.fc-module {
+  background:var(--surface); border:1px solid var(--border); border-radius:4px;
+  padding:.15rem .5rem; font-size:.72rem; color:var(--muted);
+  font-family:'JetBrains Mono',monospace;
+}
+.fc-chevron { color:var(--muted); transition:.3s; font-size:.85rem; }
+.fc-chevron.open { transform:rotate(180deg); }
+
+.fc-body { display:none; padding:0 1.5rem 1.5rem; }
+.fc-body.open { display:block; }
+
+.fc-tabs { display:flex; gap:.25rem; border-bottom:1px solid var(--border); margin-bottom:1.2rem; margin-top:.5rem; }
+.fc-tab {
+  padding:.5rem 1rem; border-radius:6px 6px 0 0; font-size:.82rem;
+  cursor:pointer; color:var(--muted); transition:.15s; border:none; background:none;
+  border-bottom:2px solid transparent; margin-bottom:-1px;
+}
+.fc-tab:hover { color:var(--text); }
+.fc-tab.active { color:var(--accent); border-bottom-color:var(--accent); font-weight:600; }
+
+.fc-pane { display:none; }
+.fc-pane.active { display:block; }
+
+/* Pane content */
+.info-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem; }
+.info-row { display:flex; flex-direction:column; gap:.2rem; }
+.info-row .lbl { font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); }
+.info-row .val { font-size:.9rem; font-weight:500; }
+.owasp-tag {
+  display:inline-block; background:rgba(91,141,238,.1); border:1px solid rgba(91,141,238,.25);
+  color:var(--accent); padding:.2rem .6rem; border-radius:4px; font-size:.75rem; font-weight:600;
+}
+.cwe-tag {
+  display:inline-block; background:rgba(168,85,247,.1); border:1px solid rgba(168,85,247,.25);
+  color:var(--purple); padding:.2rem .6rem; border-radius:4px; font-size:.75rem; font-weight:600;
+}
+.cvss-pill {
+  display:inline-flex; align-items:center; gap:.4rem; font-size:.85rem; font-weight:700;
+}
+
+.description-block { color:var(--muted); line-height:1.8; margin-bottom:1rem; font-size:.9rem; }
+.description-block strong { color:var(--text); }
+
+.evidence-box {
+  background:var(--surface); border:1px solid var(--border2); border-radius:8px;
+  padding:1rem 1.2rem; font-family:'JetBrains Mono',monospace; font-size:.78rem;
+  color:#7dd3fc; max-height:220px; overflow-y:auto; white-space:pre-wrap;
+  word-break:break-all; margin:.75rem 0; line-height:1.6;
+}
+.evidence-box:empty { display:none; }
+.evidence-label { font-size:.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin-bottom:.3rem; }
+
+.remediation-list { list-style:none; display:flex; flex-direction:column; gap:.6rem; }
+.remediation-list li {
+  display:flex; gap:.75rem; align-items:flex-start;
+  background:var(--surface); border:1px solid var(--border); border-radius:8px;
+  padding:.7rem 1rem; font-size:.88rem;
+}
+.rem-num {
+  min-width:22px; height:22px; background:rgba(74,222,128,.15); border:1px solid rgba(74,222,128,.3);
+  border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-size:.7rem; font-weight:700; color:var(--green); flex-shrink:0; margin-top:.1rem;
+}
+.rem-text { color:var(--muted); }
+.rem-text code { color:#7dd3fc; }
+
+.refs-list { display:flex; flex-direction:column; gap:.4rem; }
+.refs-list a {
+  color:var(--accent); font-size:.85rem; text-decoration:none; display:flex;
+  align-items:center; gap:.4rem;
+}
+.refs-list a:hover { text-decoration:underline; }
+
+/* ── METHODOLOGY TABLE ───────────────────────────────── */
+.method-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1rem; }
+.method-card {
+  background:var(--card); border:1px solid var(--border); border-radius:10px;
+  padding:1.2rem; display:flex; flex-direction:column; gap:.5rem;
+}
+.method-card h4 { font-size:.9rem; font-weight:600; }
+.method-card p { font-size:.82rem; color:var(--muted); }
+.method-icon { font-size:1.4rem; }
+
+/* ── FOOTER ──────────────────────────────────────────── */
+footer {
+  border-top:1px solid var(--border); padding:2rem 4rem;
+  display:flex; justify-content:space-between; align-items:center;
+  color:var(--muted); font-size:.8rem; flex-wrap:wrap; gap:1rem;
+}
+.footer-logo { font-weight:800; color:var(--accent); font-size:1rem; }
+
+/* ── DISCLAIMER BOX ──────────────────────────────────── */
+.disclaimer {
+  background:rgba(255,68,68,.04); border:1px solid rgba(255,68,68,.15);
+  border-radius:8px; padding:1rem 1.5rem; color:rgba(255,68,68,.8);
+  font-size:.82rem; margin-bottom:2rem;
+}
+
+/* ── CHART BAR ───────────────────────────────────────── */
+.bar-chart { display:flex; flex-direction:column; gap:.7rem; margin-top:1rem; }
+.bar-row { display:flex; align-items:center; gap:.8rem; }
+.bar-label { width:80px; font-size:.8rem; font-weight:600; text-align:right; flex-shrink:0; }
+.bar-bg { flex:1; background:var(--border); border-radius:4px; height:10px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:4px; transition:width 1.5s cubic-bezier(.4,0,.2,1); }
+.bar-count { font-size:.8rem; color:var(--muted); width:30px; }
+
+@media(max-width:900px) {
+  .header { padding:2rem; }
+  .container { padding:1.5rem 2rem; }
+  .toc { padding:1rem 2rem; }
+  .exec-grid { grid-template-columns:1fr; }
+  .stats { grid-template-columns:repeat(3,1fr); }
+  .info-grid { grid-template-columns:1fr; }
+  footer { padding:1.5rem 2rem; }
+}
+
+/* ── FINDINGS TOOLBAR ────────────────────────────────── */
+.findings-toolbar {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+  padding: 0.8rem 1.2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.filter-btn {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 0.4rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+.filter-btn:hover {
+  color: var(--text);
+  border-color: var(--border2);
+}
+.filter-btn.active {
+  background: var(--accent);
+  color: #ffffff;
+  border-color: var(--accent);
+  font-weight: 600;
+}
+.search-input {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.4rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  outline: none;
+  font-family: inherit;
+  min-width: 220px;
+}
+.search-input:focus {
+  border-color: var(--accent);
+}
+.toolbar-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 0.5rem;
+}
+.action-btn {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: .15s;
+  font-family: inherit;
+}
+.action-btn:hover {
+  color: var(--text);
+  background: var(--border2);
+}
+
+
+/* ── DATA COLLECTION & RECONNAISSANCE ───────────────── */
+.recon-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.recon-stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.1rem 1.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+  transition: transform .15s ease, border-color .15s ease;
+}
+.recon-stat-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--border2);
+}
+.recon-stat-card .lbl {
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.recon-stat-card .val {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.recon-tabs {
+  display: flex;
+  gap: .5rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+  padding-bottom: 1px;
+}
+.recon-tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
+  font-size: .88rem;
+  font-weight: 500;
+  padding: .65rem 1.25rem;
+  cursor: pointer;
+  transition: all .15s ease;
+  font-family: inherit;
+  white-space: nowrap;
+}
+.recon-tab:hover {
+  color: var(--text);
+}
+.recon-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  font-weight: 600;
+}
+.recon-pane {
+  display: none;
+}
+.recon-pane.active {
+  display: block;
+  animation: fadeIn .2s ease;
+}
+.recon-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.recon-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.2rem 1.5rem;
+}
+.recon-card h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  color: var(--text);
+}
+.recon-kv-list {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+.recon-kv-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  font-size: .88rem;
+  padding-bottom: .6rem;
+  border-bottom: 1px solid var(--border);
+}
+.recon-kv-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.recon-kv-row .k {
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.recon-kv-row .v {
+  color: var(--text);
+  font-weight: 500;
+  text-align: right;
+  word-break: break-all;
+}
+.tag-pill {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: .25rem .7rem;
+  border-radius: 6px;
+  font-size: .82rem;
+  display: inline-block;
+  margin: .25rem .35rem .25rem 0;
+}
+.scroll-table-container {
+  max-height: 420px;
+  overflow-y: auto;
+}
+@media(max-width:900px) {
+  .recon-grid-2 { grid-template-columns: 1fr; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-grid">
+    <div class="header-left">
+      <div style="font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem;">
+        PENETRATION TEST REPORT — CONFIDENTIAL
+      </div>
+      <h1>Security Assessment</h1>
+      <div class="subtitle">Web Application &amp; Infrastructure Vulnerability Report &bull; <span style="color:var(--accent);font-weight:600;">by killer6909203</span></div>
+    </div>
+    <div class="header-right">
+      <div class="meta-pill"><span>Target</span><strong>https://yoda.di.ubi.pt</strong></div>
+      <div class="meta-pill"><span>Date</span><strong>2026-09-22 16:39:34</strong></div>
+      <div class="meta-pill"><span>Modules</span><strong>19</strong></div>
+      <div class="meta-pill"><span>Duration</span><strong>68.4s</strong></div>
+      <div class="risk-badge" style="background:rgba(255,68,68,.1);color:#ff4444;border:1px solid #ff444440;margin-top:.5rem;">
+        Overall Risk: CRITICAL
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- NAVIGATION -->
+<nav class="toc">
+  <span class="logo">DISTROYER</span>
+  <a href="#executive">Executive Summary</a>
+  <a href="#scope">Scope &amp; Methodology</a>
+  <a href="#recon">Data Collection</a>
+  <a href="#findings">Findings</a>
+  <a href="#remediation-plan">Remediation Plan</a>
+</nav>
+
+<div class="container">
+
+  <div class="disclaimer">
+    CONFIDENTIAL — This report contains sensitive security information.
+    Distribute only to authorised personnel with a need to know.
+    Findings must be remediated before any public disclosure.
+  </div>
+
+  <!-- ── EXECUTIVE SUMMARY ────────────────────────── -->
+  <section class="section" id="executive">
+    <div class="section-header">
+      <h2>Executive Summary</h2>
+      <span class="section-tag">01</span>
+    </div>
+    <div class="exec-grid">
+      <div>
+        <div class="exec-text">A security assessment was conducted against <strong>https://yoda.di.ubi.pt</strong> on <strong>2026-09-22 16:39:34</strong>. The assessment identified a total of <strong>25 findings</strong> across multiple security domains including injection vulnerabilities, authentication mechanisms, cryptographic configurations, and HTTP security headers.<br><br><strong>High-severity vulnerabilities were identified</strong> that could allow an attacker to significantly compromise the system. Remediation should be prioritised within the next sprint/release cycle.<br><br>The overall risk score for this assessment is <strong style="color:#ff4444">82/100 (CRITICAL)</strong>. Of the 25 findings, <strong>0 Critical</strong>, <strong>2 High</strong>, and <strong>6 Medium</strong> severity issues require attention.</div>
+        <div class="bar-chart" style="margin-top:1.5rem;">
+          <div class="bar-row">
+            <div class="bar-label" style="color:var(--red)">Critical</div>
+            <div class="bar-bg"><div class="bar-fill" style="width:0%;background:var(--red);"></div></div>
+            <div class="bar-count">0</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label" style="color:var(--orange)">High</div>
+            <div class="bar-bg"><div class="bar-fill" style="width:18%;background:var(--orange);"></div></div>
+            <div class="bar-count">2</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label" style="color:var(--yellow)">Medium</div>
+            <div class="bar-bg"><div class="bar-fill" style="width:54%;background:var(--yellow);"></div></div>
+            <div class="bar-count">6</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label" style="color:var(--cyan)">Low</div>
+            <div class="bar-bg"><div class="bar-fill" style="width:54%;background:var(--cyan);"></div></div>
+            <div class="bar-count">6</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label" style="color:var(--green)">Info</div>
+            <div class="bar-bg"><div class="bar-fill" style="width:100%;background:var(--green);"></div></div>
+            <div class="bar-count">11</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="stats" style="grid-template-columns:1fr 1fr;margin-bottom:1rem;">
+          <div class="stat s-critical"><div class="num">0</div><div class="lbl">Critical</div></div>
+          <div class="stat s-high"><div class="num">2</div><div class="lbl">High</div></div>
+          <div class="stat s-medium"><div class="num">6</div><div class="lbl">Medium</div></div>
+          <div class="stat s-low"><div class="num">6</div><div class="lbl">Low</div></div>
+        </div>
+        <div class="stat s-info" style="margin-bottom:1rem;"><div class="num">11</div><div class="lbl">Informational</div></div>
+        <div class="table-card">
+          <table>
+            <thead><tr><th>Metric</th><th>Value</th></tr></thead>
+            <tbody>
+              <tr><td>Total Findings</td><td><strong>25</strong></td></tr>
+              <tr><td>Actionable Issues</td><td><strong>8</strong></td></tr>
+              <tr><td>Overall Risk Score</td><td><strong style="color:#ff4444">82/100</strong></td></tr>
+              <tr><td>Modules Executed</td><td><strong>19</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SCOPE & METHODOLOGY ─────────────────────── -->
+  <section class="section" id="scope">
+    <div class="section-header">
+      <h2>Scope &amp; Methodology</h2>
+      <span class="section-tag">02</span>
+    </div>
+    <div class="table-card" style="margin-bottom:1.5rem;">
+      <table>
+        <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Target URL</td><td><code>https://yoda.di.ubi.pt</code></td></tr>
+          <tr><td>Scan Date</td><td>2026-09-22 16:39:34</td></tr>
+          <tr><td>Test Type</td><td>Black-box Web Application &amp; Infrastructure</td></tr>
+          <tr><td>Tools Used</td><td>Distroyer v2.0 (Enterprise Red Team Edition)</td></tr>
+          <tr><td>Standard</td><td>OWASP Top 10 (2021), OWASP WSTG, CWE/SANS Top 25</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="method-grid">
+      <div class="method-card">
+        <div class="method-icon">01</div>
+        <h4>Reconnaissance</h4>
+        <p>DNS enumeration, WHOIS, certificate transparency, subdomain discovery, technology fingerprinting.</p>
+      </div>
+      <div class="method-card">
+        <div class="method-icon">02</div>
+        <h4>Vulnerability Scanning</h4>
+        <p>Automated detection of SQLi, XSS, CSRF, LFI, Open Redirect, CORS misconfigurations.</p>
+      </div>
+      <div class="method-card">
+        <div class="method-icon">03</div>
+        <h4>Configuration Review</h4>
+        <p>HTTP security headers, SSL/TLS analysis, port scanning, exposed services, backup files.</p>
+      </div>
+      <div class="method-card">
+        <div class="method-icon">04</div>
+        <h4>Authentication Testing</h4>
+        <p>Default credentials, JWT analysis, auth bypass, account enumeration, session management.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── DATA COLLECTION & RECONNAISSANCE ────────── -->
+  <section class="section" id="recon">
+    <div class="section-header">
+      <h2>Data Collection &amp; Reconnaissance</h2>
+      <span class="section-tag">03</span>
+    </div>
+    <p style="color:var(--muted);margin-bottom:1.5rem;font-size:.9rem;">
+      Comprehensive intelligence inventory collected across passive and active reconnaissance phases:
+      infrastructure mapping, server technologies, HTTP security header configurations, SSL/TLS posture, and discovered assets.
+    </p>
+    
+        <!-- Summary metrics -->
+        <div class="recon-stat-grid">
+          <div class="recon-stat-card">
+            <div class="lbl">Target Host</div>
+            <div class="val" title="yoda.di.ubi.pt">yoda.di.ubi.pt</div>
+          </div>
+          <div class="recon-stat-card">
+            <div class="lbl">Primary IPv4</div>
+            <div class="val">Unknown</div>
+          </div>
+          <div class="recon-stat-card">
+            <div class="lbl">Web Server</div>
+            <div class="val">nginx/1.27.5</div>
+          </div>
+          <div class="recon-stat-card">
+            <div class="lbl">Security Headers</div>
+            <div class="val"><span style="color:#ff4444">1</span> / 7</div>
+          </div>
+          <div class="recon-stat-card">
+            <div class="lbl">Open Ports</div>
+            <div class="val">4 Active</div>
+          </div>
+          <div class="recon-stat-card">
+            <div class="lbl">Discovered Paths</div>
+            <div class="val">0 Endpoints</div>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="recon-tabs">
+          <button class="recon-tab active" data-target="recon-network">🌐 Network &amp; DNS</button>
+          <button class="recon-tab" data-target="recon-tech">⚡ Technologies &amp; Server</button>
+          <button class="recon-tab" data-target="recon-headers">🛡️ Security Headers Audit</button>
+          <button class="recon-tab" data-target="recon-ssl">🔒 SSL / TLS Posture</button>
+          <button class="recon-tab" data-target="recon-surface">🗺️ Discovered Attack Surface</button>
+        </div>
+
+        <!-- Tab Content Panes -->
+        <div class="recon-pane active" id="recon-network">
+        <div class="recon-grid-2">
+          <div class="recon-card">
+            <h3>🌐 Target Network Details</h3>
+            <div class="recon-kv-list">
+              <div class="recon-kv-row"><span class="k">Target Hostname</span><span class="v"><code>yoda.di.ubi.pt</code></span></div>
+              <div class="recon-kv-row"><span class="k">Primary IP Address</span><span class="v"><code>Unknown</code></span></div>
+              <div class="recon-kv-row"><span class="k">Protocol &amp; Scheme</span><span class="v"><span class="badge b-INFO">HTTPS</span></span></div>
+              <div class="recon-kv-row"><span class="k">Web Application Firewall</span><span class="v">None detected</span></div>
+              <div class="recon-kv-row"><span class="k">Security Policy (security.txt)</span><span class="v">No security.txt file found</span></div>
+              <div class="recon-kv-row"><span class="k">robots.txt Status</span><span class="v">Not found / Not configured</span></div>
+              <div class="recon-kv-row"><span class="k">Sitemap Status</span><span class="v">Not found / Not configured</span></div>
+            </div>
+          </div>
+          <div class="recon-card">
+            <h3>📋 DNS Resolution</h3>
+            <div class="table-card" style="border:none;">
+              <table>
+                <thead><tr><th>Type</th><th>Record / Value</th></tr></thead>
+                <tbody><tr><td><span class="badge b-INFO">A</span></td><td><code>158.158.8.118</code></td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        </div>
+        <div class="recon-pane" id="recon-tech">
+        <div class="recon-grid-2">
+          <div class="recon-card">
+            <h3>⚡ Server &amp; Environment Fingerprint</h3>
+            <div class="recon-kv-list">
+              <div class="recon-kv-row"><span class="k">Web Server Software</span><span class="v"><code>nginx/1.27.5</code></span></div>
+              <div class="recon-kv-row"><span class="k">Detected Technologies</span><span class="v">1 Identified</span></div>
+            </div>
+            <div style="margin-top:1.2rem;">
+              <div class="lbl" style="margin-bottom:.5rem;">Detected Stack Components:</div>
+              <span class="tag-pill">🏷️ Nginx</span>
+            </div>
+          </div>
+          <div class="recon-card">
+            <h3>🚪 Discovered Portals &amp; Admin Endpoints</h3>
+            <div class="table-card" style="border:none;max-height:280px;overflow-y:auto;">
+              <table>
+                <thead><tr><th>Endpoint</th><th>Status</th></tr></thead>
+                <tbody><tr><td colspan="2" style="color:var(--muted);text-align:center;">No exposed admin interfaces identified.</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        </div>
+        <div class="recon-pane" id="recon-headers">
+        <div class="table-card">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:22%;">Security Header</th>
+                <th style="width:12%;">Audit Status</th>
+                <th style="width:38%;">Current Received Directive / Recommendation</th>
+                <th style="width:28%;">Security Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td><strong>Strict-Transport-Security</strong></td>
+              <td><span class="badge b-HIGH">MISSING</span></td>
+              <td style="font-size:.85rem;"><span style="color:var(--muted)">Not Configured</span> — Recommended: <code>max-age=31536000; includeSubDomains; preload</code></td>
+              <td style="color:var(--muted);font-size:.82rem;">Enforces encrypted HTTPS connections and mitigates MITM/SSL stripping.</td>
+            </tr>
+            
+            <tr>
+              <td><strong>Content-Security-Policy</strong></td>
+              <td><span class="badge b-HIGH">MISSING</span></td>
+              <td style="font-size:.85rem;"><span style="color:var(--muted)">Not Configured</span> — Recommended: <code>default-src &#39;self&#39;; script-src &#39;self&#39;</code></td>
+              <td style="color:var(--muted);font-size:.82rem;">Restricts script execution, frames, and asset origins to mitigate XSS.</td>
+            </tr>
+            
+            <tr>
+              <td><strong>X-Frame-Options</strong></td>
+              <td><span class="badge b-MEDIUM">MISSING</span></td>
+              <td style="font-size:.85rem;"><span style="color:var(--muted)">Not Configured</span> — Recommended: <code>DENY or SAMEORIGIN</code></td>
+              <td style="color:var(--muted);font-size:.82rem;">Controls page rendering in iframes to prevent clickjacking attacks.</td>
+            </tr>
+            
+            <tr>
+              <td><strong>X-Content-Type-Options</strong></td>
+              <td><span class="badge b-MEDIUM">MISSING</span></td>
+              <td style="font-size:.85rem;"><span style="color:var(--muted)">Not Configured</span> — Recommended: <code>nosniff</code></td>
+              <td style="color:var(--muted);font-size:.82rem;">Disables browser MIME-sniffing away from declared Content-Type.</td>
+            </tr>
+            
+            <tr>
+              <td><strong>Referrer-Policy</strong></td>
+              <td><span class="badge b-MEDIUM">MISSING</span></td>
+              <td style="font-size:.85rem;"><span style="color:var(--muted)">Not Configured</span> — Recommended: <code>strict-origin-when-cross-origin</code></td>
+              <td style="color:var(--muted);font-size:.82rem;">Protects sensitive URL query parameters from leaking to external domains.</td>
+            </tr>
+            
+            <tr>
+              <td><strong>Permissions-Policy</strong></td>
+              <td><span class="badge b-MEDIUM">MISSING</span></td>
+              <td style="font-size:.85rem;"><span style="color:var(--muted)">Not Configured</span> — Recommended: <code>geolocation=(), microphone=()</code></td>
+              <td style="color:var(--muted);font-size:.82rem;">Restricts unauthorized browser device access (mic, camera, geolocation).</td>
+            </tr>
+            
+            <tr>
+              <td><strong>Cache-Control</strong></td>
+              <td><span class="badge b-INFO">CONFIGURED</span></td>
+              <td style="font-size:.85rem;"><code style="color:#7dd3fc;word-break:break-all;">no-store</code></td>
+              <td style="color:var(--muted);font-size:.82rem;">Prevents caching of sensitive authenticated content in intermediate proxies.</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        </div>
+        <div class="recon-pane" id="recon-ssl">
+        <div class="recon-grid-2">
+          <div class="recon-card">
+            <h3>🔒 Cryptographic Configuration</h3>
+            <div class="recon-kv-list">
+              <div class="recon-kv-row"><span class="k">HTTPS Support</span><span class="v"><span class="badge b-INFO">Active (HTTPS)</span></span></div>
+              <div class="recon-kv-row"><span class="k">Certificate Validity</span><span class="v">Certificate valid for 33 more days</span></div>
+              <div class="recon-kv-row"><span class="k">Negotiated Cipher</span><span class="v"><code>Negotiated: TLS_AES_128_GCM_SHA256 (128 bits) via TLSv1.3 (Protocol: TLSv1.3)</code></span></div>
+              <div class="recon-kv-row"><span class="k">HSTS Preload List</span><span class="v">Eligible for Preload</span></div>
+            </div>
+          </div>
+          <div class="recon-card">
+            <h3>🛡️ Protocol Support</h3>
+            <p style="color:var(--muted);font-size:.85rem;margin-bottom:1rem;">
+              Modern TLS configurations mandate TLS 1.2 and TLS 1.3 while disabling vulnerable legacy protocols (SSL 2.0, SSL 3.0, TLS 1.0, and TLS 1.1).
+            </p>
+            <div><span class="tag-pill" style="color:var(--green);border-color:rgba(74,222,128,.3);">✓ TLS 1.2+ (Legacy TLS 1.0 &amp; 1.1 Disabled)</span><span class="tag-pill" style="color:var(--green);border-color:rgba(74,222,128,.3);">✓ TLS 1.3 (Modern, Highly Secure)</span></div>
+          </div>
+        </div>
+        </div>
+        <div class="recon-pane" id="recon-surface">
+        <div class="recon-grid-2">
+          <div class="recon-card">
+            <h3>🌐 Open Network Ports &amp; Services</h3>
+            <div class="table-card" style="border:none;">
+              <table>
+                <thead><tr><th>Port</th><th>Service</th><th>Service Banner</th></tr></thead>
+                <tbody><tr><td><span class="badge b-INFO">22/SSH</span></td><td>Detected</td><td><code>—</code></td></tr><tr><td><span class="badge b-INFO">80/HTTP</span></td><td>Detected</td><td><code>—</code></td></tr><tr><td><span class="badge b-INFO">443/HTTPS</span></td><td>Detected</td><td><code>—</code></td></tr><tr><td><span class="badge b-INFO">8080/HTTP</span></td><td>Detected</td><td><code>—</code></td></tr></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="recon-card">
+            <h3>🕷️ Crawler &amp; Public Asset Discovery</h3>
+            <div class="recon-kv-list">
+              <div class="recon-kv-row"><span class="k">Pages Crawled</span><span class="v"><strong>1</strong> visited</span></div>
+              <div class="recon-kv-row"><span class="k">Forms &amp; Input Surfaces</span><span class="v"><strong>6</strong> forms mapped</span></div>
+            </div>
+            <div style="margin-top:1rem;">
+              <div class="lbl" style="margin-bottom:.4rem;">Harvested Email Addresses:</div>
+              <span style="color:var(--muted)">No public email addresses harvested.</span>
+            </div>
+            <div style="margin-top:1rem;">
+              <div class="lbl" style="margin-bottom:.4rem;">Authentication Endpoints:</div>
+              <span style="color:var(--muted)">No distinct login endpoints identified.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="recon-card" style="margin-top:1.5rem;">
+          <h3>📂 Discovered Paths &amp; Accessible Directories (0 total)</h3>
+          <p style="color:var(--muted);font-size:.82rem;margin-bottom:1rem;">
+            Showing accessible endpoints, redirects, and directories enumerated during brute-force and crawling:
+          </p>
+          <div class="table-card scroll-table-container">
+            <table>
+              <thead><tr><th>Discovered Path / File</th><th>HTTP Status</th><th>Response Size</th></tr></thead>
+              <tbody><tr><td colspan="3" style="color:var(--muted);text-align:center;">No directories enumerated.</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+        </div>
+        
+  </section>
+
+  <!-- ── FINDINGS ────────────────────────────────── -->
+  <section class="section" id="findings">
+    <div class="section-header">
+      <h2>Detailed Findings</h2>
+      <span class="section-tag">04</span>
+    </div>
+    <p style="color:var(--muted);margin-bottom:1.5rem;font-size:.9rem;">
+      Click any finding to expand its full technical analysis, evidence, and remediation guidance.
+      Findings are sorted by severity (highest risk first).
+    </p>
+    <div class="findings-toolbar">
+      <button class="filter-btn active" data-severity="ALL">All (25)</button>
+      <button class="filter-btn" data-severity="CRITICAL">Critical (0)</button>
+      <button class="filter-btn" data-severity="HIGH">High (2)</button>
+      <button class="filter-btn" data-severity="MEDIUM">Medium (6)</button>
+      <button class="filter-btn" data-severity="LOW">Low (6)</button>
+      <button class="filter-btn" data-severity="INFO">Info (11)</button>
+      <input type="text" id="finding-search" class="search-input" placeholder="Filter by title, module, CVE..." />
+      <div class="toolbar-actions">
+        <button id="expand-all-btn" class="action-btn">Expand All</button>
+        <button id="collapse-all-btn" class="action-btn">Collapse All</button>
+      </div>
+    </div>
+    
+<div class="finding-card fc-HIGH" id="finding-1">
+  <div class="fc-header" data-body="body-1">
+    <span class="fc-num">#001</span>
+    <span class="badge b-HIGH">HIGH</span>
+    <span class="fc-title">Missing Security Header: Strict-Transport-Security</span>
+    
+    <span class="fc-module">headers</span>
+    <span class="fc-chevron">&#8964;</span>
+  </div>
+  <div class="fc-body" id="body-1">
+    <div class="fc-tabs">
+      <button class="fc-tab active" data-group="g1" data-target="g1-overview">Overview</button>
+      <button class="fc-tab" data-group="g1" data-target="g1-explanation">Explanation</button>
+      <button class="fc-tab" data-group="g1" data-target="g1-evidence">Evidence</button>
+      <button class="fc-tab" data-group="g1" data-target="g1-remediation">Remediation</button>
+      <button class="fc-tab" data-group="g1" data-target="g1-references">References</button>
+    </div>
+    <div class="fc-pane active" id="g1-overview" data-group="g1">
+<div class="info-grid">
+  <div class="info-row"><div class="lbl">Severity</div><div class="val"><span class="badge b-HIGH">HIGH</span></div></div>
+  <div class="info-row"><div class="lbl">CVSS Score</div><div class="val"><span class="cvss-pill" style="color:#ffc107"><strong>5.3</strong> <span style="color:var(--muted);font-size:.75rem">/ 10.0</span></span></div></div>
+  <div class="info-row"><div class="lbl">OWASP Category</div><div class="val"><span class="owasp-tag">A05:2021 - Security Misconfiguration</span></div></div>
+  <div class="info-row"><div class="lbl">CWE Reference</div><div class="val"><span class="cwe-tag">CWE-1021</span></div></div>
+</div>
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Summary</div>
+<div class="description-block">The Strict-Transport-Security header is not set.</div>
+</div>
+    <div class="fc-pane" id="g1-explanation" data-group="g1">
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">What is this vulnerability?</div>
+<div class="description-block">One or more standard HTTP security response headers are absent from the server responses. Modern browsers rely on these headers to activate built-in security defenses (such as anti-clickjacking, MIME-type enforcement, and secure referrer handling).</div>
+<div class="lbl" style="margin:.8rem 0 .4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Business &amp; Technical Impact</div><div class="description-block">Heightens vulnerability to clickjacking, client-side MIME-sniffing attacks, cross-origin data leaks, and proxy caching of sensitive user data.</div>
+</div>
+    <div class="fc-pane" id="g1-evidence" data-group="g1">
+<div class="evidence-label">Technical Evidence / Proof of Concept</div>
+<div class="evidence-box">— No specific evidence captured —</div>
+
+</div>
+    <div class="fc-pane" id="g1-remediation" data-group="g1"><ul class="remediation-list"><li><span class="rem-num">1</span><span class="rem-text">Configure all recommended security headers on web servers or reverse proxies:</span></li>
+<li><span class="rem-num">2</span><span class="rem-text">Strict-Transport-Security: max-age=31536000; includeSubDomains; preload</span></li>
+<li><span class="rem-num">3</span><span class="rem-text">Content-Security-Policy: default-src &#39;self&#39;; frame-ancestors &#39;self&#39;;</span></li>
+<li><span class="rem-num">4</span><span class="rem-text">X-Content-Type-Options: nosniff</span></li>
+<li><span class="rem-num">5</span><span class="rem-text">X-Frame-Options: SAMEORIGIN</span></li>
+<li><span class="rem-num">6</span><span class="rem-text">Referrer-Policy: strict-origin-when-cross-origin</span></li>
+<li><span class="rem-num">7</span><span class="rem-text">Permissions-Policy: geolocation=(), camera=(), microphone=()</span></li>
+<li><span class="rem-num">8</span><span class="rem-text">Cache-Control: no-store (on sensitive authenticated routes)</span></li></ul></div>
+    <div class="fc-pane" id="g1-references" data-group="g1"><div class="refs-list"><a href="https://owasp.org/www-project-secure-headers/" target="_blank" rel="noopener">&#128279; https://owasp.org/www-project-secure-headers/</a>
+<a href="https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html" target="_blank" rel="noopener">&#128279; https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html</a>
+<a href="https://cwe.mitre.org/data/definitions/1021.html" target="_blank" rel="noopener">&#128279; https://cwe.mitre.org/data/definitions/1021.html</a></div></div>
+  </div>
+</div>
+
+<div class="finding-card fc-HIGH" id="finding-2">
+  <div class="fc-header" data-body="body-2">
+    <span class="fc-num">#002</span>
+    <span class="badge b-HIGH">HIGH</span>
+    <span class="fc-title">Missing Security Header: Content-Security-Policy</span>
+    
+    <span class="fc-module">headers</span>
+    <span class="fc-chevron">&#8964;</span>
+  </div>
+  <div class="fc-body" id="body-2">
+    <div class="fc-tabs">
+      <button class="fc-tab active" data-group="g2" data-target="g2-overview">Overview</button>
+      <button class="fc-tab" data-group="g2" data-target="g2-explanation">Explanation</button>
+      <button class="fc-tab" data-group="g2" data-target="g2-evidence">Evidence</button>
+      <button class="fc-tab" data-group="g2" data-target="g2-remediation">Remediation</button>
+      <button class="fc-tab" data-group="g2" data-target="g2-references">References</button>
+    </div>
+    <div class="fc-pane active" id="g2-overview" data-group="g2">
+<div class="info-grid">
+  <div class="info-row"><div class="lbl">Severity</div><div class="val"><span class="badge b-HIGH">HIGH</span></div></div>
+  <div class="info-row"><div class="lbl">CVSS Score</div><div class="val"><span class="cvss-pill" style="color:#ffc107"><strong>5.3</strong> <span style="color:var(--muted);font-size:.75rem">/ 10.0</span></span></div></div>
+  <div class="info-row"><div class="lbl">OWASP Category</div><div class="val"><span class="owasp-tag">A05:2021 - Security Misconfiguration</span></div></div>
+  <div class="info-row"><div class="lbl">CWE Reference</div><div class="val"><span class="cwe-tag">CWE-1021</span></div></div>
+</div>
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Summary</div>
+<div class="description-block">The Content-Security-Policy header is not set.</div>
+</div>
+    <div class="fc-pane" id="g2-explanation" data-group="g2">
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">What is this vulnerability?</div>
+<div class="description-block">One or more standard HTTP security response headers are absent from the server responses. Modern browsers rely on these headers to activate built-in security defenses (such as anti-clickjacking, MIME-type enforcement, and secure referrer handling).</div>
+<div class="lbl" style="margin:.8rem 0 .4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Business &amp; Technical Impact</div><div class="description-block">Heightens vulnerability to clickjacking, client-side MIME-sniffing attacks, cross-origin data leaks, and proxy caching of sensitive user data.</div>
+</div>
+    <div class="fc-pane" id="g2-evidence" data-group="g2">
+<div class="evidence-label">Technical Evidence / Proof of Concept</div>
+<div class="evidence-box">— No specific evidence captured —</div>
+
+</div>
+    <div class="fc-pane" id="g2-remediation" data-group="g2"><ul class="remediation-list"><li><span class="rem-num">1</span><span class="rem-text">Configure all recommended security headers on web servers or reverse proxies:</span></li>
+<li><span class="rem-num">2</span><span class="rem-text">Strict-Transport-Security: max-age=31536000; includeSubDomains; preload</span></li>
+<li><span class="rem-num">3</span><span class="rem-text">Content-Security-Policy: default-src &#39;self&#39;; frame-ancestors &#39;self&#39;;</span></li>
+<li><span class="rem-num">4</span><span class="rem-text">X-Content-Type-Options: nosniff</span></li>
+<li><span class="rem-num">5</span><span class="rem-text">X-Frame-Options: SAMEORIGIN</span></li>
+<li><span class="rem-num">6</span><span class="rem-text">Referrer-Policy: strict-origin-when-cross-origin</span></li>
+<li><span class="rem-num">7</span><span class="rem-text">Permissions-Policy: geolocation=(), camera=(), microphone=()</span></li>
+<li><span class="rem-num">8</span><span class="rem-text">Cache-Control: no-store (on sensitive authenticated routes)</span></li></ul></div>
+    <div class="fc-pane" id="g2-references" data-group="g2"><div class="refs-list"><a href="https://owasp.org/www-project-secure-headers/" target="_blank" rel="noopener">&#128279; https://owasp.org/www-project-secure-headers/</a>
+<a href="https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html" target="_blank" rel="noopener">&#128279; https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html</a>
+<a href="https://cwe.mitre.org/data/definitions/1021.html" target="_blank" rel="noopener">&#128279; https://cwe.mitre.org/data/definitions/1021.html</a></div></div>
+  </div>
+</div>
+
+<div class="finding-card fc-MEDIUM" id="finding-3">
+  <div class="fc-header" data-body="body-3">
+    <span class="fc-num">#003</span>
+    <span class="badge b-MEDIUM">MEDIUM</span>
+    <span class="fc-title">Potentially Outdated Service: Port 22</span>
+    
+    <span class="fc-module">ports</span>
+    <span class="fc-chevron">&#8964;</span>
+  </div>
+  <div class="fc-body" id="body-3">
+    <div class="fc-tabs">
+      <button class="fc-tab active" data-group="g3" data-target="g3-overview">Overview</button>
+      <button class="fc-tab" data-group="g3" data-target="g3-explanation">Explanation</button>
+      <button class="fc-tab" data-group="g3" data-target="g3-evidence">Evidence</button>
+      <button class="fc-tab" data-group="g3" data-target="g3-remediation">Remediation</button>
+      <button class="fc-tab" data-group="g3" data-target="g3-references">References</button>
+    </div>
+    <div class="fc-pane active" id="g3-overview" data-group="g3">
+<div class="info-grid">
+  <div class="info-row"><div class="lbl">Severity</div><div class="val"><span class="badge b-MEDIUM">MEDIUM</span></div></div>
+  <div class="info-row"><div class="lbl">CVSS Score</div><div class="val"><span class="cvss-pill" style="color:#ffc107"><strong>6.5</strong> <span style="color:var(--muted);font-size:.75rem">/ 10.0</span></span></div></div>
+  <div class="info-row"><div class="lbl">OWASP Category</div><div class="val"><span class="owasp-tag">A06:2021 - Vulnerable and Outdated Components</span></div></div>
+  <div class="info-row"><div class="lbl">CWE Reference</div><div class="val"><span class="cwe-tag">CWE-1104</span></div></div>
+</div>
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Summary</div>
+<div class="description-block">Service banner suggests potentially outdated software.</div>
+</div>
+    <div class="fc-pane" id="g3-explanation" data-group="g3">
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">What is this vulnerability?</div>
+<div class="description-block">A network service (such as SSH, FTP, or an old web server) revealed a version string associated with an outdated or end-of-life software release.</div>
+<div class="lbl" style="margin:.8rem 0 .4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Business &amp; Technical Impact</div><div class="description-block">Potential vulnerability to known public exploits, remote denial of service, or authentication bypass.</div>
+</div>
+    <div class="fc-pane" id="g3-evidence" data-group="g3">
+<div class="evidence-label">Technical Evidence / Proof of Concept</div>
+<div class="evidence-box">Banner: SSH-2.0-OpenSSH_10.0p2 Debian-7+deb13u4</div>
+
+</div>
+    <div class="fc-pane" id="g3-remediation" data-group="g3"><ul class="remediation-list"><li><span class="rem-num">1</span><span class="rem-text">Update the service to the latest stable, vendor-supported release.</span></li>
+<li><span class="rem-num">2</span><span class="rem-text">Apply security patches and backports regularly via package managers (apt, yum, dnf).</span></li>
+<li><span class="rem-num">3</span><span class="rem-text">Restrict service exposure with firewall rules (e.g. allow SSH only from specific administrative IPs).</span></li></ul></div>
+    <div class="fc-pane" id="g3-references" data-group="g3"><div class="refs-list"><a href="https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/" target="_blank" rel="noopener">&#128279; https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/</a>
+<a href="https://cwe.mitre.org/data/definitions/1104.html" target="_blank" rel="noopener">&#128279; https://cwe.mitre.org/data/definitions/1104.html</a></div></div>
+  </div>
+</div>
+
+<div class="finding-card fc-MEDIUM" id="finding-4">
+  <div class="fc-header" data-body="body-4">
+    <span class="fc-num">#004</span>
+    <span class="badge b-MEDIUM">MEDIUM</span>
+    <span class="fc-title">Development Service Exposed: Port 8080</span>
+    
+    <span class="fc-module">ports</span>
+    <span class="fc-chevron">&#8964;</span>
+  </div>
+  <div class="fc-body" id="body-4">
+    <div class="fc-tabs">
+      <button class="fc-tab active" data-group="g4" data-target="g4-overview">Overview</button>
+      <button class="fc-tab" data-group="g4" data-target="g4-explanation">Explanation</button>
+      <button class="fc-tab" data-group="g4" data-target="g4-evidence">Evidence</button>
+      <button class="fc-tab" data-group="g4" data-target="g4-remediation">Remediation</button>
+      <button class="fc-tab" data-group="g4" data-target="g4-references">References</button>
+    </div>
+    <div class="fc-pane active" id="g4-overview" data-group="g4">
+<div class="info-grid">
+  <div class="info-row"><div class="lbl">Severity</div><div class="val"><span class="badge b-MEDIUM">MEDIUM</span></div></div>
+  <div class="info-row"><div class="lbl">CVSS Score</div><div class="val"><span class="cvss-pill" style="color:#ff7b2c"><strong>7.5</strong> <span style="color:var(--muted);font-size:.75rem">/ 10.0</span></span></div></div>
+  <div class="info-row"><div class="lbl">OWASP Category</div><div class="val"><span class="owasp-tag">A05:2021 - Security Misconfiguration</span></div></div>
+  <div class="info-row"><div class="lbl">CWE Reference</div><div class="val"><span class="cwe-tag">CWE-16</span></div></div>
+</div>
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Summary</div>
+<div class="description-block">Development/debug service running on port 8080</div>
+</div>
+    <div class="fc-pane" id="g4-explanation" data-group="g4">
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">What is this vulnerability?</div>
+<div class="description-block">Unnecessary or dangerous services are exposed to the internet, increasing the attack surface. Services like Redis, MongoDB, Elasticsearch, and Docker daemon often have no authentication by default and are designed for internal use only.</div>
+<div class="lbl" style="margin:.8rem 0 .4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Business &amp; Technical Impact</div><div class="description-block">Unauthorized access to databases (data breach, data destruction), container escape via Docker API, internal service exploitation, and use of exposed services as pivoting points for further attacks.</div>
+</div>
+    <div class="fc-pane" id="g4-evidence" data-group="g4">
+<div class="evidence-label">Technical Evidence / Proof of Concept</div>
+<div class="evidence-box">Service: HTTP Proxy</div>
+
+</div>
+    <div class="fc-pane" id="g4-remediation" data-group="g4"><ul class="remediation-list"><li><span class="rem-num">1</span><span class="rem-text">Apply strict firewall rules: only expose ports required for public access.</span></li>
+<li><span class="rem-num">2</span><span class="rem-text">Use a VPN or SSH tunneling for administrative access.</span></li>
+<li><span class="rem-num">3</span><span class="rem-text">Enable authentication on all services (Redis AUTH, MongoDB auth).</span></li>
+<li><span class="rem-num">4</span><span class="rem-text">Bind services to localhost (127.0.0.1) instead of 0.0.0.0.</span></li>
+<li><span class="rem-num">5</span><span class="rem-text">Regularly audit open ports with network scanning tools.</span></li>
+<li><span class="rem-num">6</span><span class="rem-text">Use network segmentation to isolate backend services.</span></li></ul></div>
+    <div class="fc-pane" id="g4-references" data-group="g4"><div class="refs-list"><a href="https://owasp.org/Top10/A05_2021-Security_Misconfiguration/" target="_blank" rel="noopener">&#128279; https://owasp.org/Top10/A05_2021-Security_Misconfiguration/</a>
+<a href="https://cwe.mitre.org/data/definitions/16.html" target="_blank" rel="noopener">&#128279; https://cwe.mitre.org/data/definitions/16.html</a></div></div>
+  </div>
+</div>
+
+<div class="finding-card fc-MEDIUM" id="finding-5">
+  <div class="fc-header" data-body="body-5">
+    <span class="fc-num">#005</span>
+    <span class="badge b-MEDIUM">MEDIUM</span>
+    <span class="fc-title">Missing Security Header: X-Content-Type-Options</span>
+    
+    <span class="fc-module">headers</span>
+    <span class="fc-chevron">&#8964;</span>
+  </div>
+  <div class="fc-body" id="body-5">
+    <div class="fc-tabs">
+      <button class="fc-tab active" data-group="g5" data-target="g5-overview">Overview</button>
+      <button class="fc-tab" data-group="g5" data-target="g5-explanation">Explanation</button>
+      <button class="fc-tab" data-group="g5" data-target="g5-evidence">Evidence</button>
+      <button class="fc-tab" data-group="g5" data-target="g5-remediation">Remediation</button>
+      <button class="fc-tab" data-group="g5" data-target="g5-references">References</button>
+    </div>
+    <div class="fc-pane active" id="g5-overview" data-group="g5">
+<div class="info-grid">
+  <div class="info-row"><div class="lbl">Severity</div><div class="val"><span class="badge b-MEDIUM">MEDIUM</span></div></div>
+  <div class="info-row"><div class="lbl">CVSS Score</div><div class="val"><span class="cvss-pill" style="color:#ffc107"><strong>5.3</strong> <span style="color:var(--muted);font-size:.75rem">/ 10.0</span></span></div></div>
+  <div class="info-row"><div class="lbl">OWASP Category</div><div class="val"><span class="owasp-tag">A05:2021 - Security Misconfiguration</span></div></div>
+  <div class="info-row"><div class="lbl">CWE Reference</div><div class="val"><span class="cwe-tag">CWE-1021</span></div></div>
+</div>
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Summary</div>
+<div class="description-block">The X-Content-Type-Options header is not set.</div>
+</div>
+    <div class="fc-pane" id="g5-explanation" data-group="g5">
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">What is this vulnerability?</div>
+<div class="description-block">One or more standard HTTP security response headers are absent from the server responses. Modern browsers rely on these headers to activate built-in security defenses (such as anti-clickjacking, MIME-type enforcement, and secure referrer handling).</div>
+<div class="lbl" style="margin:.8rem 0 .4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Business &amp; Technical Impact</div><div class="description-block">Heightens vulnerability to clickjacking, client-side MIME-sniffing attacks, cross-origin data leaks, and proxy caching of sensitive user data.</div>
+</div>
+    <div class="fc-pane" id="g5-evidence" data-group="g5">
+<div class="evidence-label">Technical Evidence / Proof of Concept</div>
+<div class="evidence-box">— No specific evidence captured —</div>
+
+</div>
+    <div class="fc-pane" id="g5-remediation" data-group="g5"><ul class="remediation-list"><li><span class="rem-num">1</span><span class="rem-text">Configure all recommended security headers on web servers or reverse proxies:</span></li>
+<li><span class="rem-num">2</span><span class="rem-text">Strict-Transport-Security: max-age=31536000; includeSubDomains; preload</span></li>
+<li><span class="rem-num">3</span><span class="rem-text">Content-Security-Policy: default-src &#39;self&#39;; frame-ancestors &#39;self&#39;;</span></li>
+<li><span class="rem-num">4</span><span class="rem-text">X-Content-Type-Options: nosniff</span></li>
+<li><span class="rem-num">5</span><span class="rem-text">X-Frame-Options: SAMEORIGIN</span></li>
+<li><span class="rem-num">6</span><span class="rem-text">Referrer-Policy: strict-origin-when-cross-origin</span></li>
+<li><span class="rem-num">7</span><span class="rem-text">Permissions-Policy: geolocation=(), camera=(), microphone=()</span></li>
+<li><span class="rem-num">8</span><span class="rem-text">Cache-Control: no-store (on sensitive authenticated routes)</span></li></ul></div>
+    <div class="fc-pane" id="g5-references" data-group="g5"><div class="refs-list"><a href="https://owasp.org/www-project-secure-headers/" target="_blank" rel="noopener">&#128279; https://owasp.org/www-project-secure-headers/</a>
+<a href="https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html" target="_blank" rel="noopener">&#128279; https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html</a>
+<a href="https://cwe.mitre.org/data/definitions/1021.html" target="_blank" rel="noopener">&#128279; https://cwe.mitre.org/data/definitions/1021.html</a></div></div>
+  </div>
+</div>
+
+<div class="finding-card fc-MEDIUM" id="finding-6">
+  <div class="fc-header" data-body="body-6">
+    <span class="fc-num">#006</span>
+    <span class="badge b-MEDIUM">MEDIUM</span>
+    <span class="fc-title">Missing Security Header: X-Frame-Options</span>
+    
+    <span class="fc-module">headers</span>
+    <span class="fc-chevron">&#8964;</span>
+  </div>
+  <div class="fc-body" id="body-6">
+    <div class="fc-tabs">
+      <button class="fc-tab active" data-group="g6" data-target="g6-overview">Overview</button>
+      <button class="fc-tab" data-group="g6" data-target="g6-explanation">Explanation</button>
+      <button class="fc-tab" data-group="g6" data-target="g6-evidence">Evidence</button>
+      <button class="fc-tab" data-group="g6" data-target="g6-remediation">Remediation</button>
+      <button class="fc-tab" data-group="g6" data-target="g6-references">References</button>
+    </div>
+    <div class="fc-pane active" id="g6-overview" data-group="g6">
+<div class="info-grid">
+  <div class="info-row"><div class="lbl">Severity</div><div class="val"><span class="badge b-MEDIUM">MEDIUM</span></div></div>
+  <div class="info-row"><div class="lbl">CVSS Score</div><div class="val"><span class="cvss-pill" style="color:#ffc107"><strong>5.3</strong> <span style="color:var(--muted);font-size:.75rem">/ 10.0</span></span></div></div>
+  <div class="info-row"><div class="lbl">OWASP Category</div><div class="val"><span class="owasp-tag">A05:2021 - Security Misconfiguration</span></div></div>
+  <div class="info-row"><div class="lbl">CWE Reference</div><div class="val"><span class="cwe-tag">CWE-1021</span></div></div>
+</div>
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Summary</div>
+<div class="description-block">The X-Frame-Options header is not set.</div>
+</div>
+    <div class="fc-pane" id="g6-explanation" data-group="g6">
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">What is this vulnerability?</div>
+<div class="description-block">One or more standard HTTP security response headers are absent from the server responses. Modern browsers rely on these headers to activate built-in security defenses (such as anti-clickjacking, MIME-type enforcement, and secure referrer handling).</div>
+<div class="lbl" style="margin:.8rem 0 .4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Business &amp; Technical Impact</div><div class="description-block">Heightens vulnerability to clickjacking, client-side MIME-sniffing attacks, cross-origin data leaks, and proxy caching of sensitive user data.</div>
+</div>
+    <div class="fc-pane" id="g6-evidence" data-group="g6">
+<div class="evidence-label">Technical Evidence / Proof of Concept</div>
+<div class="evidence-box">— No specific evidence captured —</div>
+
+</div>
+    <div class="fc-pane" id="g6-remediation" data-group="g6"><ul class="remediation-list"><li><span class="rem-num">1</span><span class="rem-text">Configure all recommended security headers on web servers or reverse proxies:</span></li>
+<li><span class="rem-num">2</span><span class="rem-text">Strict-Transport-Security: max-age=31536000; includeSubDomains; preload</span></li>
+<li><span class="rem-num">3</span><span class="rem-text">Content-Security-Policy: default-src &#39;self&#39;; frame-ancestors &#39;self&#39;;</span></li>
+<li><span class="rem-num">4</span><span class="rem-text">X-Content-Type-Options: nosniff</span></li>
+<li><span class="rem-num">5</span><span class="rem-text">X-Frame-Options: SAMEORIGIN</span></li>
+<li><span class="rem-num">6</span><span class="rem-text">Referrer-Policy: strict-origin-when-cross-origin</span></li>
+<li><span class="rem-num">7</span><span class="rem-text">Permissions-Policy: geolocation=(), camera=(), microphone=()</span></li>
+<li><span class="rem-num">8</span><span class="rem-text">Cache-Control: no-store (on sensitive authenticated routes)</span></li></ul></div>
+    <div class="fc-pane" id="g6-references" data-group="g6"><div class="refs-list"><a href="https://owasp.org/www-project-secure-headers/" target="_blank" rel="noopener">&#128279; https://owasp.org/www-project-secure-headers/</a>
+<a href="https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html" target="_blank" rel="noopener">&#128279; https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html</a>
+<a href="https://cwe.mitre.org/data/definitions/1021.html" target="_blank" rel="noopener">&#128279; https://cwe.mitre.org/data/definitions/1021.html</a></div></div>
+  </div>
+</div>
+
+<div class="finding-card fc-MEDIUM" id="finding-7">
+  <div class="fc-header" data-body="body-7">
+    <span class="fc-num">#007</span>
+    <span class="badge b-MEDIUM">MEDIUM</span>
+    <span class="fc-title">Clickjacking Protection Missing</span>
+    
+    <span class="fc-module">headers</span>
+    <span class="fc-chevron">&#8964;</span>
+  </div>
+  <div class="fc-body" id="body-7">
+    <div class="fc-tabs">
+      <button class="fc-tab active" data-group="g7" data-target="g7-overview">Overview</button>
+      <button class="fc-tab" data-group="g7" data-target="g7-explanation">Explanation</button>
+      <button class="fc-tab" data-group="g7" data-target="g7-evidence">Evidence</button>
+      <button class="fc-tab" data-group="g7" data-target="g7-remediation">Remediation</button>
+      <button class="fc-tab" data-group="g7" data-target="g7-references">References</button>
+    </div>
+    <div class="fc-pane active" id="g7-overview" data-group="g7">
+<div class="info-grid">
+  <div class="info-row"><div class="lbl">Severity</div><div class="val"><span class="badge b-MEDIUM">MEDIUM</span></div></div>
+  <div class="info-row"><div class="lbl">CVSS Score</div><div class="val"><span class="cvss-pill" style="color:#ffc107"><strong>5.5</strong> <span style="color:var(--muted);font-size:.75rem">/ 10.0</span></span></div></div>
+  <div class="info-row"><div class="lbl">OWASP Category</div><div class="val"><span class="owasp-tag">A01:2021 - Broken Access Control</span></div></div>
+  <div class="info-row"><div class="lbl">CWE Reference</div><div class="val"><span class="cwe-tag">CWE-288</span></div></div>
+</div>
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Summary</div>
+<div class="description-block">No X-Frame-Options or CSP frame-ancestors directive.</div>
+</div>
+    <div class="fc-pane" id="g7-explanation" data-group="g7">
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">What is this vulnerability?</div>
+<div class="description-block">No X-Frame-Options or CSP frame-ancestors directive.</div>
+<div class="lbl" style="margin:.8rem 0 .4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Business &amp; Technical Impact</div><div class="description-block">Potentially exposes application behavior or security posture in domain: headers.</div>
+</div>
+    <div class="fc-pane" id="g7-evidence" data-group="g7">
+<div class="evidence-label">Technical Evidence / Proof of Concept</div>
+<div class="evidence-box">— No specific evidence captured —</div>
+
+</div>
+    <div class="fc-pane" id="g7-remediation" data-group="g7"><ul class="remediation-list"><li><span class="rem-num">1</span><span class="rem-text">Review the affected endpoint or parameter and restrict unneeded public access.</span></li>
+<li><span class="rem-num">2</span><span class="rem-text">Apply the principle of least privilege and enforce secure configuration baselines.</span></li>
+<li><span class="rem-num">3</span><span class="rem-text">Follow OWASP guidelines for hardening this specific component.</span></li></ul></div>
+    <div class="fc-pane" id="g7-references" data-group="g7"><div class="refs-list"><a href="https://owasp.org/Top10/" target="_blank" rel="noopener">&#128279; https://owasp.org/Top10/</a>
+<a href="https://cwe.mitre.org/" target="_blank" rel="noopener">&#128279; https://cwe.mitre.org/</a></div></div>
+  </div>
+</div>
+
+<div class="finding-card fc-MEDIUM" id="finding-8">
+  <div class="fc-header" data-body="body-8">
+    <span class="fc-num">#008</span>
+    <span class="badge b-MEDIUM">MEDIUM</span>
+    <span class="fc-title">Origin Header Not Validated</span>
+    
+    <span class="fc-module">csrf</span>
+    <span class="fc-chevron">&#8964;</span>
+  </div>
+  <div class="fc-body" id="body-8">
+    <div class="fc-tabs">
+      <button class="fc-tab active" data-group="g8" data-target="g8-overview">Overview</button>
+      <button class="fc-tab" data-group="g8" data-target="g8-explanation">Explanation</button>
+      <button class="fc-tab" data-group="g8" data-target="g8-evidence">Evidence</button>
+      <button class="fc-tab" data-group="g8" data-target="g8-remediation">Remediation</button>
+      <button class="fc-tab" data-group="g8" data-target="g8-references">References</button>
+    </div>
+    <div class="fc-pane active" id="g8-overview" data-group="g8">
+<div class="info-grid">
+  <div class="info-row"><div class="lbl">Severity</div><div class="val"><span class="badge b-MEDIUM">MEDIUM</span></div></div>
+  <div class="info-row"><div class="lbl">CVSS Score</div><div class="val"><span class="cvss-pill" style="color:#ffc107"><strong>6.5</strong> <span style="color:var(--muted);font-size:.75rem">/ 10.0</span></span></div></div>
+  <div class="info-row"><div class="lbl">OWASP Category</div><div class="val"><span class="owasp-tag">A01:2021 - Broken Access Control</span></div></div>
+  <div class="info-row"><div class="lbl">CWE Reference</div><div class="val"><span class="cwe-tag">CWE-352</span></div></div>
+</div>
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Summary</div>
+<div class="description-block">Server does not reject requests from arbitrary origins.</div>
+</div>
+    <div class="fc-pane" id="g8-explanation" data-group="g8">
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">What is this vulnerability?</div>
+<div class="description-block">The application server does not validate the HTTP Origin or Referer header on state-changing requests. This enables Cross-Site Request Forgery (CSRF) where malicious third-party sites submit forged requests.</div>
+<div class="lbl" style="margin:.8rem 0 .4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Business &amp; Technical Impact</div><div class="description-block">Attackers can trigger unwanted actions on behalf of authenticated victims without their knowledge or consent.</div>
+</div>
+    <div class="fc-pane" id="g8-evidence" data-group="g8">
+<div class="evidence-label">Technical Evidence / Proof of Concept</div>
+<div class="evidence-box">Origin: https://evil.com → HTTP 200</div>
+
+</div>
+    <div class="fc-pane" id="g8-remediation" data-group="g8"><ul class="remediation-list"><li><span class="rem-num">1</span><span class="rem-text">Validate the Origin and Referer headers on the server side against an explicit allowlist of trusted domains.</span></li>
+<li><span class="rem-num">2</span><span class="rem-text">Implement anti-CSRF synchronizer tokens on all state-changing requests.</span></li>
+<li><span class="rem-num">3</span><span class="rem-text">Set SameSite=Strict or SameSite=Lax on all session and authentication cookies.</span></li></ul></div>
+    <div class="fc-pane" id="g8-references" data-group="g8"><div class="refs-list"><a href="https://owasp.org/Top10/A01_2021-Broken_Access_Control/" target="_blank" rel="noopener">&#128279; https://owasp.org/Top10/A01_2021-Broken_Access_Control/</a>
+<a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html" target="_blank" rel="noopener">&#128279; https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html</a>
+<a href="https://cwe.mitre.org/data/definitions/352.html" target="_blank" rel="noopener">&#128279; https://cwe.mitre.org/data/definitions/352.html</a></div></div>
+  </div>
+</div>
+
+<div class="finding-card fc-LOW" id="finding-9">
+  <div class="fc-header" data-body="body-9">
+    <span class="fc-num">#009</span>
+    <span class="badge b-LOW">LOW</span>
+    <span class="fc-title">No security.txt</span>
+    
+    <span class="fc-module">recon</span>
+    <span class="fc-chevron">&#8964;</span>
+  </div>
+  <div class="fc-body" id="body-9">
+    <div class="fc-tabs">
+      <button class="fc-tab active" data-group="g9" data-target="g9-overview">Overview</button>
+      <button class="fc-tab" data-group="g9" data-target="g9-explanation">Explanation</button>
+      <button class="fc-tab" data-group="g9" data-target="g9-evidence">Evidence</button>
+      <button class="fc-tab" data-group="g9" data-target="g9-remediation">Remediation</button>
+      <button class="fc-tab" data-group="g9" data-target="g9-references">References</button>
+    </div>
+    <div class="fc-pane active" id="g9-overview" data-group="g9">
+<div class="info-grid">
+  <div class="info-row"><div class="lbl">Severity</div><div class="val"><span class="badge b-LOW">LOW</span></div></div>
+  <div class="info-row"><div class="lbl">CVSS Score</div><div class="val"><span class="cvss-pill" style="color:#4ade80"><strong>2.0</strong> <span style="color:var(--muted);font-size:.75rem">/ 10.0</span></span></div></div>
+  <div class="info-row"><div class="lbl">OWASP Category</div><div class="val"><span class="owasp-tag">A05:2021 - Security Misconfiguration</span></div></div>
+  <div class="info-row"><div class="lbl">CWE Reference</div><div class="val"><span class="cwe-tag">CWE-200</span></div></div>
+</div>
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Summary</div>
+<div class="description-block">No security.txt file found</div>
+</div>
+    <div class="fc-pane" id="g9-explanation" data-group="g9">
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">What is this vulnerability?</div>
+<div class="description-block">The security.txt standard defines a machine-readable security contact policy for ethical vulnerability reporting.</div>
+<div class="lbl" style="margin:.8rem 0 .4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Business &amp; Technical Impact</div><div class="description-block">Positive transparency mechanism facilitating coordinated vulnerability disclosure.</div>
+</div>
+    <div class="fc-pane" id="g9-evidence" data-group="g9">
+<div class="evidence-label">Technical Evidence / Proof of Concept</div>
+<div class="evidence-box">— No specific evidence captured —</div>
+
+</div>
+    <div class="fc-pane" id="g9-remediation" data-group="g9"><ul class="remediation-list"><li><span class="rem-num">1</span><span class="rem-text">Maintain a valid /.well-known/security.txt file per RFC 9116.</span></li>
+<li><span class="rem-num">2</span><span class="rem-text">Ensure security contact email addresses and encryption keys are monitored and up to date.</span></li></ul></div>
+    <div class="fc-pane" id="g9-references" data-group="g9"><div class="refs-list"><a href="https://securitytxt.org/" target="_blank" rel="noopener">&#128279; https://securitytxt.org/</a></div></div>
+  </div>
+</div>
+
+<div class="finding-card fc-LOW" id="finding-10">
+  <div class="fc-header" data-body="body-10">
+    <span class="fc-num">#010</span>
+    <span class="badge b-LOW">LOW</span>
+    <span class="fc-title">Missing Security Header: Referrer-Policy</span>
+    
+    <span class="fc-module">headers</span>
+    <span class="fc-chevron">&#8964;</span>
+  </div>
+  <div class="fc-body" id="body-10">
+    <div class="fc-tabs">
+      <button class="fc-tab active" data-group="g10" data-target="g10-overview">Overview</button>
+      <button class="fc-tab" data-group="g10" data-target="g10-explanation">Explanation</button>
+      <button class="fc-tab" data-group="g10" data-target="g10-evidence">Evidence</button>
+      <button class="fc-tab" data-group="g10" data-target="g10-remediation">Remediation</button>
+      <button class="fc-tab" data-group="g10" data-target="g10-references">References</button>
+    </div>
+    <div class="fc-pane active" id="g10-overview" data-group="g10">
+<div class="info-grid">
+  <div class="info-row"><div class="lbl">Severity</div><div class="val"><span class="badge b-LOW">LOW</span></div></div>
+  <div class="info-row"><div class="lbl">CVSS Score</div><div class="val"><span class="cvss-pill" style="color:#ffc107"><strong>5.3</strong> <span style="color:var(--muted);font-size:.75rem">/ 10.0</span></span></div></div>
+  <div class="info-row"><div class="lbl">OWASP Category</div><div class="val"><span class="owasp-tag">A05:2021 - Security Misconfiguration</span></div></div>
+  <div class="info-row"><div class="lbl">CWE Reference</div><div class="val"><span class="cwe-tag">CWE-1021</span></div></div>
+</div>
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Summary</div>
+<div class="description-block">The Referrer-Policy header is not set.</div>
+</div>
+    <div class="fc-pane" id="g10-explanation" data-group="g10">
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">What is this vulnerability?</div>
+<div class="description-block">One or more standard HTTP security response headers are absent from the server responses. Modern browsers rely on these headers to activate built-in security defenses (such as anti-clickjacking, MIME-type enforcement, and secure referrer handling).</div>
+<div class="lbl" style="margin:.8rem 0 .4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Business &amp; Technical Impact</div><div class="description-block">Heightens vulnerability to clickjacking, client-side MIME-sniffing attacks, cross-origin data leaks, and proxy caching of sensitive user data.</div>
+</div>
+    <div class="fc-pane" id="g10-evidence" data-group="g10">
+<div class="evidence-label">Technical Evidence / Proof of Concept</div>
+<div class="evidence-box">— No specific evidence captured —</div>
+
+</div>
+    <div class="fc-pane" id="g10-remediation" data-group="g10"><ul class="remediation-list"><li><span class="rem-num">1</span><span class="rem-text">Configure all recommended security headers on web servers or reverse proxies:</span></li>
+<li><span class="rem-num">2</span><span class="rem-text">Strict-Transport-Security: max-age=31536000; includeSubDomains; preload</span></li>
+<li><span class="rem-num">3</span><span class="rem-text">Content-Security-Policy: default-src &#39;self&#39;; frame-ancestors &#39;self&#39;;</span></li>
+<li><span class="rem-num">4</span><span class="rem-text">X-Content-Type-Options: nosniff</span></li>
+<li><span class="rem-num">5</span><span class="rem-text">X-Frame-Options: SAMEORIGIN</span></li>
+<li><span class="rem-num">6</span><span class="rem-text">Referrer-Policy: strict-origin-when-cross-origin</span></li>
+<li><span class="rem-num">7</span><span class="rem-text">Permissions-Policy: geolocation=(), camera=(), microphone=()</span></li>
+<li><span class="rem-num">8</span><span class="rem-text">Cache-Control: no-store (on sensitive authenticated routes)</span></li></ul></div>
+    <div class="fc-pane" id="g10-references" data-group="g10"><div class="refs-list"><a href="https://owasp.org/www-project-secure-headers/" target="_blank" rel="noopener">&#128279; https://owasp.org/www-project-secure-headers/</a>
+<a href="https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html" target="_blank" rel="noopener">&#128279; https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html</a>
+<a href="https://cwe.mitre.org/data/definitions/1021.html" target="_blank" rel="noopener">&#128279; https://cwe.mitre.org/data/definitions/1021.html</a></div></div>
+  </div>
+</div>
+
+<div class="finding-card fc-LOW" id="finding-11">
+  <div class="fc-header" data-body="body-11">
+    <span class="fc-num">#011</span>
+    <span class="badge b-LOW">LOW</span>
+    <span class="fc-title">Missing Security Header: Permissions-Policy</span>
+    
+    <span class="fc-module">headers</span>
+    <span class="fc-chevron">&#8964;</span>
+  </div>
+  <div class="fc-body" id="body-11">
+    <div class="fc-tabs">
+      <button class="fc-tab active" data-group="g11" data-target="g11-overview">Overview</button>
+      <button class="fc-tab" data-group="g11" data-target="g11-explanation">Explanation</button>
+      <button class="fc-tab" data-group="g11" data-target="g11-evidence">Evidence</button>
+      <button class="fc-tab" data-group="g11" data-target="g11-remediation">Remediation</button>
+      <button class="fc-tab" data-group="g11" data-target="g11-references">References</button>
+    </div>
+    <div class="fc-pane active" id="g11-overview" data-group="g11">
+<div class="info-grid">
+  <div class="info-row"><div class="lbl">Severity</div><div class="val"><span class="badge b-LOW">LOW</span></div></div>
+  <div class="info-row"><div class="lbl">CVSS Score</div><div class="val"><span class="cvss-pill" style="color:#ffc107"><strong>5.3</strong> <span style="color:var(--muted);font-size:.75rem">/ 10.0</span></span></div></div>
+  <div class="info-row"><div class="lbl">OWASP Category</div><div class="val"><span class="owasp-tag">A05:2021 - Security Misconfiguration</span></div></div>
+  <div class="info-row"><div class="lbl">CWE Reference</div><div class="val"><span class="cwe-tag">CWE-1021</span></div></div>
+</div>
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Summary</div>
+<div class="description-block">The Permissions-Policy header is not set.</div>
+</div>
+    <div class="fc-pane" id="g11-explanation" data-group="g11">
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">What is this vulnerability?</div>
+<div class="description-block">One or more standard HTTP security response headers are absent from the server responses. Modern browsers rely on these headers to activate built-in security defenses (such as anti-clickjacking, MIME-type enforcement, and secure referrer handling).</div>
+<div class="lbl" style="margin:.8rem 0 .4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Business &amp; Technical Impact</div><div class="description-block">Heightens vulnerability to clickjacking, client-side MIME-sniffing attacks, cross-origin data leaks, and proxy caching of sensitive user data.</div>
+</div>
+    <div class="fc-pane" id="g11-evidence" data-group="g11">
+<div class="evidence-label">Technical Evidence / Proof of Concept</div>
+<div class="evidence-box">— No specific evidence captured —</div>
+
+</div>
+    <div class="fc-pane" id="g11-remediation" data-group="g11"><ul class="remediation-list"><li><span class="rem-num">1</span><span class="rem-text">Configure all recommended security headers on web servers or reverse proxies:</span></li>
+<li><span class="rem-num">2</span><span class="rem-text">Strict-Transport-Security: max-age=31536000; includeSubDomains; preload</span></li>
+<li><span class="rem-num">3</span><span class="rem-text">Content-Security-Policy: default-src &#39;self&#39;; frame-ancestors &#39;self&#39;;</span></li>
+<li><span class="rem-num">4</span><span class="rem-text">X-Content-Type-Options: nosniff</span></li>
+<li><span class="rem-num">5</span><span class="rem-text">X-Frame-Options: SAMEORIGIN</span></li>
+<li><span class="rem-num">6</span><span class="rem-text">Referrer-Policy: strict-origin-when-cross-origin</span></li>
+<li><span class="rem-num">7</span><span class="rem-text">Permissions-Policy: geolocation=(), camera=(), microphone=()</span></li>
+<li><span class="rem-num">8</span><span class="rem-text">Cache-Control: no-store (on sensitive authenticated routes)</span></li></ul></div>
+    <div class="fc-pane" id="g11-references" data-group="g11"><div class="refs-list"><a href="https://owasp.org/www-project-secure-headers/" target="_blank" rel="noopener">&#128279; https://owasp.org/www-project-secure-headers/</a>
+<a href="https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html" target="_blank" rel="noopener">&#128279; https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html</a>
+<a href="https://cwe.mitre.org/data/definitions/1021.html" target="_blank" rel="noopener">&#128279; https://cwe.mitre.org/data/definitions/1021.html</a></div></div>
+  </div>
+</div>
+
+<div class="finding-card fc-LOW" id="finding-12">
+  <div class="fc-header" data-body="body-12">
+    <span class="fc-num">#012</span>
+    <span class="badge b-LOW">LOW</span>
+    <span class="fc-title">Missing Security Header: X-XSS-Protection</span>
+    
+    <span class="fc-module">headers</span>
+    <span class="fc-chevron">&#8964;</span>
+  </div>
+  <div class="fc-body" id="body-12">
+    <div class="fc-tabs">
+      <button class="fc-tab active" data-group="g12" data-target="g12-overview">Overview</button>
+      <button class="fc-tab" data-group="g12" data-target="g12-explanation">Explanation</button>
+      <button class="fc-tab" data-group="g12" data-target="g12-evidence">Evidence</button>
+      <button class="fc-tab" data-group="g12" data-target="g12-remediation">Remediation</button>
+      <button class="fc-tab" data-group="g12" data-target="g12-references">References</button>
+    </div>
+    <div class="fc-pane active" id="g12-overview" data-group="g12">
+<div class="info-grid">
+  <div class="info-row"><div class="lbl">Severity</div><div class="val"><span class="badge b-LOW">LOW</span></div></div>
+  <div class="info-row"><div class="lbl">CVSS Score</div><div class="val"><span class="cvss-pill" style="color:#ffc107"><strong>5.3</strong> <span style="color:var(--muted);font-size:.75rem">/ 10.0</span></span></div></div>
+  <div class="info-row"><div class="lbl">OWASP Category</div><div class="val"><span class="owasp-tag">A05:2021 - Security Misconfiguration</span></div></div>
+  <div class="info-row"><div class="lbl">CWE Reference</div><div class="val"><span class="cwe-tag">CWE-1021</span></div></div>
+</div>
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Summary</div>
+<div class="description-block">The X-XSS-Protection header is not set.</div>
+</div>
+    <div class="fc-pane" id="g12-explanation" data-group="g12">
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">What is this vulnerability?</div>
+<div class="description-block">One or more standard HTTP security response headers are absent from the server responses. Modern browsers rely on these headers to activate built-in security defenses (such as anti-clickjacking, MIME-type enforcement, and secure referrer handling).</div>
+<div class="lbl" style="margin:.8rem 0 .4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Business &amp; Technical Impact</div><div class="description-block">Heightens vulnerability to clickjacking, client-side MIME-sniffing attacks, cross-origin data leaks, and proxy caching of sensitive user data.</div>
+</div>
+    <div class="fc-pane" id="g12-evidence" data-group="g12">
+<div class="evidence-label">Technical Evidence / Proof of Concept</div>
+<div class="evidence-box">— No specific evidence captured —</div>
+
+</div>
+    <div class="fc-pane" id="g12-remediation" data-group="g12"><ul class="remediation-list"><li><span class="rem-num">1</span><span class="rem-text">Configure all recommended security headers on web servers or reverse proxies:</span></li>
+<li><span class="rem-num">2</span><span class="rem-text">Strict-Transport-Security: max-age=31536000; includeSubDomains; preload</span></li>
+<li><span class="rem-num">3</span><span class="rem-text">Content-Security-Policy: default-src &#39;self&#39;; frame-ancestors &#39;self&#39;;</span></li>
+<li><span class="rem-num">4</span><span class="rem-text">X-Content-Type-Options: nosniff</span></li>
+<li><span class="rem-num">5</span><span class="rem-text">X-Frame-Options: SAMEORIGIN</span></li>
+<li><span class="rem-num">6</span><span class="rem-text">Referrer-Policy: strict-origin-when-cross-origin</span></li>
+<li><span class="rem-num">7</span><span class="rem-text">Permissions-Policy: geolocation=(), camera=(), microphone=()</span></li>
+<li><span class="rem-num">8</span><span class="rem-text">Cache-Control: no-store (on sensitive authenticated routes)</span></li></ul></div>
+    <div class="fc-pane" id="g12-references" data-group="g12"><div class="refs-list"><a href="https://owasp.org/www-project-secure-headers/" target="_blank" rel="noopener">&#128279; https://owasp.org/www-project-secure-headers/</a>
+<a href="https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html" target="_blank" rel="noopener">&#128279; https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html</a>
+<a href="https://cwe.mitre.org/data/definitions/1021.html" target="_blank" rel="noopener">&#128279; https://cwe.mitre.org/data/definitions/1021.html</a></div></div>
+  </div>
+</div>
+
+<div class="finding-card fc-LOW" id="finding-13">
+  <div class="fc-header" data-body="body-13">
+    <span class="fc-num">#013</span>
+    <span class="badge b-LOW">LOW</span>
+    <span class="fc-title">Information Disclosure: Server</span>
+    
+    <span class="fc-module">headers</span>
+    <span class="fc-chevron">&#8964;</span>
+  </div>
+  <div class="fc-body" id="body-13">
+    <div class="fc-tabs">
+      <button class="fc-tab active" data-group="g13" data-target="g13-overview">Overview</button>
+      <button class="fc-tab" data-group="g13" data-target="g13-explanation">Explanation</button>
+      <button class="fc-tab" data-group="g13" data-target="g13-evidence">Evidence</button>
+      <button class="fc-tab" data-group="g13" data-target="g13-remediation">Remediation</button>
+      <button class="fc-tab" data-group="g13" data-target="g13-references">References</button>
+    </div>
+    <div class="fc-pane active" id="g13-overview" data-group="g13">
+<div class="info-grid">
+  <div class="info-row"><div class="lbl">Severity</div><div class="val"><span class="badge b-LOW">LOW</span></div></div>
+  <div class="info-row"><div class="lbl">CVSS Score</div><div class="val"><span class="cvss-pill" style="color:#4ade80"><strong>3.7</strong> <span style="color:var(--muted);font-size:.75rem">/ 10.0</span></span></div></div>
+  <div class="info-row"><div class="lbl">OWASP Category</div><div class="val"><span class="owasp-tag">A05:2021 - Security Misconfiguration</span></div></div>
+  <div class="info-row"><div class="lbl">CWE Reference</div><div class="val"><span class="cwe-tag">CWE-200</span></div></div>
+</div>
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Summary</div>
+<div class="description-block">Server header reveals version information.</div>
+</div>
+    <div class="fc-pane" id="g13-explanation" data-group="g13">
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">What is this vulnerability?</div>
+<div class="description-block">The web server returns a &quot;Server&quot; header exposing software name and version details (e.g. nginx/1.18.0). This enables attackers to immediately look up known public CVEs for that specific software release.</div>
+<div class="lbl" style="margin:.8rem 0 .4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Business &amp; Technical Impact</div><div class="description-block">Facilitates targeted vulnerability research against known unpatched server exploits.</div>
+</div>
+    <div class="fc-pane" id="g13-evidence" data-group="g13">
+<div class="evidence-label">Technical Evidence / Proof of Concept</div>
+<div class="evidence-box">Server: nginx/1.27.5</div>
+
+</div>
+    <div class="fc-pane" id="g13-remediation" data-group="g13"><ul class="remediation-list"><li><span class="rem-num">1</span><span class="rem-text">In Nginx, set &quot;server_tokens off;&quot; in nginx.conf.</span></li>
+<li><span class="rem-num">2</span><span class="rem-text">In Apache, set &quot;ServerTokens Prod&quot; and &quot;ServerSignature Off&quot;.</span></li>
+<li><span class="rem-num">3</span><span class="rem-text">Remove or overwrite the Server header in CDN/reverse proxy rules.</span></li></ul></div>
+    <div class="fc-pane" id="g13-references" data-group="g13"><div class="refs-list"><a href="https://cwe.mitre.org/data/definitions/200.html" target="_blank" rel="noopener">&#128279; https://cwe.mitre.org/data/definitions/200.html</a>
+<a href="https://owasp.org/Top10/A05_2021-Security_Misconfiguration/" target="_blank" rel="noopener">&#128279; https://owasp.org/Top10/A05_2021-Security_Misconfiguration/</a></div></div>
+  </div>
+</div>
+
+<div class="finding-card fc-LOW" id="finding-14">
+  <div class="fc-header" data-body="body-14">
+    <span class="fc-num">#014</span>
+    <span class="badge b-LOW">LOW</span>
+    <span class="fc-title">Unrestricted Outbound DNS Egress (UDP 53 Allowed)</span>
+    
+    <span class="fc-module">net</span>
+    <span class="fc-chevron">&#8964;</span>
+  </div>
+  <div class="fc-body" id="body-14">
+    <div class="fc-tabs">
+      <button class="fc-tab active" data-group="g14" data-target="g14-overview">Overview</button>
+      <button class="fc-tab" data-group="g14" data-target="g14-explanation">Explanation</button>
+      <button class="fc-tab" data-group="g14" data-target="g14-evidence">Evidence</button>
+      <button class="fc-tab" data-group="g14" data-target="g14-remediation">Remediation</button>
+      <button class="fc-tab" data-group="g14" data-target="g14-references">References</button>
+    </div>
+    <div class="fc-pane active" id="g14-overview" data-group="g14">
+<div class="info-grid">
+  <div class="info-row"><div class="lbl">Severity</div><div class="val"><span class="badge b-LOW">LOW</span></div></div>
+  <div class="info-row"><div class="lbl">CVSS Score</div><div class="val"><span class="cvss-pill" style="color:#4ade80"><strong>3.5</strong> <span style="color:var(--muted);font-size:.75rem">/ 10.0</span></span></div></div>
+  <div class="info-row"><div class="lbl">OWASP Category</div><div class="val"><span class="owasp-tag">A05:2021 - Security Misconfiguration</span></div></div>
+  <div class="info-row"><div class="lbl">CWE Reference</div><div class="val"><span class="cwe-tag">CWE-1021</span></div></div>
+</div>
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Summary</div>
+<div class="description-block">Internal hosts can query external public DNS resolvers directly on UDP port 53.</div>
+</div>
+    <div class="fc-pane" id="g14-explanation" data-group="g14">
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">What is this vulnerability?</div>
+<div class="description-block">Internal hosts can query external public DNS resolvers directly on UDP port 53.</div>
+<div class="lbl" style="margin:.8rem 0 .4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Business &amp; Technical Impact</div><div class="description-block">Potentially exposes application behavior or security posture in domain: net.</div>
+</div>
+    <div class="fc-pane" id="g14-evidence" data-group="g14">
+<div class="evidence-label">Technical Evidence / Proof of Concept</div>
+<div class="evidence-box">Received valid DNS response directly from public resolver.</div>
+
+</div>
+    <div class="fc-pane" id="g14-remediation" data-group="g14"><ul class="remediation-list"><li><span class="rem-num">1</span><span class="rem-text">Review the affected endpoint or parameter and restrict unneeded public access.</span></li>
+<li><span class="rem-num">2</span><span class="rem-text">Apply the principle of least privilege and enforce secure configuration baselines.</span></li>
+<li><span class="rem-num">3</span><span class="rem-text">Follow OWASP guidelines for hardening this specific component.</span></li></ul></div>
+    <div class="fc-pane" id="g14-references" data-group="g14"><div class="refs-list"><a href="https://owasp.org/Top10/" target="_blank" rel="noopener">&#128279; https://owasp.org/Top10/</a>
+<a href="https://cwe.mitre.org/" target="_blank" rel="noopener">&#128279; https://cwe.mitre.org/</a></div></div>
+  </div>
+</div>
+
+<div class="finding-card fc-INFO" id="finding-15">
+  <div class="fc-header" data-body="body-15">
+    <span class="fc-num">#015</span>
+    <span class="badge b-INFO">INFO</span>
+    <span class="fc-title">DNS Records Enumerated</span>
+    
+    <span class="fc-module">recon</span>
+    <span class="fc-chevron">&#8964;</span>
+  </div>
+  <div class="fc-body" id="body-15">
+    <div class="fc-tabs">
+      <button class="fc-tab active" data-group="g15" data-target="g15-overview">Overview</button>
+      <button class="fc-tab" data-group="g15" data-target="g15-explanation">Explanation</button>
+      <button class="fc-tab" data-group="g15" data-target="g15-evidence">Evidence</button>
+      <button class="fc-tab" data-group="g15" data-target="g15-remediation">Remediation</button>
+      <button class="fc-tab" data-group="g15" data-target="g15-references">References</button>
+    </div>
+    <div class="fc-pane active" id="g15-overview" data-group="g15">
+<div class="info-grid">
+  <div class="info-row"><div class="lbl">Severity</div><div class="val"><span class="badge b-INFO">INFO</span></div></div>
+  <div class="info-row"><div class="lbl">CVSS Score</div><div class="val"><span class="cvss-pill" style="color:#4ade80"><strong>2.5</strong> <span style="color:var(--muted);font-size:.75rem">/ 10.0</span></span></div></div>
+  <div class="info-row"><div class="lbl">OWASP Category</div><div class="val"><span class="owasp-tag">A05:2021 - Security Misconfiguration</span></div></div>
+  <div class="info-row"><div class="lbl">CWE Reference</div><div class="val"><span class="cwe-tag">CWE-200</span></div></div>
+</div>
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Summary</div>
+<div class="description-block">Found 1 record types</div>
+</div>
+    <div class="fc-pane" id="g15-explanation" data-group="g15">
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">What is this vulnerability?</div>
+<div class="description-block">DNS enumeration identified active DNS resource records (A, MX, NS, TXT). DNS records often reveal email service providers, third-party verifications, and internal hostnames.</div>
+<div class="lbl" style="margin:.8rem 0 .4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Business &amp; Technical Impact</div><div class="description-block">Provides reconnaissance data that aids in social engineering and email spoofing if SPF/DMARC are incomplete.</div>
+</div>
+    <div class="fc-pane" id="g15-evidence" data-group="g15">
+<div class="evidence-label">Technical Evidence / Proof of Concept</div>
+<div class="evidence-box">{
+  &quot;A&quot;: [
+    &quot;158.158.8.118&quot;
+  ]
+}</div>
+
+</div>
+    <div class="fc-pane" id="g15-remediation" data-group="g15"><ul class="remediation-list"><li><span class="rem-num">1</span><span class="rem-text">Audit DNS records to remove obsolete verification tokens (e.g. old SPF/DKIM or domain ownership TXT records).</span></li>
+<li><span class="rem-num">2</span><span class="rem-text">Enforce strong SPF, DKIM, and DMARC policies to prevent email impersonation.</span></li></ul></div>
+    <div class="fc-pane" id="g15-references" data-group="g15"><div class="refs-list"><a href="https://owasp.org/Top10/A05_2021-Security_Misconfiguration/" target="_blank" rel="noopener">&#128279; https://owasp.org/Top10/A05_2021-Security_Misconfiguration/</a>
+<a href="https://cwe.mitre.org/data/definitions/200.html" target="_blank" rel="noopener">&#128279; https://cwe.mitre.org/data/definitions/200.html</a></div></div>
+  </div>
+</div>
+
+<div class="finding-card fc-INFO" id="finding-16">
+  <div class="fc-header" data-body="body-16">
+    <span class="fc-num">#016</span>
+    <span class="badge b-INFO">INFO</span>
+    <span class="fc-title">WHOIS Information</span>
+    
+    <span class="fc-module">recon</span>
+    <span class="fc-chevron">&#8964;</span>
+  </div>
+  <div class="fc-body" id="body-16">
+    <div class="fc-tabs">
+      <button class="fc-tab active" data-group="g16" data-target="g16-overview">Overview</button>
+      <button class="fc-tab" data-group="g16" data-target="g16-explanation">Explanation</button>
+      <button class="fc-tab" data-group="g16" data-target="g16-evidence">Evidence</button>
+      <button class="fc-tab" data-group="g16" data-target="g16-remediation">Remediation</button>
+      <button class="fc-tab" data-group="g16" data-target="g16-references">References</button>
+    </div>
+    <div class="fc-pane active" id="g16-overview" data-group="g16">
+<div class="info-grid">
+  <div class="info-row"><div class="lbl">Severity</div><div class="val"><span class="badge b-INFO">INFO</span></div></div>
+  <div class="info-row"><div class="lbl">CVSS Score</div><div class="val"><span class="cvss-pill" style="color:#4ade80"><strong>2.0</strong> <span style="color:var(--muted);font-size:.75rem">/ 10.0</span></span></div></div>
+  <div class="info-row"><div class="lbl">OWASP Category</div><div class="val"><span class="owasp-tag">A05:2021 - Security Misconfiguration</span></div></div>
+  <div class="info-row"><div class="lbl">CWE Reference</div><div class="val"><span class="cwe-tag">CWE-200</span></div></div>
+</div>
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Summary</div>
+<div class="description-block">Domain registration data</div>
+</div>
+    <div class="fc-pane" id="g16-explanation" data-group="g16">
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">What is this vulnerability?</div>
+<div class="description-block">WHOIS information reveals registrar, nameservers, registrant identity, and domain expiration dates.</div>
+<div class="lbl" style="margin:.8rem 0 .4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Business &amp; Technical Impact</div><div class="description-block">Information gathering for social engineering and domain takeover attempts if renewals lapse.</div>
+</div>
+    <div class="fc-pane" id="g16-evidence" data-group="g16">
+<div class="evidence-label">Technical Evidence / Proof of Concept</div>
+<div class="evidence-box">Registrar: None
+Created: 1994-01-20 00:00:00+00:00
+Expires: 2026-12-31 23:59:00+00:00
+Name Servers: [&#39;dnss2.ubi.pt&#39;, &#39;dnss1.ubi.pt&#39;]</div>
+
+</div>
+    <div class="fc-pane" id="g16-remediation" data-group="g16"><ul class="remediation-list"><li><span class="rem-num">1</span><span class="rem-text">Enable WHOIS privacy protection through your domain registrar.</span></li>
+<li><span class="rem-num">2</span><span class="rem-text">Monitor domain expiration dates and enable auto-renewal.</span></li></ul></div>
+    <div class="fc-pane" id="g16-references" data-group="g16"><div class="refs-list"><a href="https://owasp.org/Top10/A05_2021-Security_Misconfiguration/" target="_blank" rel="noopener">&#128279; https://owasp.org/Top10/A05_2021-Security_Misconfiguration/</a></div></div>
+  </div>
+</div>
+
+<div class="finding-card fc-INFO" id="finding-17">
+  <div class="fc-header" data-body="body-17">
+    <span class="fc-num">#017</span>
+    <span class="badge b-INFO">INFO</span>
+    <span class="fc-title">Open Ports Detected</span>
+    
+    <span class="fc-module">ports</span>
+    <span class="fc-chevron">&#8964;</span>
+  </div>
+  <div class="fc-body" id="body-17">
+    <div class="fc-tabs">
+      <button class="fc-tab active" data-group="g17" data-target="g17-overview">Overview</button>
+      <button class="fc-tab" data-group="g17" data-target="g17-explanation">Explanation</button>
+      <button class="fc-tab" data-group="g17" data-target="g17-evidence">Evidence</button>
+      <button class="fc-tab" data-group="g17" data-target="g17-remediation">Remediation</button>
+      <button class="fc-tab" data-group="g17" data-target="g17-references">References</button>
+    </div>
+    <div class="fc-pane active" id="g17-overview" data-group="g17">
+<div class="info-grid">
+  <div class="info-row"><div class="lbl">Severity</div><div class="val"><span class="badge b-INFO">INFO</span></div></div>
+  <div class="info-row"><div class="lbl">CVSS Score</div><div class="val"><span class="cvss-pill" style="color:#ffc107"><strong>4.0</strong> <span style="color:var(--muted);font-size:.75rem">/ 10.0</span></span></div></div>
+  <div class="info-row"><div class="lbl">OWASP Category</div><div class="val"><span class="owasp-tag">A05:2021 - Security Misconfiguration</span></div></div>
+  <div class="info-row"><div class="lbl">CWE Reference</div><div class="val"><span class="cwe-tag">CWE-16</span></div></div>
+</div>
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Summary</div>
+<div class="description-block">4 open port(s): 22/SSH, 80/HTTP, 443/HTTPS, 8080/HTTP Proxy</div>
+</div>
+    <div class="fc-pane" id="g17-explanation" data-group="g17">
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">What is this vulnerability?</div>
+<div class="description-block">Open network ports were discovered during port scanning. Every open network port represents an entry point into the host infrastructure.</div>
+<div class="lbl" style="margin:.8rem 0 .4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Business &amp; Technical Impact</div><div class="description-block">Exposed services increase the attack surface and may be susceptible to exploitation if unpatched.</div>
+</div>
+    <div class="fc-pane" id="g17-evidence" data-group="g17">
+<div class="evidence-label">Technical Evidence / Proof of Concept</div>
+<div class="evidence-box">  22/SSH: SSH-2.0-OpenSSH_10.0p2 Debian-7+deb13u4
+  80/HTTP: HTTP/1.0 308 Permanent Redirect Location: https://
+  443/HTTPS: 
+  8080/HTTP Proxy: HTTP/1.0 308 Permanent Redirect Location: http://l</div>
+
+</div>
+    <div class="fc-pane" id="g17-remediation" data-group="g17"><ul class="remediation-list"><li><span class="rem-num">1</span><span class="rem-text">Close all unnecessary open network ports using host or cloud firewall rules.</span></li>
+<li><span class="rem-num">2</span><span class="rem-text">Restrict administrative ports (such as SSH, RDP) to trusted IP addresses or require VPN access.</span></li></ul></div>
+    <div class="fc-pane" id="g17-references" data-group="g17"><div class="refs-list"><a href="https://owasp.org/Top10/A05_2021-Security_Misconfiguration/" target="_blank" rel="noopener">&#128279; https://owasp.org/Top10/A05_2021-Security_Misconfiguration/</a>
+<a href="https://cwe.mitre.org/data/definitions/16.html" target="_blank" rel="noopener">&#128279; https://cwe.mitre.org/data/definitions/16.html</a></div></div>
+  </div>
+</div>
+
+<div class="finding-card fc-INFO" id="finding-18">
+  <div class="fc-header" data-body="body-18">
+    <span class="fc-num">#018</span>
+    <span class="badge b-INFO">INFO</span>
+    <span class="fc-title">Certificate Valid</span>
+    
+    <span class="fc-module">ssl</span>
+    <span class="fc-chevron">&#8964;</span>
+  </div>
+  <div class="fc-body" id="body-18">
+    <div class="fc-tabs">
+      <button class="fc-tab active" data-group="g18" data-target="g18-overview">Overview</button>
+      <button class="fc-tab" data-group="g18" data-target="g18-explanation">Explanation</button>
+      <button class="fc-tab" data-group="g18" data-target="g18-evidence">Evidence</button>
+      <button class="fc-tab" data-group="g18" data-target="g18-remediation">Remediation</button>
+      <button class="fc-tab" data-group="g18" data-target="g18-references">References</button>
+    </div>
+    <div class="fc-pane active" id="g18-overview" data-group="g18">
+<div class="info-grid">
+  <div class="info-row"><div class="lbl">Severity</div><div class="val"><span class="badge b-INFO">INFO</span></div></div>
+  <div class="info-row"><div class="lbl">CVSS Score</div><div class="val"><span class="cvss-pill" style="color:#ffc107"><strong>6.5</strong> <span style="color:var(--muted);font-size:.75rem">/ 10.0</span></span></div></div>
+  <div class="info-row"><div class="lbl">OWASP Category</div><div class="val"><span class="owasp-tag">A02:2021 - Cryptographic Failures</span></div></div>
+  <div class="info-row"><div class="lbl">CWE Reference</div><div class="val"><span class="cwe-tag">CWE-295</span></div></div>
+</div>
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Summary</div>
+<div class="description-block">Certificate valid for 33 more days</div>
+</div>
+    <div class="fc-pane" id="g18-explanation" data-group="g18">
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">What is this vulnerability?</div>
+<div class="description-block">Analysis of the SSL/TLS digital certificate configuration, expiration schedule, Subject Alternative Names (SAN), or Certificate Authority chain of trust.</div>
+<div class="lbl" style="margin:.8rem 0 .4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Business &amp; Technical Impact</div><div class="description-block">Improper certificate management leads to connection interception, trust warnings for users, and downtime.</div>
+</div>
+    <div class="fc-pane" id="g18-evidence" data-group="g18">
+<div class="evidence-label">Technical Evidence / Proof of Concept</div>
+<div class="evidence-box">Oct 26 11:01:02 2026 GMT</div>
+
+</div>
+    <div class="fc-pane" id="g18-remediation" data-group="g18"><ul class="remediation-list"><li><span class="rem-num">1</span><span class="rem-text">Deploy valid TLS certificates issued by trusted public CAs.</span></li>
+<li><span class="rem-num">2</span><span class="rem-text">Monitor expiration dates with automated alerts at 30, 14, and 7 days prior to expiry.</span></li>
+<li><span class="rem-num">3</span><span class="rem-text">Ensure all public subdomains are included in certificate SAN entries.</span></li></ul></div>
+    <div class="fc-pane" id="g18-references" data-group="g18"><div class="refs-list"><a href="https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Protection_Cheat_Sheet.html" target="_blank" rel="noopener">&#128279; https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Protection_Cheat_Sheet.html</a>
+<a href="https://cwe.mitre.org/data/definitions/295.html" target="_blank" rel="noopener">&#128279; https://cwe.mitre.org/data/definitions/295.html</a></div></div>
+  </div>
+</div>
+
+<div class="finding-card fc-INFO" id="finding-19">
+  <div class="fc-header" data-body="body-19">
+    <span class="fc-num">#019</span>
+    <span class="badge b-INFO">INFO</span>
+    <span class="fc-title">TLS Cipher Info</span>
+    
+    <span class="fc-module">ssl</span>
+    <span class="fc-chevron">&#8964;</span>
+  </div>
+  <div class="fc-body" id="body-19">
+    <div class="fc-tabs">
+      <button class="fc-tab active" data-group="g19" data-target="g19-overview">Overview</button>
+      <button class="fc-tab" data-group="g19" data-target="g19-explanation">Explanation</button>
+      <button class="fc-tab" data-group="g19" data-target="g19-evidence">Evidence</button>
+      <button class="fc-tab" data-group="g19" data-target="g19-remediation">Remediation</button>
+      <button class="fc-tab" data-group="g19" data-target="g19-references">References</button>
+    </div>
+    <div class="fc-pane active" id="g19-overview" data-group="g19">
+<div class="info-grid">
+  <div class="info-row"><div class="lbl">Severity</div><div class="val"><span class="badge b-INFO">INFO</span></div></div>
+  <div class="info-row"><div class="lbl">CVSS Score</div><div class="val"><span class="cvss-pill" style="color:#4ade80"><strong>2.0</strong> <span style="color:var(--muted);font-size:.75rem">/ 10.0</span></span></div></div>
+  <div class="info-row"><div class="lbl">OWASP Category</div><div class="val"><span class="owasp-tag">A05:2021 - Security Misconfiguration</span></div></div>
+  <div class="info-row"><div class="lbl">CWE Reference</div><div class="val"><span class="cwe-tag">CWE-200</span></div></div>
+</div>
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Summary</div>
+<div class="description-block">Negotiated: TLS_AES_128_GCM_SHA256 (128 bits) via TLSv1.3</div>
+</div>
+    <div class="fc-pane" id="g19-explanation" data-group="g19">
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">What is this vulnerability?</div>
+<div class="description-block">Negotiated: TLS_AES_128_GCM_SHA256 (128 bits) via TLSv1.3</div>
+<div class="lbl" style="margin:.8rem 0 .4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Business &amp; Technical Impact</div><div class="description-block">Potentially exposes application behavior or security posture in domain: ssl.</div>
+</div>
+    <div class="fc-pane" id="g19-evidence" data-group="g19">
+<div class="evidence-label">Technical Evidence / Proof of Concept</div>
+<div class="evidence-box">Protocol: TLSv1.3</div>
+
+</div>
+    <div class="fc-pane" id="g19-remediation" data-group="g19"><ul class="remediation-list"><li><span class="rem-num">1</span><span class="rem-text">Review the affected endpoint or parameter and restrict unneeded public access.</span></li>
+<li><span class="rem-num">2</span><span class="rem-text">Apply the principle of least privilege and enforce secure configuration baselines.</span></li>
+<li><span class="rem-num">3</span><span class="rem-text">Follow OWASP guidelines for hardening this specific component.</span></li></ul></div>
+    <div class="fc-pane" id="g19-references" data-group="g19"><div class="refs-list"><a href="https://owasp.org/Top10/" target="_blank" rel="noopener">&#128279; https://owasp.org/Top10/</a>
+<a href="https://cwe.mitre.org/" target="_blank" rel="noopener">&#128279; https://cwe.mitre.org/</a></div></div>
+  </div>
+</div>
+
+<div class="finding-card fc-INFO" id="finding-20">
+  <div class="fc-header" data-body="body-20">
+    <span class="fc-num">#020</span>
+    <span class="badge b-INFO">INFO</span>
+    <span class="fc-title">Modern TLS Only</span>
+    
+    <span class="fc-module">ssl</span>
+    <span class="fc-chevron">&#8964;</span>
+  </div>
+  <div class="fc-body" id="body-20">
+    <div class="fc-tabs">
+      <button class="fc-tab active" data-group="g20" data-target="g20-overview">Overview</button>
+      <button class="fc-tab" data-group="g20" data-target="g20-explanation">Explanation</button>
+      <button class="fc-tab" data-group="g20" data-target="g20-evidence">Evidence</button>
+      <button class="fc-tab" data-group="g20" data-target="g20-remediation">Remediation</button>
+      <button class="fc-tab" data-group="g20" data-target="g20-references">References</button>
+    </div>
+    <div class="fc-pane active" id="g20-overview" data-group="g20">
+<div class="info-grid">
+  <div class="info-row"><div class="lbl">Severity</div><div class="val"><span class="badge b-INFO">INFO</span></div></div>
+  <div class="info-row"><div class="lbl">CVSS Score</div><div class="val"><span class="cvss-pill" style="color:#4ade80"><strong>2.0</strong> <span style="color:var(--muted);font-size:.75rem">/ 10.0</span></span></div></div>
+  <div class="info-row"><div class="lbl">OWASP Category</div><div class="val"><span class="owasp-tag">A02:2021 - Cryptographic Failures</span></div></div>
+  <div class="info-row"><div class="lbl">CWE Reference</div><div class="val"><span class="cwe-tag">CWE-326</span></div></div>
+</div>
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Summary</div>
+<div class="description-block">Server does not appear to support TLS 1.0/1.1.</div>
+</div>
+    <div class="fc-pane" id="g20-explanation" data-group="g20">
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">What is this vulnerability?</div>
+<div class="description-block">Server does not support insecure legacy protocols (TLS 1.0 / TLS 1.1), adhering to current cryptographic standards.</div>
+<div class="lbl" style="margin:.8rem 0 .4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Business &amp; Technical Impact</div><div class="description-block">Positive security indicator. Ensures traffic is protected by modern encryption algorithms.</div>
+</div>
+    <div class="fc-pane" id="g20-evidence" data-group="g20">
+<div class="evidence-label">Technical Evidence / Proof of Concept</div>
+<div class="evidence-box">— No specific evidence captured —</div>
+
+</div>
+    <div class="fc-pane" id="g20-remediation" data-group="g20"><ul class="remediation-list"><li><span class="rem-num">1</span><span class="rem-text">Maintain current secure TLS configuration. Continue enforcing TLS 1.2 and TLS 1.3 exclusively.</span></li></ul></div>
+    <div class="fc-pane" id="g20-references" data-group="g20"><div class="refs-list"><a href="https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Protection_Cheat_Sheet.html" target="_blank" rel="noopener">&#128279; https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Protection_Cheat_Sheet.html</a></div></div>
+  </div>
+</div>
+
+<div class="finding-card fc-INFO" id="finding-21">
+  <div class="fc-header" data-body="body-21">
+    <span class="fc-num">#021</span>
+    <span class="badge b-INFO">INFO</span>
+    <span class="fc-title">TLS 1.3 Supported</span>
+    
+    <span class="fc-module">ssl</span>
+    <span class="fc-chevron">&#8964;</span>
+  </div>
+  <div class="fc-body" id="body-21">
+    <div class="fc-tabs">
+      <button class="fc-tab active" data-group="g21" data-target="g21-overview">Overview</button>
+      <button class="fc-tab" data-group="g21" data-target="g21-explanation">Explanation</button>
+      <button class="fc-tab" data-group="g21" data-target="g21-evidence">Evidence</button>
+      <button class="fc-tab" data-group="g21" data-target="g21-remediation">Remediation</button>
+      <button class="fc-tab" data-group="g21" data-target="g21-references">References</button>
+    </div>
+    <div class="fc-pane active" id="g21-overview" data-group="g21">
+<div class="info-grid">
+  <div class="info-row"><div class="lbl">Severity</div><div class="val"><span class="badge b-INFO">INFO</span></div></div>
+  <div class="info-row"><div class="lbl">CVSS Score</div><div class="val"><span class="cvss-pill" style="color:#4ade80"><strong>2.0</strong> <span style="color:var(--muted);font-size:.75rem">/ 10.0</span></span></div></div>
+  <div class="info-row"><div class="lbl">OWASP Category</div><div class="val"><span class="owasp-tag">A02:2021 - Cryptographic Failures</span></div></div>
+  <div class="info-row"><div class="lbl">CWE Reference</div><div class="val"><span class="cwe-tag">CWE-326</span></div></div>
+</div>
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Summary</div>
+<div class="description-block">Server supports TLS 1.3 (recommended).</div>
+</div>
+    <div class="fc-pane" id="g21-explanation" data-group="g21">
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">What is this vulnerability?</div>
+<div class="description-block">Server successfully negotiated TLS 1.3, providing optimal cryptographic security and 0-RTT performance.</div>
+<div class="lbl" style="margin:.8rem 0 .4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Business &amp; Technical Impact</div><div class="description-block">Positive security indicator. Protects user traffic with forward secrecy and hardened cipher suites.</div>
+</div>
+    <div class="fc-pane" id="g21-evidence" data-group="g21">
+<div class="evidence-label">Technical Evidence / Proof of Concept</div>
+<div class="evidence-box">— No specific evidence captured —</div>
+
+</div>
+    <div class="fc-pane" id="g21-remediation" data-group="g21"><ul class="remediation-list"><li><span class="rem-num">1</span><span class="rem-text">Maintain support for TLS 1.3 and modern forward-secret ciphers.</span></li></ul></div>
+    <div class="fc-pane" id="g21-references" data-group="g21"><div class="refs-list"><a href="https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Protection_Cheat_Sheet.html" target="_blank" rel="noopener">&#128279; https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Protection_Cheat_Sheet.html</a></div></div>
+  </div>
+</div>
+
+<div class="finding-card fc-INFO" id="finding-22">
+  <div class="fc-header" data-body="body-22">
+    <span class="fc-num">#022</span>
+    <span class="badge b-INFO">INFO</span>
+    <span class="fc-title">HTTP-&gt;HTTPS Redirect</span>
+    
+    <span class="fc-module">ssl</span>
+    <span class="fc-chevron">&#8964;</span>
+  </div>
+  <div class="fc-body" id="body-22">
+    <div class="fc-tabs">
+      <button class="fc-tab active" data-group="g22" data-target="g22-overview">Overview</button>
+      <button class="fc-tab" data-group="g22" data-target="g22-explanation">Explanation</button>
+      <button class="fc-tab" data-group="g22" data-target="g22-evidence">Evidence</button>
+      <button class="fc-tab" data-group="g22" data-target="g22-remediation">Remediation</button>
+      <button class="fc-tab" data-group="g22" data-target="g22-references">References</button>
+    </div>
+    <div class="fc-pane active" id="g22-overview" data-group="g22">
+<div class="info-grid">
+  <div class="info-row"><div class="lbl">Severity</div><div class="val"><span class="badge b-INFO">INFO</span></div></div>
+  <div class="info-row"><div class="lbl">CVSS Score</div><div class="val"><span class="cvss-pill" style="color:#4ade80"><strong>2.0</strong> <span style="color:var(--muted);font-size:.75rem">/ 10.0</span></span></div></div>
+  <div class="info-row"><div class="lbl">OWASP Category</div><div class="val"><span class="owasp-tag">A05:2021 - Security Misconfiguration</span></div></div>
+  <div class="info-row"><div class="lbl">CWE Reference</div><div class="val"><span class="cwe-tag">CWE-200</span></div></div>
+</div>
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Summary</div>
+<div class="description-block">HTTP properly redirects to HTTPS.</div>
+</div>
+    <div class="fc-pane" id="g22-explanation" data-group="g22">
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">What is this vulnerability?</div>
+<div class="description-block">HTTP properly redirects to HTTPS.</div>
+<div class="lbl" style="margin:.8rem 0 .4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Business &amp; Technical Impact</div><div class="description-block">Potentially exposes application behavior or security posture in domain: ssl.</div>
+</div>
+    <div class="fc-pane" id="g22-evidence" data-group="g22">
+<div class="evidence-label">Technical Evidence / Proof of Concept</div>
+<div class="evidence-box">https://yoda.di.ubi.pt/</div>
+
+</div>
+    <div class="fc-pane" id="g22-remediation" data-group="g22"><ul class="remediation-list"><li><span class="rem-num">1</span><span class="rem-text">Review the affected endpoint or parameter and restrict unneeded public access.</span></li>
+<li><span class="rem-num">2</span><span class="rem-text">Apply the principle of least privilege and enforce secure configuration baselines.</span></li>
+<li><span class="rem-num">3</span><span class="rem-text">Follow OWASP guidelines for hardening this specific component.</span></li></ul></div>
+    <div class="fc-pane" id="g22-references" data-group="g22"><div class="refs-list"><a href="https://owasp.org/Top10/" target="_blank" rel="noopener">&#128279; https://owasp.org/Top10/</a>
+<a href="https://cwe.mitre.org/" target="_blank" rel="noopener">&#128279; https://cwe.mitre.org/</a></div></div>
+  </div>
+</div>
+
+<div class="finding-card fc-INFO" id="finding-23">
+  <div class="fc-header" data-body="body-23">
+    <span class="fc-num">#023</span>
+    <span class="badge b-INFO">INFO</span>
+    <span class="fc-title">Technologies Detected</span>
+    
+    <span class="fc-module">fingerprint</span>
+    <span class="fc-chevron">&#8964;</span>
+  </div>
+  <div class="fc-body" id="body-23">
+    <div class="fc-tabs">
+      <button class="fc-tab active" data-group="g23" data-target="g23-overview">Overview</button>
+      <button class="fc-tab" data-group="g23" data-target="g23-explanation">Explanation</button>
+      <button class="fc-tab" data-group="g23" data-target="g23-evidence">Evidence</button>
+      <button class="fc-tab" data-group="g23" data-target="g23-remediation">Remediation</button>
+      <button class="fc-tab" data-group="g23" data-target="g23-references">References</button>
+    </div>
+    <div class="fc-pane active" id="g23-overview" data-group="g23">
+<div class="info-grid">
+  <div class="info-row"><div class="lbl">Severity</div><div class="val"><span class="badge b-INFO">INFO</span></div></div>
+  <div class="info-row"><div class="lbl">CVSS Score</div><div class="val"><span class="cvss-pill" style="color:#4ade80"><strong>2.5</strong> <span style="color:var(--muted);font-size:.75rem">/ 10.0</span></span></div></div>
+  <div class="info-row"><div class="lbl">OWASP Category</div><div class="val"><span class="owasp-tag">A05:2021 - Security Misconfiguration</span></div></div>
+  <div class="info-row"><div class="lbl">CWE Reference</div><div class="val"><span class="cwe-tag">CWE-200</span></div></div>
+</div>
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Summary</div>
+<div class="description-block">Identified 1 technologies</div>
+</div>
+    <div class="fc-pane" id="g23-explanation" data-group="g23">
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">What is this vulnerability?</div>
+<div class="description-block">Fingerprinting analysis successfully detected underlying server software, frameworks, and web technologies.</div>
+<div class="lbl" style="margin:.8rem 0 .4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Business &amp; Technical Impact</div><div class="description-block">Assists attackers in targeting known vulnerabilities specific to the identified technology stack.</div>
+</div>
+    <div class="fc-pane" id="g23-evidence" data-group="g23">
+<div class="evidence-label">Technical Evidence / Proof of Concept</div>
+<div class="evidence-box">Nginx</div>
+
+</div>
+    <div class="fc-pane" id="g23-remediation" data-group="g23"><ul class="remediation-list"><li><span class="rem-num">1</span><span class="rem-text">Suppress technology-identifying response headers (Server, X-Powered-By, X-AspNet-Version).</span></li>
+<li><span class="rem-num">2</span><span class="rem-text">Keep all identified frameworks, libraries, and web servers updated to current supported versions.</span></li></ul></div>
+    <div class="fc-pane" id="g23-references" data-group="g23"><div class="refs-list"><a href="https://owasp.org/Top10/A05_2021-Security_Misconfiguration/" target="_blank" rel="noopener">&#128279; https://owasp.org/Top10/A05_2021-Security_Misconfiguration/</a>
+<a href="https://cwe.mitre.org/data/definitions/200.html" target="_blank" rel="noopener">&#128279; https://cwe.mitre.org/data/definitions/200.html</a></div></div>
+  </div>
+</div>
+
+<div class="finding-card fc-INFO" id="finding-24">
+  <div class="fc-header" data-body="body-24">
+    <span class="fc-num">#024</span>
+    <span class="badge b-INFO">INFO</span>
+    <span class="fc-title">Directory Enumeration Complete</span>
+    
+    <span class="fc-module">dirs</span>
+    <span class="fc-chevron">&#8964;</span>
+  </div>
+  <div class="fc-body" id="body-24">
+    <div class="fc-tabs">
+      <button class="fc-tab active" data-group="g24" data-target="g24-overview">Overview</button>
+      <button class="fc-tab" data-group="g24" data-target="g24-explanation">Explanation</button>
+      <button class="fc-tab" data-group="g24" data-target="g24-evidence">Evidence</button>
+      <button class="fc-tab" data-group="g24" data-target="g24-remediation">Remediation</button>
+      <button class="fc-tab" data-group="g24" data-target="g24-references">References</button>
+    </div>
+    <div class="fc-pane active" id="g24-overview" data-group="g24">
+<div class="info-grid">
+  <div class="info-row"><div class="lbl">Severity</div><div class="val"><span class="badge b-INFO">INFO</span></div></div>
+  <div class="info-row"><div class="lbl">CVSS Score</div><div class="val"><span class="cvss-pill" style="color:#4ade80"><strong>2.0</strong> <span style="color:var(--muted);font-size:.75rem">/ 10.0</span></span></div></div>
+  <div class="info-row"><div class="lbl">OWASP Category</div><div class="val"><span class="owasp-tag">A05:2021 - Security Misconfiguration</span></div></div>
+  <div class="info-row"><div class="lbl">CWE Reference</div><div class="val"><span class="cwe-tag">CWE-548</span></div></div>
+</div>
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Summary</div>
+<div class="description-block">Scanned 92 paths, found 0 accessible</div>
+</div>
+    <div class="fc-pane" id="g24-explanation" data-group="g24">
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">What is this vulnerability?</div>
+<div class="description-block">Automated enumeration of web paths, files, and directories completed.</div>
+<div class="lbl" style="margin:.8rem 0 .4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Business &amp; Technical Impact</div><div class="description-block">Provides visibility into the overall attack surface and exposed endpoints.</div>
+</div>
+    <div class="fc-pane" id="g24-evidence" data-group="g24">
+<div class="evidence-label">Technical Evidence / Proof of Concept</div>
+<div class="evidence-box">— No specific evidence captured —</div>
+
+</div>
+    <div class="fc-pane" id="g24-remediation" data-group="g24"><ul class="remediation-list"><li><span class="rem-num">1</span><span class="rem-text">Disable directory listings and remove unnecessary files and endpoints from web servers.</span></li></ul></div>
+    <div class="fc-pane" id="g24-references" data-group="g24"><div class="refs-list"><a href="https://owasp.org/Top10/A05_2021-Security_Misconfiguration/" target="_blank" rel="noopener">&#128279; https://owasp.org/Top10/A05_2021-Security_Misconfiguration/</a></div></div>
+  </div>
+</div>
+
+<div class="finding-card fc-INFO" id="finding-25">
+  <div class="fc-header" data-body="body-25">
+    <span class="fc-num">#025</span>
+    <span class="badge b-INFO">INFO</span>
+    <span class="fc-title">Crawl Complete</span>
+    
+    <span class="fc-module">crawl</span>
+    <span class="fc-chevron">&#8964;</span>
+  </div>
+  <div class="fc-body" id="body-25">
+    <div class="fc-tabs">
+      <button class="fc-tab active" data-group="g25" data-target="g25-overview">Overview</button>
+      <button class="fc-tab" data-group="g25" data-target="g25-explanation">Explanation</button>
+      <button class="fc-tab" data-group="g25" data-target="g25-evidence">Evidence</button>
+      <button class="fc-tab" data-group="g25" data-target="g25-remediation">Remediation</button>
+      <button class="fc-tab" data-group="g25" data-target="g25-references">References</button>
+    </div>
+    <div class="fc-pane active" id="g25-overview" data-group="g25">
+<div class="info-grid">
+  <div class="info-row"><div class="lbl">Severity</div><div class="val"><span class="badge b-INFO">INFO</span></div></div>
+  <div class="info-row"><div class="lbl">CVSS Score</div><div class="val"><span class="cvss-pill" style="color:#4ade80"><strong>2.0</strong> <span style="color:var(--muted);font-size:.75rem">/ 10.0</span></span></div></div>
+  <div class="info-row"><div class="lbl">OWASP Category</div><div class="val"><span class="owasp-tag">A05:2021 - Security Misconfiguration</span></div></div>
+  <div class="info-row"><div class="lbl">CWE Reference</div><div class="val"><span class="cwe-tag">CWE-200</span></div></div>
+</div>
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Summary</div>
+<div class="description-block">Discovered 1 pages, 0 forms, 1 endpoints</div>
+</div>
+    <div class="fc-pane" id="g25-explanation" data-group="g25">
+<div class="lbl" style="margin-bottom:.4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">What is this vulnerability?</div>
+<div class="description-block">Web spider and crawler mapped accessible application pages, forms, and input parameters.</div>
+<div class="lbl" style="margin:.8rem 0 .4rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Business &amp; Technical Impact</div><div class="description-block">Defines the discoverable attack surface of the application.</div>
+</div>
+    <div class="fc-pane" id="g25-evidence" data-group="g25">
+<div class="evidence-label">Technical Evidence / Proof of Concept</div>
+<div class="evidence-box">Pages visited: 1</div>
+
+</div>
+    <div class="fc-pane" id="g25-remediation" data-group="g25"><ul class="remediation-list"><li><span class="rem-num">1</span><span class="rem-text">Audit public pages to ensure unauthenticated users cannot access sensitive business workflows.</span></li></ul></div>
+    <div class="fc-pane" id="g25-references" data-group="g25"><div class="refs-list"><a href="https://owasp.org/Top10/A05_2021-Security_Misconfiguration/" target="_blank" rel="noopener">&#128279; https://owasp.org/Top10/A05_2021-Security_Misconfiguration/</a></div></div>
+  </div>
+</div>
+  </section>
+
+  <!-- ── REMEDIATION PLAN ────────────────────────── -->
+  <section class="section" id="remediation-plan">
+    <div class="section-header">
+      <h2>Remediation Priority Plan</h2>
+      <span class="section-tag">05</span>
+    </div>
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Severity</th>
+            <th>Finding</th>
+            <th>Recommended Action</th>
+            <th>Priority</th>
+          </tr>
+        </thead>
+        <tbody><tr><td>1</td><td><span class="badge b-HIGH">HIGH</span></td><td>Missing Security Header: Strict-Transport-Security</td><td style="color:var(--muted);font-size:.85rem">Configure all recommended security headers on web servers or reverse proxies:</td><td style="color:var(--muted)">Within 7 days</td></tr>
+<tr><td>2</td><td><span class="badge b-HIGH">HIGH</span></td><td>Missing Security Header: Content-Security-Policy</td><td style="color:var(--muted);font-size:.85rem">Configure all recommended security headers on web servers or reverse proxies:</td><td style="color:var(--muted)">Within 7 days</td></tr>
+<tr><td>3</td><td><span class="badge b-MEDIUM">MEDIUM</span></td><td>Potentially Outdated Service: Port 22</td><td style="color:var(--muted);font-size:.85rem">Update the service to the latest stable, vendor-supported release.</td><td style="color:var(--muted)">Within 30 days</td></tr>
+<tr><td>4</td><td><span class="badge b-MEDIUM">MEDIUM</span></td><td>Development Service Exposed: Port 8080</td><td style="color:var(--muted);font-size:.85rem">Apply strict firewall rules: only expose ports required for public access.</td><td style="color:var(--muted)">Within 30 days</td></tr>
+<tr><td>5</td><td><span class="badge b-MEDIUM">MEDIUM</span></td><td>Missing Security Header: X-Content-Type-Options</td><td style="color:var(--muted);font-size:.85rem">Configure all recommended security headers on web servers or reverse proxies:</td><td style="color:var(--muted)">Within 30 days</td></tr>
+<tr><td>6</td><td><span class="badge b-MEDIUM">MEDIUM</span></td><td>Missing Security Header: X-Frame-Options</td><td style="color:var(--muted);font-size:.85rem">Configure all recommended security headers on web servers or reverse proxies:</td><td style="color:var(--muted)">Within 30 days</td></tr>
+<tr><td>7</td><td><span class="badge b-MEDIUM">MEDIUM</span></td><td>Clickjacking Protection Missing</td><td style="color:var(--muted);font-size:.85rem">Review the affected endpoint or parameter and restrict unneeded public access.</td><td style="color:var(--muted)">Within 30 days</td></tr>
+<tr><td>8</td><td><span class="badge b-MEDIUM">MEDIUM</span></td><td>Origin Header Not Validated</td><td style="color:var(--muted);font-size:.85rem">Validate the Origin and Referer headers on the server side against an explicit allowlist of trusted domains.</td><td style="color:var(--muted)">Within 30 days</td></tr>
+<tr><td>9</td><td><span class="badge b-LOW">LOW</span></td><td>No security.txt</td><td style="color:var(--muted);font-size:.85rem">Maintain a valid /.well-known/security.txt file per RFC 9116.</td><td style="color:var(--muted)">Planned sprint</td></tr>
+<tr><td>10</td><td><span class="badge b-LOW">LOW</span></td><td>Missing Security Header: Referrer-Policy</td><td style="color:var(--muted);font-size:.85rem">Configure all recommended security headers on web servers or reverse proxies:</td><td style="color:var(--muted)">Planned sprint</td></tr>
+<tr><td>11</td><td><span class="badge b-LOW">LOW</span></td><td>Missing Security Header: Permissions-Policy</td><td style="color:var(--muted);font-size:.85rem">Configure all recommended security headers on web servers or reverse proxies:</td><td style="color:var(--muted)">Planned sprint</td></tr>
+<tr><td>12</td><td><span class="badge b-LOW">LOW</span></td><td>Missing Security Header: X-XSS-Protection</td><td style="color:var(--muted);font-size:.85rem">Configure all recommended security headers on web servers or reverse proxies:</td><td style="color:var(--muted)">Planned sprint</td></tr>
+<tr><td>13</td><td><span class="badge b-LOW">LOW</span></td><td>Information Disclosure: Server</td><td style="color:var(--muted);font-size:.85rem">In Nginx, set &quot;server_tokens off;&quot; in nginx.conf.</td><td style="color:var(--muted)">Planned sprint</td></tr>
+<tr><td>14</td><td><span class="badge b-LOW">LOW</span></td><td>Unrestricted Outbound DNS Egress (UDP 53 Allowed)</td><td style="color:var(--muted);font-size:.85rem">Review the affected endpoint or parameter and restrict unneeded public access.</td><td style="color:var(--muted)">Planned sprint</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div>
+    <div class="footer-logo">DISTROYER</div>
+    <div>Web Security &amp; Penetration Testing Framework v1.0</div>
+  </div>
+  <div style="text-align:right;">
+    <div>This report was generated automatically.</div>
+    <div>For authorized security testing only. Unauthorized use is illegal.</div>
+  </div>
+</footer>
+
+<script>
+(function() {
+  // Expand/collapse findings
+  document.querySelectorAll('.fc-header').forEach(h => {
+    h.addEventListener('click', () => {
+      const body = document.getElementById(h.dataset.body);
+      const chevron = h.querySelector('.fc-chevron');
+      if (body) {
+        body.classList.toggle('open');
+        chevron && chevron.classList.toggle('open');
+      }
+    });
+  });
+
+  // Severity filtering and real-time search
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const findingCards = document.querySelectorAll('.finding-card');
+  const searchInput = document.getElementById('finding-search');
+
+  function applyFilters() {
+    const activeBtn = document.querySelector('.filter-btn.active');
+    const selectedSev = activeBtn ? activeBtn.dataset.severity : 'ALL';
+    const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+    findingCards.forEach(card => {
+      const matchSev = (selectedSev === 'ALL' || card.classList.contains('fc-' + selectedSev));
+      const text = card.textContent.toLowerCase();
+      const matchQuery = !query || text.includes(query);
+      card.style.display = (matchSev && matchQuery) ? 'block' : 'none';
+    });
+  }
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      applyFilters();
+    });
+  });
+
+  if (searchInput) {
+    searchInput.addEventListener('input', applyFilters);
+  }
+
+  // Expand / Collapse all
+  const expandAllBtn = document.getElementById('expand-all-btn');
+  const collapseAllBtn = document.getElementById('collapse-all-btn');
+  if (expandAllBtn) {
+    expandAllBtn.addEventListener('click', () => {
+      document.querySelectorAll('.fc-body').forEach(b => b.classList.add('open'));
+      document.querySelectorAll('.fc-chevron').forEach(c => c.classList.add('open'));
+    });
+  }
+  if (collapseAllBtn) {
+    collapseAllBtn.addEventListener('click', () => {
+      document.querySelectorAll('.fc-body').forEach(b => b.classList.remove('open'));
+      document.querySelectorAll('.fc-chevron').forEach(c => c.classList.remove('open'));
+    });
+  }
+
+  // Tab switching
+  document.querySelectorAll('.fc-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const group = tab.dataset.group;
+      const target = tab.dataset.target;
+      document.querySelectorAll(`.fc-tab[data-group="${group}"]`).forEach(t => t.classList.remove('active'));
+      document.querySelectorAll(`.fc-pane[data-group="${group}"]`).forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      const pane = document.getElementById(target);
+      if (pane) pane.classList.add('active');
+    });
+  });
+
+  
+  // Recon tabs switching
+  document.querySelectorAll('.recon-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.recon-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.recon-pane').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      const targetPane = document.getElementById(tab.dataset.target);
+      if (targetPane) targetPane.classList.add('active');
+    });
+  });
+
+  // Animate bars on load
+  document.querySelectorAll('.bar-fill').forEach(b => {
+    const w = b.style.width;
+    b.style.width = '0%';
+    setTimeout(() => { b.style.width = w; }, 200);
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "warzone-tracker",
+  "version": "1.0.0",
+  "description": "Mapeador Tático do Conflito Ucrânia-Rússia com OpenStreetMap, MariaDB e Desenho no Mapa",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "cors": "^2.8.5",
+    "mysql2": "^3.9.7",
+    "dotenv": "^16.4.5"
+  }
+}

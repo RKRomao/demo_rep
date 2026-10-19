@@ -1,0 +1,26 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Instalar dependências de sistema para compiladores e bibliotecas GIS (GEOS, GDAL)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    libgeos-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY backend/requirements.txt ./requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY backend/app ./app
+
+EXPOSE 8000
+
+ENV PORT=8000
+ENV DB_HOST=db
+ENV DB_PORT=3306
+ENV DB_USER=root
+ENV DB_PASSWORD=root
+ENV DB_NAME=warzone_db
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

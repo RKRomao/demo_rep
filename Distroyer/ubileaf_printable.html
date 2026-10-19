@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatório de Penetration Testing (Versão Imprimível) — ubileaf.di.ubi.pt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────────────────────
+   PRINT & EXECUTIVE REPORT STYLING — DISTROYER v2.0
+   Designed for A4 Paper, PDF Export and High-Readability Printing
+   ───────────────────────────────────────────────────────────── */
+
+:root {
+  --text-main:    #0f172a;
+  --text-muted:   #475569;
+  --text-subtle:  #64748b;
+  --bg-page:      #ffffff;
+  --bg-subtle:    #f8fafc;
+  --bg-card:      #ffffff;
+  --border-light: #e2e8f0;
+  --border-dark:  #cbd5e1;
+  --primary:      #1e40af;
+  --primary-soft: #eff6ff;
+  
+  --red-bg:       #fef2f2;
+  --red-border:   #fecaca;
+  --red-text:     #b91c1c;
+
+  --orange-bg:    #fff7ed;
+  --orange-border:#fed7aa;
+  --orange-text:  #c2410c;
+
+  --yellow-bg:    #fefce8;
+  --yellow-border:#fef08a;
+  --yellow-text:  #854d0e;
+
+  --cyan-bg:      #f0fdfa;
+  --cyan-border:  #99f6e4;
+  --cyan-text:    #0f766e;
+
+  --green-bg:     #f0fdf4;
+  --green-border: #bbf7d0;
+  --green-text:   #15803d;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg-page);
+  color: var(--text-main);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 13.5px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── INTERACTIVE TOP TOOLBAR (Hidden in Print) ── */
+.no-print-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: #0f172a;
+  color: #f8fafc;
+  padding: 0.75rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border-bottom: 1px solid #1e293b;
+}
+
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.toolbar-brand {
+  font-weight: 800;
+  font-size: 1.05rem;
+  letter-spacing: 0.05em;
+  color: #60a5fa;
+}
+
+.toolbar-tag {
+  background: #1e293b;
+  color: #94a3b8;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+}
+
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.btn-print {
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.55rem 1.25rem;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background 0.15s ease;
+}
+
+.btn-print:hover {
+  background: #1d4ed8;
+}
+
+.btn-secondary {
+  background: #334155;
+  color: #f1f5f9;
+  border: 1px solid #475569;
+  font-weight: 500;
+  font-size: 0.82rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.15s ease;
+}
+
+.btn-secondary:hover {
+  background: #475569;
+  color: #ffffff;
+}
+
+/* ── DOCUMENT CONTAINER ── */
+.document-container {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 2.5rem 3rem 4rem 3rem;
+}
+
+/* ── REPORT COVER / HEADER ── */
+.report-header {
+  border-bottom: 2px solid #0f172a;
+  padding-bottom: 1.75rem;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
+.report-header-left h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.report-header-left .classification {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #b91c1c;
+  background: var(--red-bg);
+  border: 1px solid var(--red-border);
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  margin-bottom: 0.6rem;
+}
+
+.report-header-left .subtitle {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  margin-top: 0.4rem;
+}
+
+.report-header-right {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  align-items: flex-end;
+}
+
+.meta-box {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 0.3rem 0.8rem;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+}
+
+.meta-box .k {
+  color: var(--text-subtle);
+  font-weight: 500;
+}
+
+.meta-box .v {
+  font-weight: 600;
+  color: var(--text-main);
+  text-align: right;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+}
+
+.overall-risk-badge {
+  background: #fff7ed;
+  border: 1.5px solid #ea580c;
+  color: #c2410c;
+  padding: 0.45rem 1.2rem;
+  border-radius: 6px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ── NOTICE & DISCLAIMER ── */
+.confidential-callout {
+  background: #fef2f2;
+  border-left: 4px solid #ef4444;
+  border-top: 1px solid #fee2e2;
+  border-right: 1px solid #fee2e2;
+  border-bottom: 1px solid #fee2e2;
+  padding: 0.85rem 1.2rem;
+  font-size: 0.82rem;
+  color: #991b1b;
+  border-radius: 0 6px 6px 0;
+  margin-bottom: 2rem;
+}
+
+/* ── SECTION STRUCTURE ── */
+.section {
+  margin-bottom: 2.5rem;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-bottom: 1.5px solid var(--border-dark);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.section-num {
+  background: #0f172a;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+}
+
+.section-title h2 {
+  font-size: 1.28rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* ── EXECUTIVE SUMMARY ── */
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 1.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.summary-text {
+  color: #334155;
+  line-height: 1.8;
+  font-size: 0.92rem;
+}
+
+.summary-text p {
+  margin-bottom: 0.8rem;
+}
+
+.summary-text strong {
+  color: #0f172a;
+}
+
+/* Risk meter & stats */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
+}
+
+.stat-box {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-top: 3px solid;
+  border-radius: 6px;
+  padding: 0.6rem 0.4rem;
+  text-align: center;
+}
+
+.stat-box .num {
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.stat-box .lbl {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.st-critical { border-top-color: #ef4444; } .st-critical .num, .st-critical .lbl { color: #b91c1c; }
+.st-high     { border-top-color: #f97316; } .st-high .num, .st-high .lbl { color: #c2410c; }
+.st-medium   { border-top-color: #eab308; } .st-medium .num, .st-medium .lbl { color: #854d0e; }
+.st-low      { border-top-color: #06b6d4; } .st-low .num, .st-low .lbl { color: #0f766e; }
+.st-info     { border-top-color: #22c55e; } .st-info .num, .st-info .lbl { color: #15803d; }
+
+.table-summary {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  margin-top: 0.5rem;
+}
+
+.table-summary td {
+  padding: 0.45rem 0.6rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.table-summary tr:last-child td {
+  border-bottom: none;
+}
+
+/* Distribution bar chart */
+.bar-chart-container {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-top: 1rem;
+}
+
+.bar-chart-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.bar-chart-row:last-child {
+  margin-bottom: 0;
+}
+
+.bar-chart-lbl {
+  width: 70px;
+  font-weight: 600;
+  text-align: right;
+  font-size: 0.78rem;
+}
+
+.bar-track {
+  flex: 1;
+  background: #e2e8f0;
+  height: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.bar-value {
+  height: 100%;
+  border-radius: 6px;
+}
+
+.bar-count-num {
+  width: 25px;
+  font-weight: 700;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+/* ── TABLES ── */
+.table-wrapper {
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+  background: #ffffff;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+thead th {
+  background: #f1f5f9;
+  color: #334155;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  padding: 0.6rem 0.85rem;
+  text-align: left;
+  border-bottom: 1.5px solid var(--border-dark);
+}
+
+tbody td {
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid var(--border-light);
+  color: #334155;
+  vertical-align: top;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr:nth-child(even) {
+  background: #fafafa;
+}
+
+code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  color: #0f172a;
+}
+
+/* ── SEVERITY BADGES ── */
+.badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.18rem 0.55rem;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.b-CRITICAL { background: var(--red-bg); color: var(--red-text); border: 1px solid var(--red-border); }
+.b-HIGH     { background: var(--orange-bg); color: var(--orange-text); border: 1px solid var(--orange-border); }
+.b-MEDIUM   { background: var(--yellow-bg); color: var(--yellow-text); border: 1px solid var(--yellow-border); }
+.b-LOW      { background: var(--cyan-bg); color: var(--cyan-text); border: 1px solid var(--cyan-border); }
+.b-INFO     { background: var(--green-bg); color: var(--green-text); border: 1px solid var(--green-border); }
+
+/* ── METHODOLOGY CARDS ── */
+.method-grid-print {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.method-card-print {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  padding: 0.75rem;
+}
+
+.method-card-print .num {
+  font-weight: 800;
+  color: var(--primary);
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+.method-card-print h4 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.3rem;
+}
+
+.method-card-print p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* ── DATA COLLECTION / RECON CARDS ── */
+.recon-stat-summary {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.recon-stat-mini {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  padding: 0.5rem 0.6rem;
+  border-radius: 6px;
+}
+
+.recon-stat-mini .lbl {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+  font-weight: 600;
+}
+
+.recon-stat-mini .val {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #0f172a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recon-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.recon-box {
+  background: #ffffff;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.recon-box h3 {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 0.4rem;
+}
+
+.recon-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.recon-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.recon-row .k {
+  color: var(--text-subtle);
+}
+
+.recon-row .v {
+  font-weight: 600;
+  color: var(--text-main);
+  text-align: right;
+}
+
+/* ── DETAILED FINDINGS (PRINTABLE EXPANDED FORMAT) ── */
+.finding-item-print {
+  background: #ffffff;
+  border: 1px solid var(--border-dark);
+  border-left: 5px solid;
+  border-radius: 8px;
+  margin-bottom: 1.75rem;
+  padding: 1.25rem 1.5rem;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.f-HIGH   { border-left-color: #ea580c; }
+.f-LOW    { border-left-color: #0891b2; }
+.f-INFO   { border-left-color: #16a34a; }
+.f-CRIT   { border-left-color: #dc2626; }
+.f-MED    { border-left-color: #ca8a04; }
+
+.finding-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.finding-title-left {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.finding-id {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-subtle);
+  background: var(--bg-subtle);
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-light);
+}
+
+.finding-title-left h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.finding-module-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  color: var(--text-muted);
+}
+
+.finding-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  padding: 0.65rem 0.85rem;
+  margin-bottom: 1rem;
+  font-size: 0.78rem;
+}
+
+.meta-field .lbl {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+  font-weight: 600;
+  margin-bottom: 0.15rem;
+}
+
+.meta-field .val {
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.finding-subhead {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #334155;
+  margin: 0.85rem 0 0.35rem 0;
+}
+
+.finding-desc {
+  font-size: 0.86rem;
+  color: #334155;
+  line-height: 1.6;
+}
+
+.evidence-box-print {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: #0f172a;
+  white-space: pre-wrap;
+  word-break: break-all;
+  line-height: 1.5;
+  margin: 0.4rem 0 0.8rem 0;
+}
+
+.remediation-steps {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-top: 0.4rem;
+}
+
+.remediation-steps li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.82rem;
+  color: #334155;
+}
+
+.step-num {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #dcfce7;
+  color: #166534;
+  font-weight: 700;
+  font-size: 0.72rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.references-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.4rem;
+}
+
+.ref-item {
+  font-size: 0.78rem;
+  color: var(--primary);
+  text-decoration: none;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── FOOTER & DISCLAIMER ── */
+.report-footer {
+  margin-top: 3rem;
+  border-top: 2px solid #0f172a;
+  padding-top: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--text-subtle);
+}
+
+.footer-brand {
+  font-weight: 800;
+  color: #0f172a;
+}
+
+/* ── PRINT-SPECIFIC CSS RULES ── */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 1.4cm 1.2cm 1.5cm 1.2cm;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 11pt !important;
+    line-height: 1.4 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .no-print-toolbar {
+    display: none !important;
+  }
+
+  .document-container {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .section {
+    page-break-inside: auto;
+  }
+
+  .section-break-before {
+    page-break-before: always;
+    break-before: page;
+  }
+
+  .finding-item-print {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    border: 1px solid #94a3b8 !important;
+    box-shadow: none !important;
+  }
+
+  .table-wrapper {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .summary-grid, .recon-two-col, .method-grid-print {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  a {
+    color: #1e3a8a !important;
+    text-decoration: none !important;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .document-container { padding: 1.5rem 1rem; }
+  .summary-grid { grid-template-columns: 1fr; }
+  .report-header { flex-direction: column; align-items: flex-start; }
+  .report-header-right { align-items: flex-start; }
+  .recon-two-col { grid-template-columns: 1fr; }
+  .method-grid-print { grid-template-columns: 1fr 1fr; }
+  .finding-meta-grid { grid-template-columns: 1fr 1fr; }
+  .recon-stat-summary { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP ACTION BAR (Hidden when printed or exported as PDF) -->
+<header class="no-print-toolbar">
+  <div class="toolbar-left">
+    <span class="toolbar-brand">DISTROYER</span>
+    <span class="toolbar-tag">Versão de Impressão / PDF Oficial</span>
+  </div>
+  <div class="toolbar-actions">
+    <a href="ubileaf.html" class="btn-secondary">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Ver Relatório Interativo
+    </a>
+    <button class="btn-print" onclick="window.print();">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+      Imprimir / Guardar como PDF
+    </button>
+  </div>
+</header>
+
+<main class="document-container">
+
+  <!-- ── COVER / HEADER ── -->
+  <section class="report-header">
+    <div class="report-header-left">
+      <span class="classification">CONFIDENCIAL — RELATÓRIO DE SEGURANÇA</span>
+      <h1>Avaliação de Segurança</h1>
+      <div class="subtitle">
+        Relatório Técnico de Vulnerabilidades Web &bull; 
+        <strong>Alvo:</strong> ubileaf.di.ubi.pt &bull; 
+        <strong>Auditor:</strong> killer6909203
+      </div>
+    </div>
+    <div class="report-header-right">
+      <div class="overall-risk-badge">
+        Risco Global: HIGH (79/100)
+      </div>
+      <div class="meta-box">
+        <span class="k">Data do Scan:</span>
+        <span class="v">2026-10-12 17:04:54</span>
+        <span class="k">Duração:</span>
+        <span class="v">408.7s</span>
+        <span class="k">Módulos:</span>
+        <span class="v">5 executados</span>
+        <span class="k">Ferramenta:</span>
+        <span class="v">Distroyer v2.0 Red Team</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONFIDENTIALITY CALLOUT -->
+  <div class="confidential-callout">
+    <strong>AVISO DE CONFIDENCIALIDADE:</strong> Este documento contém informações sensíveis de segurança técnica relativas ao sistema avaliado. O conteúdo destina-se exclusivamente ao uso do proprietário e equipes técnicas autorizadas. As vulnerabilidades listadas devem ser mitigadas com celeridade antes de qualquer divulgação.
+  </div>
+
+  <!-- ── 01. EXECUTIVE SUMMARY ── -->
+  <section class="section" id="executive">
+    <div class="section-title">
+      <span class="section-num">01</span>
+      <h2>Resumo Executivo (Executive Summary)</h2>
+    </div>
+
+    <div class="summary-grid">
+      <div class="summary-text">
+        <p>
+          Foi conduzida uma auditoria de segurança à aplicação web e infraestrutura localizada em <strong>ubileaf.di.ubi.pt</strong> a <strong>2026-10-12 às 17:04:54</strong>. O teste avaliou os domínios de transporte criptográfico (SSL/TLS), mapeamento de superfície de ataque, cabeçalhos de resposta HTTP, enumeração DNS e spiders de rastreio web.
+        </p>
+        <p>
+          A avaliação identificou um total de <strong>4 descobertas</strong> (findings). Foram identificadas vulnerabilidades de <strong>severidade Alta (HIGH)</strong> que expõem o tráfego dos utilizadores e facilitam interceção MitM e fuga de dados sensíveis.
+        </p>
+        <p>
+          A pontuação de risco global atribuída é <strong style="color:#c2410c;">79/100 (HIGH)</strong>. De entre as vulnerabilidades apuradas, <strong>1 problema de alta severidade</strong> requer mitigação prioritária no próximo ciclo de desenvolvimento/sprint.
+        </p>
+
+        <!-- Bar chart distribution -->
+        <div class="bar-chart-container">
+          <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;color:var(--text-subtle);margin-bottom:0.6rem;">
+            Distribuição por Gravidade (Severity Breakdown)
+          </div>
+          <div class="bar-chart-row">
+            <span class="bar-chart-lbl" style="color:#b91c1c;">Critical</span>
+            <div class="bar-track"><div class="bar-value" style="width:0%;background:#ef4444;"></div></div>
+            <span class="bar-count-num">0</span>
+          </div>
+          <div class="bar-chart-row">
+            <span class="bar-chart-lbl" style="color:#c2410c;">High</span>
+            <div class="bar-track"><div class="bar-value" style="width:50%;background:#f97316;"></div></div>
+            <span class="bar-count-num">1</span>
+          </div>
+          <div class="bar-chart-row">
+            <span class="bar-chart-lbl" style="color:#854d0e;">Medium</span>
+            <div class="bar-track"><div class="bar-value" style="width:0%;background:#eab308;"></div></div>
+            <span class="bar-count-num">0</span>
+          </div>
+          <div class="bar-chart-row">
+            <span class="bar-chart-lbl" style="color:#0f766e;">Low</span>
+            <div class="bar-track"><div class="bar-value" style="width:50%;background:#06b6d4;"></div></div>
+            <span class="bar-count-num">1</span>
+          </div>
+          <div class="bar-chart-row">
+            <span class="bar-chart-lbl" style="color:#15803d;">Info</span>
+            <div class="bar-track"><div class="bar-value" style="width:100%;background:#22c55e;"></div></div>
+            <span class="bar-count-num">2</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="stats-row">
+          <div class="stat-box st-critical"><div class="num">0</div><div class="lbl">Crit</div></div>
+          <div class="stat-box st-high"><div class="num">1</div><div class="lbl">High</div></div>
+          <div class="stat-box st-medium"><div class="num">0</div><div class="lbl">Med</div></div>
+          <div class="stat-box st-low"><div class="num">1</div><div class="lbl">Low</div></div>
+        </div>
+        <div class="stat-box st-info" style="margin-bottom:0.75rem;"><div class="num">2</div><div class="lbl">Informativas (Recon / Crawl)</div></div>
+
+        <div class="table-wrapper">
+          <table class="table-summary">
+            <thead><tr><th>Métrica de Avaliação</th><th>Resultado</th></tr></thead>
+            <tbody>
+              <tr><td>Total de Vulnerabilidades / Findings</td><td><strong>4</strong></td></tr>
+              <tr><td>Problemas de Ação Imediata (High/Crit)</td><td><strong style="color:#c2410c;">1</strong></td></tr>
+              <tr><td>Índice Global de Risco</td><td><strong style="color:#c2410c;">79 / 100 (HIGH)</strong></td></tr>
+              <tr><td>Módulos de Auditoria Ativados</td><td><strong>5</strong></td></tr>
+              <tr><td>Cabeçalhos de Segurança em Falta</td><td><strong style="color:#b91c1c;">7 de 7</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 02. SCOPE & METHODOLOGY ── -->
+  <section class="section" id="scope">
+    <div class="section-title">
+      <span class="section-num">02</span>
+      <h2>Âmbito &amp; Metodologia (Scope &amp; Methodology)</h2>
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 25%;">Parâmetro de Auditoria</th>
+            <th style="width: 75%;">Especificação Técnica</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Alvo Auditado (Target URL)</strong></td>
+            <td><code>ubileaf.di.ubi.pt</code></td>
+          </tr>
+          <tr>
+            <td><strong>Data &amp; Hora da Execução</strong></td>
+            <td>2026-10-12 17:04:54 (Duração total: 408.7 segundos)</td>
+          </tr>
+          <tr>
+            <td><strong>Tipo de Avaliação</strong></td>
+            <td>Black-box Web Application &amp; External Infrastructure Security Assessment</td>
+          </tr>
+          <tr>
+            <td><strong>Ferramenta Utilizada</strong></td>
+            <td>Distroyer v2.0 (Enterprise Red Team Edition)</td>
+          </tr>
+          <tr>
+            <td><strong>Normas &amp; Standards de Referência</strong></td>
+            <td>OWASP Top 10 (2021), OWASP Web Security Testing Guide (WSTG), CWE/SANS Top 25</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="method-grid-print">
+      <div class="method-card-print">
+        <div class="num">01. RECON</div>
+        <h4>Reconhecimento</h4>
+        <p>Resolução DNS, certificados TLS, descoberta de subdomínios, verificação de WAF e fingerprinting de servidores.</p>
+      </div>
+      <div class="method-card-print">
+        <div class="num">02. VULN SCAN</div>
+        <h4>Verificação de Falhas</h4>
+        <p>Inspeção automatizada de vetores de injeção, XSS, SSRF, bypasses de controlo de acesso e políticas CORS.</p>
+      </div>
+      <div class="method-card-print">
+        <div class="num">03. CONFIG AUDIT</div>
+        <h4>Revisão de Configurações</h4>
+        <p>Auditoria exaustiva a cabeçalhos de segurança HTTP, ciphers e versões TLS, arquivos sensíveis e portas abertas.</p>
+      </div>
+      <div class="method-card-print">
+        <div class="num">04. CRAWLING &amp; ASSETS</div>
+        <h4>Mapeamento de Superfície</h4>
+        <p>Spidering de páginas públicas, formulários, parâmetros de entrada, credenciais expostas e caminhos administrativos.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 03. DATA COLLECTION & RECONNAISSANCE ── -->
+  <section class="section section-break-before" id="recon">
+    <div class="section-title">
+      <span class="section-num">03</span>
+      <h2>Recolha de Dados &amp; Inteligência (Reconnaissance)</h2>
+    </div>
+
+    <!-- Mini KPI row -->
+    <div class="recon-stat-summary">
+      <div class="recon-stat-mini">
+        <div class="lbl">Host Alvo</div>
+        <div class="val" title="ubileaf.di.ubi.pt">ubileaf.di.ubi.pt</div>
+      </div>
+      <div class="recon-stat-mini">
+        <div class="lbl">Endereço IPv4</div>
+        <div class="val">Unknown / Dinâmico</div>
+      </div>
+      <div class="recon-stat-mini">
+        <div class="lbl">Servidor Web</div>
+        <div class="val">Nginx (Identificado)</div>
+      </div>
+      <div class="recon-stat-mini">
+        <div class="lbl">Cabeçalhos Seguros</div>
+        <div class="val" style="color:#b91c1c;">0 / 7 Configurados</div>
+      </div>
+      <div class="recon-stat-mini">
+        <div class="lbl">Portas Abertas</div>
+        <div class="val">0 (Scan Rápido)</div>
+      </div>
+      <div class="recon-stat-mini">
+        <div class="lbl">Formulários Mapeados</div>
+        <div class="val">6 Forms Mapeados</div>
+      </div>
+    </div>
+
+    <!-- Recon 2 column block -->
+    <div class="recon-two-col">
+      <div class="recon-box">
+        <h3>🌐 Rede &amp; Infraestrutura</h3>
+        <div class="recon-list">
+          <div class="recon-row"><span class="k">Hostname Alvo</span><span class="v"><code>ubileaf.di.ubi.pt</code></span></div>
+          <div class="recon-row"><span class="k">Protocolo Primário</span><span class="v"><span class="badge b-INFO">HTTP</span></span></div>
+          <div class="recon-row"><span class="k">WAF (Firewall Web)</span><span class="v">Nenhuma detetada</span></div>
+          <div class="recon-row"><span class="k">security.txt</span><span class="v" style="color:#c2410c;">Ausente (Não configurado)</span></div>
+          <div class="recon-row"><span class="k">robots.txt</span><span class="v">Não encontrado</span></div>
+          <div class="recon-row"><span class="k">sitemap.xml</span><span class="v">Não encontrado</span></div>
+        </div>
+      </div>
+
+      <div class="recon-box">
+        <h3>🔒 Criptografia &amp; Protocolos TLS</h3>
+        <div class="recon-list">
+          <div class="recon-row"><span class="k">Suporte HTTPS</span><span class="v"><span class="badge b-INFO">Ativo (Porta 80 padrão)</span></span></div>
+          <div class="recon-row"><span class="k">Validade do Certificado</span><span class="v">Válido</span></div>
+          <div class="recon-row"><span class="k">Ciphers Negociados</span><span class="v"><code>TLS 1.2 / TLS 1.3</code></span></div>
+          <div class="recon-row"><span class="k">HSTS Preload</span><span class="v">Elegível para Preload</span></div>
+          <div class="recon-row"><span class="k">Páginas Rasteadas</span><span class="v">1 página visitada</span></div>
+          <div class="recon-row"><span class="k">Formulários Web</span><span class="v">6 formulários detetados</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Security Headers Audit Table -->
+    <h3 style="font-size:0.95rem;font-weight:700;margin-bottom:0.6rem;color:#0f172a;">
+      🛡️ Auditoria a Cabeçalhos de Segurança HTTP (HTTP Security Headers Audit)
+    </h3>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:24%;">Cabeçalho de Segurança</th>
+            <th style="width:13%;">Estado da Auditoria</th>
+            <th style="width:38%;">Diretiva Recomendada</th>
+            <th style="width:25%;">Objetivo de Proteção</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Strict-Transport-Security (HSTS)</strong></td>
+            <td><span class="badge b-HIGH">EM FALTA</span></td>
+            <td><code>max-age=31536000; includeSubDomains; preload</code></td>
+            <td>Força comunicação cifrada via HTTPS e impede downgrade / MITM.</td>
+          </tr>
+          <tr>
+            <td><strong>Content-Security-Policy (CSP)</strong></td>
+            <td><span class="badge b-HIGH">EM FALTA</span></td>
+            <td><code>default-src &#39;self&#39;; script-src &#39;self&#39;</code></td>
+            <td>Restringe execução de scripts e origens não autorizadas (mitiga XSS).</td>
+          </tr>
+          <tr>
+            <td><strong>X-Frame-Options</strong></td>
+            <td><span class="badge b-MEDIUM">EM FALTA</span></td>
+            <td><code>DENY</code> ou <code>SAMEORIGIN</code></td>
+            <td>Controla inclusão do site em iframes para prevenir Clickjacking.</td>
+          </tr>
+          <tr>
+            <td><strong>X-Content-Type-Options</strong></td>
+            <td><span class="badge b-MEDIUM">EM FALTA</span></td>
+            <td><code>nosniff</code></td>
+            <td>Desativa auto-deteção (MIME-sniffing) do navegador.</td>
+          </tr>
+          <tr>
+            <td><strong>Referrer-Policy</strong></td>
+            <td><span class="badge b-MEDIUM">EM FALTA</span></td>
+            <td><code>strict-origin-when-cross-origin</code></td>
+            <td>Impede que URLs com tokens sensíveis vazem para domínios externos.</td>
+          </tr>
+          <tr>
+            <td><strong>Permissions-Policy</strong></td>
+            <td><span class="badge b-MEDIUM">EM FALTA</span></td>
+            <td><code>geolocation=(), microphone=(), camera=()</code></td>
+            <td>Restringe o acesso da página a microfones, câmaras e sensores.</td>
+          </tr>
+          <tr>
+            <td><strong>Cache-Control</strong></td>
+            <td><span class="badge b-MEDIUM">EM FALTA</span></td>
+            <td><code>no-store, no-cache, must-revalidate</code></td>
+            <td>Evita que proxies intermédios guardem dados autenticados em cache.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── 04. DETAILED FINDINGS ── -->
+  <section class="section section-break-before" id="findings">
+    <div class="section-title">
+      <span class="section-num">04</span>
+      <h2>Descobertas Detalhadas (Detailed Technical Findings)</h2>
+    </div>
+
+    <!-- FINDING 01: NO HTTPS -->
+    <article class="finding-item-print f-HIGH" id="finding-print-1">
+      <div class="finding-title-row">
+        <div class="finding-title-left">
+          <span class="finding-id">#001</span>
+          <span class="badge b-HIGH">HIGH</span>
+          <h3>Ausência de Enforçamento HTTPS (No HTTPS Enforced)</h3>
+        </div>
+        <span class="finding-module-pill">Módulo: ssl</span>
+      </div>
+
+      <div class="finding-meta-grid">
+        <div class="meta-field">
+          <div class="lbl">Severidade</div>
+          <div class="val"><span class="badge b-HIGH">HIGH</span></div>
+        </div>
+        <div class="meta-field">
+          <div class="lbl">Pontuação CVSS v3.1</div>
+          <div class="val" style="color:#c2410c;font-weight:700;">7.5 / 10.0</div>
+        </div>
+        <div class="meta-field">
+          <div class="lbl">Categoria OWASP</div>
+          <div class="val">A05:2021 — Security Misconfiguration</div>
+        </div>
+        <div class="meta-field">
+          <div class="lbl">Classificação CWE</div>
+          <div class="val">CWE-200 / CWE-319</div>
+        </div>
+      </div>
+
+      <div class="finding-subhead">Resumo da Vulnerabilidade:</div>
+      <p class="finding-desc">
+        O servidor alvo aceita ligações através do protocolo inseguro HTTP sem redirecionamento compulsório para HTTPS nem ativação de mecanismos como HSTS.
+      </p>
+
+      <div class="finding-subhead">Impacto Técnico e de Negócio:</div>
+      <p class="finding-desc">
+        Comunicações em texto claro (HTTP) são suscetíveis a ataques de interceção e escuta (Man-in-the-Middle / sniffing) na rede local ou em trânsito de ISP. Cookies de sessão, credenciais submetidas e conteúdo de respostas podem ser lidos e alterados por terceiros maliciosos sem aviso prévio aos utilizadores.
+      </p>
+
+      <div class="finding-subhead">Evidência Técnica / Prova de Conceito:</div>
+      <pre class="evidence-box-print">Ligação estabelecida via http://ubileaf.di.ubi.pt/ sem redirecionamento 301/308 obrigatório para https://.</pre>
+
+      <div class="finding-subhead">Recomendações de Remediação:</div>
+      <ul class="remediation-steps">
+        <li>
+          <span class="step-num">1</span>
+          <span>Configurar o servidor web (Nginx) para redirecionar permanentemente (código HTTP 301) todo o tráfego HTTP da porta 80 para HTTPS (porta 443).</span>
+        </li>
+        <li>
+          <span class="step-num">2</span>
+          <span>Implementar o cabeçalho <code>Strict-Transport-Security: max-age=31536000; includeSubDomains; preload</code> para garantir que navegadores nunca realizem ligações em texto claro.</span>
+        </li>
+        <li>
+          <span class="step-num">3</span>
+          <span>Garantir que todos os cookies de autenticação contenham os atributos <code>Secure</code> e <code>HttpOnly</code>.</span>
+        </li>
+      </ul>
+
+      <div class="finding-subhead">Referências Oficiais:</div>
+      <div class="references-row">
+        <a class="ref-item" href="https://owasp.org/Top10/A05_2021-Security_Misconfiguration/" target="_blank">🔗 OWASP Top 10 A05:2021 Misconfiguration</a>
+        <a class="ref-item" href="https://cwe.mitre.org/data/definitions/319.html" target="_blank">🔗 CWE-319: Cleartext Transmission of Sensitive Information</a>
+      </div>
+    </article>
+
+    <!-- FINDING 02: NO SECURITY.TXT -->
+    <article class="finding-item-print f-LOW" id="finding-print-2">
+      <div class="finding-title-row">
+        <div class="finding-title-left">
+          <span class="finding-id">#002</span>
+          <span class="badge b-LOW">LOW</span>
+          <h3>Falta de Política de Divulgação security.txt (No security.txt)</h3>
+        </div>
+        <span class="finding-module-pill">Módulo: recon</span>
+      </div>
+
+      <div class="finding-meta-grid">
+        <div class="meta-field">
+          <div class="lbl">Severidade</div>
+          <div class="val"><span class="badge b-LOW">LOW</span></div>
+        </div>
+        <div class="meta-field">
+          <div class="lbl">Pontuação CVSS v3.1</div>
+          <div class="val" style="color:#0f766e;font-weight:700;">2.0 / 10.0</div>
+        </div>
+        <div class="meta-field">
+          <div class="lbl">Categoria OWASP</div>
+          <div class="val">A05:2021 — Security Misconfiguration</div>
+        </div>
+        <div class="meta-field">
+          <div class="lbl">Classificação CWE</div>
+          <div class="val">CWE-200</div>
+        </div>
+      </div>
+
+      <div class="finding-subhead">Resumo da Vulnerabilidade:</div>
+      <p class="finding-desc">
+        Não foi encontrado o ficheiro normalizado <code>/.well-known/security.txt</code> nem <code>/security.txt</code> no domínio avaliado.
+      </p>
+
+      <div class="finding-subhead">Impacto Técnico e de Negócio:</div>
+      <p class="finding-desc">
+        O padrão security.txt (RFC 9116) define um canal direto e seguro para investigadores éticos e a comunidade reportarem incidentes ou falhas diretamente à equipa de segurança da organização, prevenindo divulgação pública descontrolada ou demoras no contacto.
+      </p>
+
+      <div class="finding-subhead">Evidência Técnica / Prova de Conceito:</div>
+      <pre class="evidence-box-print">GET /.well-known/security.txt -> 404 Not Found</pre>
+
+      <div class="finding-subhead">Recomendações de Remediação:</div>
+      <ul class="remediation-steps">
+        <li>
+          <span class="step-num">1</span>
+          <span>Criar o ficheiro <code>/.well-known/security.txt</code> em conformidade com o padrão RFC 9116.</span>
+        </li>
+        <li>
+          <span class="step-num">2</span>
+          <span>Adicionar contactos operacionais (ex: <code>Contact: mailto:security@ubi.pt</code>) e chaves públicas de cifragem PGP.</span>
+        </li>
+      </ul>
+
+      <div class="finding-subhead">Referências Oficiais:</div>
+      <div class="references-row">
+        <a class="ref-item" href="https://securitytxt.org/" target="_blank">🔗 RFC 9116 — A File Format to Aid in Security Vulnerability Disclosure</a>
+      </div>
+    </article>
+
+    <!-- FINDING 03: DNS ENUMERATION -->
+    <article class="finding-item-print f-INFO" id="finding-print-3">
+      <div class="finding-title-row">
+        <div class="finding-title-left">
+          <span class="finding-id">#003</span>
+          <span class="badge b-INFO">INFO</span>
+          <h3>Registos DNS Enumerados (DNS Records Enumerated)</h3>
+        </div>
+        <span class="finding-module-pill">Módulo: recon</span>
+      </div>
+
+      <div class="finding-meta-grid">
+        <div class="meta-field">
+          <div class="lbl">Severidade</div>
+          <div class="val"><span class="badge b-INFO">INFO</span></div>
+        </div>
+        <div class="meta-field">
+          <div class="lbl">Pontuação CVSS v3.1</div>
+          <div class="val" style="color:#15803d;font-weight:700;">2.5 / 10.0</div>
+        </div>
+        <div class="meta-field">
+          <div class="lbl">Categoria OWASP</div>
+          <div class="val">A05:2021 — Security Misconfiguration</div>
+        </div>
+        <div class="meta-field">
+          <div class="lbl">Classificação CWE</div>
+          <div class="val">CWE-200</div>
+        </div>
+      </div>
+
+      <div class="finding-subhead">Resumo da Vulnerabilidade:</div>
+      <p class="finding-desc">
+        A enumeração DNS identificou registos de recursos DNS ativos (A, NS, IPv6). Foram mapeados endereços locais/VPN e root servers associados à resolução.
+      </p>
+
+      <div class="finding-subhead">Impacto Técnico e de Negócio:</div>
+      <p class="finding-desc">
+        Fornece informações de reconhecimento de rede e topologia interna (endereços IP privados das gamas 192.168.x.x e VPN 26.x.x.x) que facilitam o planeamento de ataques direcionados caso haja pivoting de rede.
+      </p>
+
+      <div class="finding-subhead">Evidência Técnica / Prova de Conceito:</div>
+      <pre class="evidence-box-print">{
+  "A / IPv6": [
+    "fe80::8e7e:e724:c536:e66",
+    "fe80::3d4e:79a8:2a20:bcb7",
+    "fe80::680e:e4a8:74cf:3ece",
+    "fe80::7a44:822:bc1f:b151",
+    "26.12.228.84",
+    "192.168.224.85",
+    "192.168.35.1",
+    "192.168.94.1",
+    "fdfd::1a0c:e454"
+  ],
+  "NS": [
+    "e.root-servers.net.", "m.root-servers.net.", "j.root-servers.net.",
+    "a.root-servers.net.", "h.root-servers.net.", "f.root-servers.net.",
+    "i.root-servers.net.", "c.root-servers.net.", "k.root-servers.net."
+  ]
+}</pre>
+
+      <div class="finding-subhead">Recomendações de Remediação:</div>
+      <ul class="remediation-steps">
+        <li>
+          <span class="step-num">1</span>
+          <span>Auditar a exposição de IPs privados e interfaces em zonas DNS públicas ou de teste.</span>
+        </li>
+        <li>
+          <span class="step-num">2</span>
+          <span>Verificar e consolidar registos SPF, DKIM e DMARC com política de rejeição (<code>p=reject</code>).</span>
+        </li>
+      </ul>
+
+      <div class="finding-subhead">Referências Oficiais:</div>
+      <div class="references-row">
+        <a class="ref-item" href="https://owasp.org/Top10/A05_2021-Security_Misconfiguration/" target="_blank">🔗 OWASP Top 10 A05:2021</a>
+        <a class="ref-item" href="https://cwe.mitre.org/data/definitions/200.html" target="_blank">🔗 CWE-200: Exposure of Sensitive Information</a>
+      </div>
+    </article>
+
+    <!-- FINDING 04: CRAWLER COMPLETE -->
+    <article class="finding-item-print f-INFO" id="finding-print-4">
+      <div class="finding-title-row">
+        <div class="finding-title-left">
+          <span class="finding-id">#004</span>
+          <span class="badge b-INFO">INFO</span>
+          <h3>Rastreio Web Concluído (Spider / Crawler Surface Analysis)</h3>
+        </div>
+        <span class="finding-module-pill">Módulo: crawl</span>
+      </div>
+
+      <div class="finding-meta-grid">
+        <div class="meta-field">
+          <div class="lbl">Severidade</div>
+          <div class="val"><span class="badge b-INFO">INFO</span></div>
+        </div>
+        <div class="meta-field">
+          <div class="lbl">Pontuação CVSS v3.1</div>
+          <div class="val" style="color:#15803d;font-weight:700;">2.0 / 10.0</div>
+        </div>
+        <div class="meta-field">
+          <div class="lbl">Categoria OWASP</div>
+          <div class="val">A05:2021 — Security Misconfiguration</div>
+        </div>
+        <div class="meta-field">
+          <div class="lbl">Classificação CWE</div>
+          <div class="val">CWE-200</div>
+        </div>
+      </div>
+
+      <div class="finding-subhead">Resumo da Vulnerabilidade:</div>
+      <p class="finding-desc">
+        O crawler e mapeador de superfície web explorou os pontos de contacto acessíveis, mapeando 1 página raiz e 6 elementos de formulário/inputs.
+      </p>
+
+      <div class="finding-subhead">Impacto Técnico e de Negócio:</div>
+      <p class="finding-desc">
+        Define o perímetro exterior de ataque passível de ser explorado por agentes automatizados e testes de injeção em formulários.
+      </p>
+
+      <div class="finding-subhead">Evidência Técnica / Prova de Conceito:</div>
+      <pre class="evidence-box-print">Pages visited: 1 &bull; Forms mapped: 6 &bull; Sensitive directories: 0 exposed</pre>
+
+      <div class="finding-subhead">Recomendações de Remediação:</div>
+      <ul class="remediation-steps">
+        <li>
+          <span class="step-num">1</span>
+          <span>Implementar proteção contra CSRF (Cross-Site Request Forgery) e sanitização rigorosa nos 6 formulários identificados.</span>
+        </li>
+      </ul>
+
+      <div class="finding-subhead">Referências Oficiais:</div>
+      <div class="references-row">
+        <a class="ref-item" href="https://owasp.org/Top10/A05_2021-Security_Misconfiguration/" target="_blank">🔗 OWASP Top 10 A05:2021</a>
+      </div>
+    </article>
+  </section>
+
+  <!-- ── 05. REMEDIATION PLAN ── -->
+  <section class="section section-break-before" id="remediation-plan">
+    <div class="section-title">
+      <span class="section-num">05</span>
+      <h2>Plano de Priorização &amp; Remediação (Remediation Priority Plan)</h2>
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 6%;">#</th>
+            <th style="width: 14%;">Severidade</th>
+            <th style="width: 25%;">Vulnerabilidade Identificada</th>
+            <th style="width: 37%;">Ação Recomendada de Remediação</th>
+            <th style="width: 18%;">Prazo / SLA Sugerido</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1</strong></td>
+            <td><span class="badge b-HIGH">HIGH</span></td>
+            <td><strong>No HTTPS</strong></td>
+            <td>Configurar redirecionamento 301 compulsório para HTTPS e aplicar cabeçalho HSTS no Nginx.</td>
+            <td><strong style="color:#c2410c;">Até 7 dias</strong></td>
+          </tr>
+          <tr>
+            <td><strong>2</strong></td>
+            <td><span class="badge b-LOW">LOW</span></td>
+            <td><strong>No security.txt</strong></td>
+            <td>Disponibilizar o ficheiro <code>/.well-known/security.txt</code> com os contactos da equipa de segurança.</td>
+            <td>Sprint planeado (30 dias)</td>
+          </tr>
+          <tr>
+            <td><strong>3</strong></td>
+            <td><span class="badge b-INFO">INFO</span></td>
+            <td><strong>Security Headers Audit</strong></td>
+            <td>Adicionar os 7 cabeçalhos em falta (CSP, X-Frame-Options, X-Content-Type, etc.) na configuração do servidor.</td>
+            <td>Próximo release / sprint</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── 06. FOOTER & SIGN-OFF ── -->
+  <footer class="report-footer">
+    <div>
+      <span class="footer-brand">DISTROYER RED TEAM FRAMEWORK v2.0</span>
+      <div>Relatório emitido automaticamente &bull; Auditoria de Segurança Ética Autorizada</div>
+    </div>
+    <div style="text-align: right;">
+      <div>Alvo: <strong>ubileaf.di.ubi.pt</strong> | Auditor: <strong>killer6909203</strong></div>
+      <div>Uso não autorizado ou testes sem consentimento prévio são estritamente proibidos por lei.</div>
+    </div>
+  </footer>
+
+</main>
+
+</body>
+</html>
