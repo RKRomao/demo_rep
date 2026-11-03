@@ -1,19 +1,24 @@
 <!DOCTYPE html>
 <html lang="pt-PT" data-theme="dark">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fontes & Referências do Poster</title>
-  <meta name="description" content="Página estática com as fontes bibliográficas, normas internacionais (ISO/IEC, JIS), RFCs da IETF, 3GPP e publicações científicas citadas no poster (NFC, OSPF, SCTP, MCP).">
-  
+  <meta name="description"
+    content="Página estática com as fontes bibliográficas, normas internacionais (ISO/IEC, JIS), RFCs da IETF, 3GPP e publicações científicas citadas no poster (NFC, OSPF, SCTP, MCP).">
+
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+
   <!-- Stylesheet -->
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <!-- Ambient background glow elements -->
   <div class="glow-orb orb-1" aria-hidden="true"></div>
@@ -28,13 +33,15 @@
         </span>
         <h1 class="header-title">Fontes & Referências Oficiais</h1>
         <p class="header-subtitle">
-          Compilação exaustiva de normas internacionais (ISO, JIS, EMVCo), RFCs da IETF, padrões 3GPP e literatura científica de alto impacto (ACM, IEEE, NeurIPS).
+          Compilação de normas internacionais (ISO, JIS, EMVCo), RFCs da IETF, padrões 3GPP e literatura científica de
+          alto impacto (ACM, IEEE, NeurIPS).
         </p>
       </div>
 
       <div class="header-actions">
         <button id="theme-toggle" class="btn btn-icon" title="Alternar tema claro/escuro" aria-label="Alternar tema">
-          <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="5"></circle>
             <line x1="12" y1="1" x2="12" y2="3"></line>
             <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -45,7 +52,8 @@
             <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
             <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
           </svg>
-          <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
           </svg>
         </button>
@@ -71,16 +79,18 @@
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
-          <input type="text" id="search-input" placeholder="Pesquisar por norma, autor, RFC, 5G, IEEE, protocolo..." autocomplete="off">
+          <input type="text" id="search-input" placeholder="Pesquisar por norma, autor, RFC, 5G, IEEE, protocolo..."
+            autocomplete="off">
           <button id="clear-search" class="btn-clear" aria-label="Limpar pesquisa">&times;</button>
         </div>
 
         <nav class="filter-tabs" aria-label="Filtro de tópicos">
-          <button class="filter-btn active" data-filter="all">Todos <span class="counter" id="count-all">31</span></button>
-          <button class="filter-btn" data-filter="nfc">NFC <span class="counter">7</span></button>
-          <button class="filter-btn" data-filter="ospf">OSPF <span class="counter">9</span></button>
-          <button class="filter-btn" data-filter="sctp">SCTP <span class="counter">8</span></button>
-          <button class="filter-btn" data-filter="mcp">MCP <span class="counter">7</span></button>
+          <button class="filter-btn active" data-filter="all">Todos <span class="counter"
+              id="count-all">31</span></button>
+          <button class="filter-btn" data-filter="nfc">1. NFC <span class="counter">7</span></button>
+          <button class="filter-btn" data-filter="ospf">2. OSPF <span class="counter">9</span></button>
+          <button class="filter-btn" data-filter="sctp">3. SCTP <span class="counter">8</span></button>
+          <button class="filter-btn" data-filter="mcp">4. MCP <span class="counter">7</span></button>
         </nav>
       </div>
     </div>
@@ -88,7 +98,7 @@
 
   <!-- Main Content Area -->
   <main class="container main-content">
-    
+
     <!-- ==========================================
          NFC Section
          ========================================== -->
@@ -96,8 +106,9 @@
       <div class="card-header border-teal">
         <div class="topic-meta">
           <span class="topic-tag tag-teal">Comunicação Sem Fio / RFID & Pagamentos</span>
-          <h2 class="topic-title">NFC — Near Field Communication</h2>
-          <p class="topic-desc">Padrões de indução em campo eletromagnético (13.56 MHz), formatos de dados NDEF, ecossistema financeiro EMVCo e segurança de canais de proximidade.</p>
+          <h2 class="topic-title">1. NFC — Near Field Communication</h2>
+          <p class="topic-desc">Padrões de indução em campo eletromagnético (13.56 MHz), formatos de dados NDEF,
+            ecossistema financeiro EMVCo e segurança de canais de proximidade.</p>
         </div>
         <div class="badge-count">7 Fontes & Normas</div>
       </div>
@@ -111,13 +122,18 @@
               <span class="ref-code">ISO/IEC 18092:2023</span>
               <span class="ref-type-badge">Padrão Internacional</span>
             </div>
-            <h3 class="ref-title">Telecommunications and information exchange between systems — Near Field Communication — Interface and Protocol (NFCIP-1)</h3>
+            <h3 class="ref-title">Telecommunications and information exchange between systems — Near Field Communication
+              — Interface and Protocol (NFCIP-1)</h3>
             <p class="ref-details">
-              Define modulações, esquemas de codificação, velocidades de transmissão (106, 212 e 424 kbit/s) e formato de quadros na frequência RF de 13,56 MHz para os modos de comunicação ativo e passivo.
+              Define modulações, esquemas de codificação, velocidades de transmissão (106, 212 e 424 kbit/s) e formato
+              de quadros na frequência RF de 13,56 MHz para os modos de comunicação ativo e passivo.
             </p>
             <div class="ref-actions">
-              <a href="https://www.iso.org/standard/83726.html" target="_blank" rel="noopener noreferrer" class="ref-link">Aceder ISO.org &rarr;</a>
-              <button class="btn-copy" data-cite="ISO/IEC 18092. (2023). Telecommunications and information exchange between systems — Near Field Communication — Interface and Protocol (NFCIP-1). International Organization for Standardization.">Copiar Citação</button>
+              <a href="https://www.iso.org/standard/83726.html" target="_blank" rel="noopener noreferrer"
+                class="ref-link">Aceder ISO.org &rarr;</a>
+              <button class="btn-copy"
+                data-cite="ISO/IEC 18092. (2023). Telecommunications and information exchange between systems — Near Field Communication — Interface and Protocol (NFCIP-1). International Organization for Standardization.">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
@@ -130,13 +146,19 @@
               <span class="ref-code">ISO/IEC 14443 (Partes 1 a 4) Tipo A & B</span>
               <span class="ref-type-badge">Padrão Internacional</span>
             </div>
-            <h3 class="ref-title">Cards and security devices for personal identification — Contactless proximity objects</h3>
+            <h3 class="ref-title">Cards and security devices for personal identification — Contactless proximity objects
+            </h3>
             <p class="ref-details">
-              Norma de referência para cartões e dispositivos sem contacto de proximidade (raio de até 10 cm), especificando o acoplamento físico, modulação de sinal (Tipo A e B), algoritmos anticolisão e protocolos de transmissão T=CL.
+              Norma de referência para cartões e dispositivos sem contacto de proximidade (raio de até 10 cm),
+              especificando o acoplamento físico, modulação de sinal (Tipo A e B), algoritmos anticolisão e protocolos
+              de transmissão T=CL.
             </p>
             <div class="ref-actions">
-              <a href="https://www.iso.org/standard/73596.html" target="_blank" rel="noopener noreferrer" class="ref-link">Aceder ISO.org &rarr;</a>
-              <button class="btn-copy" data-cite="ISO/IEC 14443. Cards and security devices for personal identification — Contactless proximity objects (Part 1-4: Type A and Type B). International Organization for Standardization.">Copiar Citação</button>
+              <a href="https://www.iso.org/standard/73596.html" target="_blank" rel="noopener noreferrer"
+                class="ref-link">Aceder ISO.org &rarr;</a>
+              <button class="btn-copy"
+                data-cite="ISO/IEC 14443. Cards and security devices for personal identification — Contactless proximity objects (Part 1-4: Type A and Type B). International Organization for Standardization.">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
@@ -149,13 +171,18 @@
               <span class="ref-code">JIS X 6319-4 (FeliCa)</span>
               <span class="ref-type-badge">Padrão Industrial Japonês</span>
             </div>
-            <h3 class="ref-title">Specification of implementation for integrated circuit(s) cards — Part 4: High speed proximity cards</h3>
+            <h3 class="ref-title">Specification of implementation for integrated circuit(s) cards — Part 4: High speed
+              proximity cards</h3>
             <p class="ref-details">
-              Especificação base da tecnologia Sony FeliCa (NFC-F), caracterizada pelo seu processamento em menos de 100 milissegundos para bilhética de trânsito em massa (ex: Suica/Pasmo) e micropagamentos.
+              Especificação base da tecnologia Sony FeliCa (NFC-F), caracterizada pelo seu processamento em menos de 100
+              milissegundos para bilhética de trânsito em massa (ex: Suica/Pasmo) e micropagamentos.
             </p>
             <div class="ref-actions">
-              <a href="https://www.sony.net/Products/felica/" target="_blank" rel="noopener noreferrer" class="ref-link">Especificação Sony FeliCa &rarr;</a>
-              <button class="btn-copy" data-cite="JIS X 6319-4. Specification of implementation for integrated circuit(s) cards — Part 4: High speed proximity cards (FeliCa). Japanese Industrial Standards Committee.">Copiar Citação</button>
+              <a href="https://www.sony.net/Products/felica/" target="_blank" rel="noopener noreferrer"
+                class="ref-link">Especificação Sony FeliCa &rarr;</a>
+              <button class="btn-copy"
+                data-cite="JIS X 6319-4. Specification of implementation for integrated circuit(s) cards — Part 4: High speed proximity cards (FeliCa). Japanese Industrial Standards Committee.">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
@@ -168,13 +195,19 @@
               <span class="ref-code">ISO/IEC 21481:2021 (NFCIP-2)</span>
               <span class="ref-type-badge">Padrão Internacional</span>
             </div>
-            <h3 class="ref-title">Information technology — Telecommunications and information exchange between systems — NFCIP-2</h3>
+            <h3 class="ref-title">Information technology — Telecommunications and information exchange between systems —
+              NFCIP-2</h3>
             <p class="ref-details">
-              Especifica o mecanismo de seleção e comutação automática entre NFCIP-1 (ISO/IEC 18092), cartões de proximidade (ISO/IEC 14443) e cartões de vizinhança/vicinity (ISO/IEC 15693), garantindo total interoperabilidade sem interferência mútua.
+              Especifica o mecanismo de seleção e comutação automática entre NFCIP-1 (ISO/IEC 18092), cartões de
+              proximidade (ISO/IEC 14443) e cartões de vizinhança/vicinity (ISO/IEC 15693), garantindo total
+              interoperabilidade sem interferência mútua.
             </p>
             <div class="ref-actions">
-              <a href="https://www.iso.org/standard/81335.html" target="_blank" rel="noopener noreferrer" class="ref-link">Aceder ISO.org &rarr;</a>
-              <button class="btn-copy" data-cite="ISO/IEC 21481. (2021). Information technology — Telecommunications and information exchange between systems — Near Field Communication Interface and Protocol -2 (NFCIP-2). International Organization for Standardization.">Copiar Citação</button>
+              <a href="https://www.iso.org/standard/81335.html" target="_blank" rel="noopener noreferrer"
+                class="ref-link">Aceder ISO.org &rarr;</a>
+              <button class="btn-copy"
+                data-cite="ISO/IEC 21481. (2021). Information technology — Telecommunications and information exchange between systems — Near Field Communication Interface and Protocol -2 (NFCIP-2). International Organization for Standardization.">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
@@ -189,11 +222,15 @@
             </div>
             <h3 class="ref-title">NFC Data Exchange Format (NDEF) Technical Specification</h3>
             <p class="ref-details">
-              Formato de dados binário comum e leve para encapsular e trocar mensagens e registos tipados (RTD, MIME, URIs) entre dispositivos móveis e etiquetas RFID/NFC de diferentes fabricantes.
+              Formato de dados binário comum e leve para encapsular e trocar mensagens e registos tipados (RTD, MIME,
+              URIs) entre dispositivos móveis e etiquetas RFID/NFC de diferentes fabricantes.
             </p>
             <div class="ref-actions">
-              <a href="https://nfc-forum.org/" target="_blank" rel="noopener noreferrer" class="ref-link">NFC Forum Specs &rarr;</a>
-              <button class="btn-copy" data-cite="NFC Forum. (2021). NFC Data Exchange Format (NDEF) Technical Specification. NFC Forum Technical Committee.">Copiar Citação</button>
+              <a href="https://nfc-forum.org/" target="_blank" rel="noopener noreferrer" class="ref-link">NFC Forum
+                Specs &rarr;</a>
+              <button class="btn-copy"
+                data-cite="NFC Forum. (2021). NFC Data Exchange Format (NDEF) Technical Specification. NFC Forum Technical Committee.">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
@@ -208,17 +245,23 @@
             </div>
             <h3 class="ref-title">EMV® Contactless Specifications for Payment Systems</h3>
             <p class="ref-details">
-              Conjunto de normas técnicas universais geridas pela EMVCo (Visa, Mastercard, Europay, Amex) para transações financeiras de crédito e débito sem contacto em terminais POS, smartcards e carteiras digitais (Apple Pay / Google Pay).
+              Conjunto de normas técnicas universais geridas pela EMVCo (Visa, Mastercard, Europay, Amex) para
+              transações financeiras de crédito e débito sem contacto em terminais POS, smartcards e carteiras digitais
+              (Apple Pay / Google Pay).
             </p>
             <div class="ref-actions">
-              <a href="https://www.emvco.com/emv-technologies/contactless/" target="_blank" rel="noopener noreferrer" class="ref-link">EMVCo Standards &rarr;</a>
-              <button class="btn-copy" data-cite="EMVCo. (2022). EMV® Contactless Specifications for Payment Systems (Architecture & Level 1/Level 2). EMVCo LLC.">Copiar Citação</button>
+              <a href="https://www.emvco.com/emv-technologies/contactless/" target="_blank" rel="noopener noreferrer"
+                class="ref-link">EMVCo Standards &rarr;</a>
+              <button class="btn-copy"
+                data-cite="EMVCo. (2022). EMV® Contactless Specifications for Payment Systems (Architecture & Level 1/Level 2). EMVCo LLC.">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
 
         <!-- NFC 7: Haselsteiner & Breitfuss (Security Paper) -->
-        <div class="ref-item" data-search="nfc haselsteiner breitfuss 2006 security near field communication rfid eavesdropping relay attack">
+        <div class="ref-item"
+          data-search="nfc haselsteiner breitfuss 2006 security near field communication rfid eavesdropping relay attack">
           <div class="ref-icon icon-teal"><span>PAPER</span></div>
           <div class="ref-body">
             <div class="ref-header">
@@ -227,11 +270,16 @@
             </div>
             <h3 class="ref-title">Security in Near Field Communication (NFC)</h3>
             <p class="ref-details">
-              Haselsteiner, E., & Breitfuß, K. (2006). Estudo pioneiro de segurança em NFC que formalizou os vetores de ameaça física em canais de proximidade: escuta clandestina (eavesdropping), modificação de dados, ataques de inserção e ataques de relay.
+              Haselsteiner, E., & Breitfuß, K. (2006). Estudo pioneiro de segurança em NFC que formalizou os vetores de
+              ameaça física em canais de proximidade: escuta clandestina (eavesdropping), modificação de dados, ataques
+              de inserção e ataques de relay.
             </p>
             <div class="ref-actions">
-              <a href="https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=10.1.1.133.5188" target="_blank" rel="noopener noreferrer" class="ref-link">Artigo Seminal PDF &rarr;</a>
-              <button class="btn-copy" data-cite="Haselsteiner, E., & Breitfuß, K. (2006). Security in Near Field Communication (NFC). In Workshop on RFID Security (RFIDSec 06), Graz, Austria.">Copiar Citação</button>
+              <a href="https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=10.1.1.133.5188" target="_blank"
+                rel="noopener noreferrer" class="ref-link">Artigo Seminal PDF &rarr;</a>
+              <button class="btn-copy"
+                data-cite="Haselsteiner, E., & Breitfuß, K. (2006). Security in Near Field Communication (NFC). In Workshop on RFID Security (RFIDSec 06), Graz, Austria.">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
@@ -245,8 +293,9 @@
       <div class="card-header border-orange">
         <div class="topic-meta">
           <span class="topic-tag tag-orange">Protocolo de Roteamento de Estado de Enlace (IGP)</span>
-          <h2 class="topic-title">OSPF — Open Shortest Path First</h2>
-          <p class="topic-desc">Evolução histórica do IETF, obra de referência de John Moy, expansões criptográficas e extensões modernas para Engenharia de Tráfego e Segment Routing.</p>
+          <h2 class="topic-title">2. OSPF — Open Shortest Path First</h2>
+          <p class="topic-desc">Evolução histórica do IETF, obra de referência de John Moy, expansões criptográficas e
+            extensões modernas para Engenharia de Tráfego e Segment Routing.</p>
         </div>
         <div class="badge-count">9 Fontes (Timeline + Extensões)</div>
       </div>
@@ -263,11 +312,16 @@
             </div>
             <h3 class="ref-title">OSPFv1 na RFC 1131 — Base Experimental</h3>
             <p class="ref-details">
-              Primeira especificação formal do OSPF elaborada por John Moy no seio do IETF IGP Working Group, estabelecendo o cálculo dinâmico de caminhos mais curtos através do algoritmo de Dijkstra e o intercâmbio de pacotes de estado de enlace (LSA).
+              Primeira especificação formal do OSPF elaborada por John Moy no seio do IETF IGP Working Group,
+              estabelecendo o cálculo dinâmico de caminhos mais curtos através do algoritmo de Dijkstra e o intercâmbio
+              de pacotes de estado de enlace (LSA).
             </p>
             <div class="ref-actions">
-              <a href="https://datatracker.ietf.org/doc/html/rfc1131" target="_blank" rel="noopener noreferrer" class="ref-link">IETF RFC 1131 &rarr;</a>
-              <button class="btn-copy" data-cite="Moy, J. (1989). The OSPF Specification. RFC 1131. Internet Engineering Task Force (IETF).">Copiar Citação</button>
+              <a href="https://datatracker.ietf.org/doc/html/rfc1131" target="_blank" rel="noopener noreferrer"
+                class="ref-link">IETF RFC 1131 &rarr;</a>
+              <button class="btn-copy"
+                data-cite="Moy, J. (1989). The OSPF Specification. RFC 1131. Internet Engineering Task Force (IETF).">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
@@ -282,17 +336,22 @@
             </div>
             <h3 class="ref-title">OSPFv2 na RFC 1247 (John Moy) — Versão Robusta para IPv4</h3>
             <p class="ref-details">
-              Revisão estrutural profunda com suporte nativo a máscaras de sub-rede de tamanho variável (VLSM), sumarização de rotas sem classe (CIDR), mecanismos de autenticação e tipologia de áreas (Backbone, Stub).
+              Revisão estrutural profunda com suporte nativo a máscaras de sub-rede de tamanho variável (VLSM),
+              sumarização de rotas sem classe (CIDR), mecanismos de autenticação e tipologia de áreas (Backbone, Stub).
             </p>
             <div class="ref-actions">
-              <a href="https://datatracker.ietf.org/doc/html/rfc1247" target="_blank" rel="noopener noreferrer" class="ref-link">IETF RFC 1247 &rarr;</a>
-              <button class="btn-copy" data-cite="Moy, J. (1991). OSPF Version 2. RFC 1247. Internet Engineering Task Force (IETF).">Copiar Citação</button>
+              <a href="https://datatracker.ietf.org/doc/html/rfc1247" target="_blank" rel="noopener noreferrer"
+                class="ref-link">IETF RFC 1247 &rarr;</a>
+              <button class="btn-copy"
+                data-cite="Moy, J. (1991). OSPF Version 2. RFC 1247. Internet Engineering Task Force (IETF).">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
 
         <!-- OSPF Timeline 3: 1998 (RFC 2328) -->
-        <div class="timeline-item" data-search="1998 ospfv2 consolidado rfc 2328 john moy std 54 ipv4 internet standard">
+        <div class="timeline-item"
+          data-search="1998 ospfv2 consolidado rfc 2328 john moy std 54 ipv4 internet standard">
           <div class="timeline-node"><span class="timeline-year">1998</span></div>
           <div class="timeline-content">
             <div class="ref-header">
@@ -301,11 +360,16 @@
             </div>
             <h3 class="ref-title">OSPFv2 Consolidado na RFC 2328 — Versão Atual para IPv4</h3>
             <p class="ref-details">
-              Moy, J. (1998). Especificação definitiva do OSPFv2 para redes IPv4. Elevada ao estatuto de <strong>Internet Standard (STD 54)</strong> pelo IETF, continua a ser a base padrão em infraestruturas empresariais.
+              Moy, J. (1998). Especificação definitiva do OSPFv2 para redes IPv4. Elevada ao estatuto de
+              <strong>Internet Standard (STD 54)</strong> pelo IETF, continua a ser a base padrão em infraestruturas
+              empresariais.
             </p>
             <div class="ref-actions">
-              <a href="https://datatracker.ietf.org/doc/html/rfc2328" target="_blank" rel="noopener noreferrer" class="ref-link">IETF RFC 2328 &rarr;</a>
-              <button class="btn-copy" data-cite="Moy, J. (1998). OSPF Version 2. RFC 2328 (STD 54). Internet Engineering Task Force (IETF). DOI: 10.17487/RFC2328.">Copiar Citação</button>
+              <a href="https://datatracker.ietf.org/doc/html/rfc2328" target="_blank" rel="noopener noreferrer"
+                class="ref-link">IETF RFC 2328 &rarr;</a>
+              <button class="btn-copy"
+                data-cite="Moy, J. (1998). OSPF Version 2. RFC 2328 (STD 54). Internet Engineering Task Force (IETF). DOI: 10.17487/RFC2328.">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
@@ -320,11 +384,15 @@
             </div>
             <h3 class="ref-title">OSPFv3 na RFC 2740 — Suporte Inicial a IPv6</h3>
             <p class="ref-details">
-              Coltun, R., Ferguson, D., & Moy, J. (1999). Adaptação arquitetural do protocolo para endereçamento IPv6 de 128 bits, desacoplando o cálculo da topologia de routers dos prefixos de rede atribuídos aos interfaces.
+              Coltun, R., Ferguson, D., & Moy, J. (1999). Adaptação arquitetural do protocolo para endereçamento IPv6 de
+              128 bits, desacoplando o cálculo da topologia de routers dos prefixos de rede atribuídos aos interfaces.
             </p>
             <div class="ref-actions">
-              <a href="https://datatracker.ietf.org/doc/html/rfc2740" target="_blank" rel="noopener noreferrer" class="ref-link">IETF RFC 2740 &rarr;</a>
-              <button class="btn-copy" data-cite="Coltun, R., Ferguson, D., & Moy, J. (1999). OSPF for IPv6. RFC 2740. Internet Engineering Task Force (IETF).">Copiar Citação</button>
+              <a href="https://datatracker.ietf.org/doc/html/rfc2740" target="_blank" rel="noopener noreferrer"
+                class="ref-link">IETF RFC 2740 &rarr;</a>
+              <button class="btn-copy"
+                data-cite="Coltun, R., Ferguson, D., & Moy, J. (1999). OSPF for IPv6. RFC 2740. Internet Engineering Task Force (IETF).">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
@@ -333,8 +401,11 @@
       <!-- OSPF Additional Foundations & Modern Standards -->
       <div class="references-list" style="border-top: 1px solid var(--border-color);">
         <!-- OSPF 5: Moy Book -->
-        <div class="ref-item" data-search="ospf livro moy anatomy of an internet routing protocol addison-wesley obra classica">
-          <div class="ref-icon icon-teal" style="background: rgba(249, 115, 22, 0.15); color: var(--accent-orange); border-color: rgba(249, 115, 22, 0.3);"><span>BOOK</span></div>
+        <div class="ref-item"
+          data-search="ospf livro moy anatomy of an internet routing protocol addison-wesley obra classica">
+          <div class="ref-icon icon-teal"
+            style="background: rgba(249, 115, 22, 0.15); color: var(--accent-orange); border-color: rgba(249, 115, 22, 0.3);">
+            <span>BOOK</span></div>
           <div class="ref-body">
             <div class="ref-header">
               <span class="ref-code">Livro Canónico (1998)</span>
@@ -342,18 +413,25 @@
             </div>
             <h3 class="ref-title">OSPF: Anatomy of an Internet Routing Protocol</h3>
             <p class="ref-details">
-              Moy, J. T. (1998). Livro de referência canónico escrito pelo criador do protocolo OSPF, detalhando as razões de projeto por detrás do algoritmo SPF, flooding de LSA, áreas de roteamento e convergência estável em redes de grande escala.
+              Moy, J. T. (1998). Livro de referência canónico escrito pelo criador do protocolo OSPF, detalhando as
+              razões de projeto por detrás do algoritmo SPF, flooding de LSA, áreas de roteamento e convergência estável
+              em redes de grande escala.
             </p>
             <div class="ref-actions">
-              <span class="ref-link" style="color: var(--text-muted);">Addison-Wesley Professional (ISBN 0-201-63472-4)</span>
-              <button class="btn-copy" data-cite="Moy, J. T. (1998). OSPF: Anatomy of an Internet Routing Protocol. Addison-Wesley Professional.">Copiar Citação</button>
+              <span class="ref-link" style="color: var(--text-muted);">Addison-Wesley Professional (ISBN
+                0-201-63472-4)</span>
+              <button class="btn-copy"
+                data-cite="Moy, J. T. (1998). OSPF: Anatomy of an Internet Routing Protocol. Addison-Wesley Professional.">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
 
         <!-- OSPF 6: RFC 5340 -->
         <div class="ref-item" data-search="ospf rfc 5340 2008 ospf for ipv6 revisao consolidada lindem coltun">
-          <div class="ref-icon icon-teal" style="background: rgba(249, 115, 22, 0.15); color: var(--accent-orange); border-color: rgba(249, 115, 22, 0.3);"><span>RFC</span></div>
+          <div class="ref-icon icon-teal"
+            style="background: rgba(249, 115, 22, 0.15); color: var(--accent-orange); border-color: rgba(249, 115, 22, 0.3);">
+            <span>RFC</span></div>
           <div class="ref-body">
             <div class="ref-header">
               <span class="ref-code">RFC 5340 (2008)</span>
@@ -361,18 +439,25 @@
             </div>
             <h3 class="ref-title">OSPF for IPv6 (Atualização e Consolidação da RFC 2740)</h3>
             <p class="ref-details">
-              Coltun, R., Ferguson, D., Moy, J., & Lindem, A. (2008). Especificação consolidada do OSPFv3 com suporte a múltiplos processos sobre o mesmo enlace físico, cabeçalhos de autenticação IPsec e suporte estendido a famílias de endereços.
+              Coltun, R., Ferguson, D., Moy, J., & Lindem, A. (2008). Especificação consolidada do OSPFv3 com suporte a
+              múltiplos processos sobre o mesmo enlace físico, cabeçalhos de autenticação IPsec e suporte estendido a
+              famílias de endereços.
             </p>
             <div class="ref-actions">
-              <a href="https://datatracker.ietf.org/doc/html/rfc5340" target="_blank" rel="noopener noreferrer" class="ref-link">IETF RFC 5340 &rarr;</a>
-              <button class="btn-copy" data-cite="Coltun, R., Ferguson, D., Moy, J., & Lindem, A. (2008). OSPF for IPv6. RFC 5340. Internet Engineering Task Force (IETF). DOI: 10.17487/RFC5340.">Copiar Citação</button>
+              <a href="https://datatracker.ietf.org/doc/html/rfc5340" target="_blank" rel="noopener noreferrer"
+                class="ref-link">IETF RFC 5340 &rarr;</a>
+              <button class="btn-copy"
+                data-cite="Coltun, R., Ferguson, D., Moy, J., & Lindem, A. (2008). OSPF for IPv6. RFC 5340. Internet Engineering Task Force (IETF). DOI: 10.17487/RFC5340.">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
 
         <!-- OSPF 7: Traffic Engineering (RFC 3630 & RFC 8362) -->
         <div class="ref-item" data-search="ospf traffic engineering te rfc 3630 rfc 8362 mpls lsa lsac extensibility">
-          <div class="ref-icon icon-teal" style="background: rgba(249, 115, 22, 0.15); color: var(--accent-orange); border-color: rgba(249, 115, 22, 0.3);"><span>RFC</span></div>
+          <div class="ref-icon icon-teal"
+            style="background: rgba(249, 115, 22, 0.15); color: var(--accent-orange); border-color: rgba(249, 115, 22, 0.3);">
+            <span>RFC</span></div>
           <div class="ref-body">
             <div class="ref-header">
               <span class="ref-code">RFC 3630 / RFC 8362</span>
@@ -380,19 +465,27 @@
             </div>
             <h3 class="ref-title">Traffic Engineering Extensions to OSPF & OSPFv3 LSA Extensibility</h3>
             <p class="ref-details">
-              Katz, D., Kompella, K., & Yeung, D. (RFC 3630) e Lindem, A., et al. (RFC 8362). Extensões que permitem disseminar parâmetros de enlace como largura de banda reservada, atraso e classes de serviço para túneis MPLS-TE e roteamento baseado em restrições.
+              Katz, D., Kompella, K., & Yeung, D. (RFC 3630) e Lindem, A., et al. (RFC 8362). Extensões que permitem
+              disseminar parâmetros de enlace como largura de banda reservada, atraso e classes de serviço para túneis
+              MPLS-TE e roteamento baseado em restrições.
             </p>
             <div class="ref-actions">
-              <a href="https://datatracker.ietf.org/doc/html/rfc3630" target="_blank" rel="noopener noreferrer" class="ref-link">IETF RFC 3630 &rarr;</a>
-              <a href="https://datatracker.ietf.org/doc/html/rfc8362" target="_blank" rel="noopener noreferrer" class="ref-link">IETF RFC 8362 &rarr;</a>
-              <button class="btn-copy" data-cite="Katz, D., Kompella, K., & Yeung, D. (2003). Traffic Engineering (TE) Extensions to OSPF Version 2. RFC 3630. Internet Engineering Task Force (IETF).">Copiar Citação</button>
+              <a href="https://datatracker.ietf.org/doc/html/rfc3630" target="_blank" rel="noopener noreferrer"
+                class="ref-link">IETF RFC 3630 &rarr;</a>
+              <a href="https://datatracker.ietf.org/doc/html/rfc8362" target="_blank" rel="noopener noreferrer"
+                class="ref-link">IETF RFC 8362 &rarr;</a>
+              <button class="btn-copy"
+                data-cite="Katz, D., Kompella, K., & Yeung, D. (2003). Traffic Engineering (TE) Extensions to OSPF Version 2. RFC 3630. Internet Engineering Task Force (IETF).">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
 
         <!-- OSPF 8: Security (RFC 5709) -->
         <div class="ref-item" data-search="ospf rfc 5709 hmac-sha cryptographic authentication seguranca md5 sha-256">
-          <div class="ref-icon icon-teal" style="background: rgba(249, 115, 22, 0.15); color: var(--accent-orange); border-color: rgba(249, 115, 22, 0.3);"><span>RFC</span></div>
+          <div class="ref-icon icon-teal"
+            style="background: rgba(249, 115, 22, 0.15); color: var(--accent-orange); border-color: rgba(249, 115, 22, 0.3);">
+            <span>RFC</span></div>
           <div class="ref-body">
             <div class="ref-header">
               <span class="ref-code">RFC 5709 (2009)</span>
@@ -400,18 +493,26 @@
             </div>
             <h3 class="ref-title">OSPFv2 HMAC-SHA Cryptographic Authentication</h3>
             <p class="ref-details">
-              Bhatia, M., Manral, V., Fanto, M., et al. (2009). Atualização indispensável para mitigar vulnerabilidades e ataques de injeção em redes OSPF, substituindo assinaturas fracas de MD5 por famílias HMAC-SHA (SHA-1, SHA-256, SHA-512).
+              Bhatia, M., Manral, V., Fanto, M., et al. (2009). Atualização indispensável para mitigar vulnerabilidades
+              e ataques de injeção em redes OSPF, substituindo assinaturas fracas de MD5 por famílias HMAC-SHA (SHA-1,
+              SHA-256, SHA-512).
             </p>
             <div class="ref-actions">
-              <a href="https://datatracker.ietf.org/doc/html/rfc5709" target="_blank" rel="noopener noreferrer" class="ref-link">IETF RFC 5709 &rarr;</a>
-              <button class="btn-copy" data-cite="Bhatia, M., Manral, V., Fanto, M., White, R., Barnes, M., Li, T., & Atkinson, R. (2009). OSPFv2 HMAC-SHA Cryptographic Authentication. RFC 5709. Internet Engineering Task Force (IETF).">Copiar Citação</button>
+              <a href="https://datatracker.ietf.org/doc/html/rfc5709" target="_blank" rel="noopener noreferrer"
+                class="ref-link">IETF RFC 5709 &rarr;</a>
+              <button class="btn-copy"
+                data-cite="Bhatia, M., Manral, V., Fanto, M., White, R., Barnes, M., Li, T., & Atkinson, R. (2009). OSPFv2 HMAC-SHA Cryptographic Authentication. RFC 5709. Internet Engineering Task Force (IETF).">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
 
         <!-- OSPF 9: Segment Routing (RFC 8665) -->
-        <div class="ref-item" data-search="ospf rfc 8665 segment routing sr-mpls srv6 psenak previdi filsfils modern backbone telecom">
-          <div class="ref-icon icon-teal" style="background: rgba(249, 115, 22, 0.15); color: var(--accent-orange); border-color: rgba(249, 115, 22, 0.3);"><span>RFC</span></div>
+        <div class="ref-item"
+          data-search="ospf rfc 8665 segment routing sr-mpls srv6 psenak previdi filsfils modern backbone telecom">
+          <div class="ref-icon icon-teal"
+            style="background: rgba(249, 115, 22, 0.15); color: var(--accent-orange); border-color: rgba(249, 115, 22, 0.3);">
+            <span>RFC</span></div>
           <div class="ref-body">
             <div class="ref-header">
               <span class="ref-code">RFC 8665 (2019)</span>
@@ -419,11 +520,16 @@
             </div>
             <h3 class="ref-title">OSPF Extensions for Segment Routing</h3>
             <p class="ref-details">
-              Psenak, P., Previdi, C., Filsfils, C., et al. (2019). Arquitetura de ponta que estende o OSPF para anunciar identificadores de segmento (Segment Identifiers - SIDs), simplificando planos de controlo em redes core MPLS e SRv6 de grandes operadoras globais.
+              Psenak, P., Previdi, C., Filsfils, C., et al. (2019). Arquitetura de ponta que estende o OSPF para
+              anunciar identificadores de segmento (Segment Identifiers - SIDs), simplificando planos de controlo em
+              redes core MPLS e SRv6 de grandes operadoras globais.
             </p>
             <div class="ref-actions">
-              <a href="https://datatracker.ietf.org/doc/html/rfc8665" target="_blank" rel="noopener noreferrer" class="ref-link">IETF RFC 8665 &rarr;</a>
-              <button class="btn-copy" data-cite="Psenak, P., Previdi, C., Filsfils, C., Gredler, H., Shakir, R., Henderickx, W., & Tantsura, J. (2019). OSPF Extensions for Segment Routing. RFC 8665. Internet Engineering Task Force (IETF).">Copiar Citação</button>
+              <a href="https://datatracker.ietf.org/doc/html/rfc8665" target="_blank" rel="noopener noreferrer"
+                class="ref-link">IETF RFC 8665 &rarr;</a>
+              <button class="btn-copy"
+                data-cite="Psenak, P., Previdi, C., Filsfils, C., Gredler, H., Shakir, R., Henderickx, W., & Tantsura, J. (2019). OSPF Extensions for Segment Routing. RFC 8665. Internet Engineering Task Force (IETF).">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
@@ -437,15 +543,17 @@
       <div class="card-header border-cyan">
         <div class="topic-meta">
           <span class="topic-tag tag-cyan">Camada de Transporte Confiável & Telecomunicações</span>
-          <h2 class="topic-title">SCTP — Stream Control Transmission Protocol</h2>
-          <p class="topic-desc">Multi-homing e multi-streaming nativos, extensões para confiabilidade parcial (PR-SCTP), papel fundamental no WebRTC e protocolo obrigatório na infraestrutura 4G LTE e 5G.</p>
+          <h2 class="topic-title">3. SCTP — Stream Control Transmission Protocol</h2>
+          <p class="topic-desc">Multi-homing e multi-streaming nativos, extensões para confiabilidade parcial (PR-SCTP),
+            papel fundamental no WebRTC e protocolo obrigatório na infraestrutura 4G LTE e 5G.</p>
         </div>
         <div class="badge-count">8 Fontes & Normas 3GPP</div>
       </div>
 
       <div class="references-list">
         <!-- SCTP 1: RFC 9260 -->
-        <div class="ref-item" data-search="sctp rfc 9260 2022 stewart tuexen nielsen standard atual internet padrao consolidado">
+        <div class="ref-item"
+          data-search="sctp rfc 9260 2022 stewart tuexen nielsen standard atual internet padrao consolidado">
           <div class="ref-icon icon-cyan"><span>RFC</span></div>
           <div class="ref-body">
             <div class="ref-header">
@@ -454,11 +562,16 @@
             </div>
             <h3 class="ref-title">Stream Control Transmission Protocol (Substitui formalmente a RFC 4960)</h3>
             <p class="ref-details">
-              Stewart, R., Tüxen, M., & Nielsen, K. (2022). A especificação oficial definitiva e consolidada do SCTP pela IETF, incorporando melhorias de recuperação de pacotes, defesa contra SYN Flood via Cookie de 4 vias e suporte avançado de multi-homing.
+              Stewart, R., Tüxen, M., & Nielsen, K. (2022). A especificação oficial definitiva e consolidada do SCTP
+              pela IETF, incorporando melhorias de recuperação de pacotes, defesa contra SYN Flood via Cookie de 4 vias
+              e suporte avançado de multi-homing.
             </p>
             <div class="ref-actions">
-              <a href="https://datatracker.ietf.org/doc/html/rfc9260" target="_blank" rel="noopener noreferrer" class="ref-link">IETF RFC 9260 &rarr;</a>
-              <button class="btn-copy" data-cite="Stewart, R., Tüxen, M., & Nielsen, K. (2022). Stream Control Transmission Protocol. RFC 9260. Internet Engineering Task Force (IETF). DOI: 10.17487/RFC9260.">Copiar Citação</button>
+              <a href="https://datatracker.ietf.org/doc/html/rfc9260" target="_blank" rel="noopener noreferrer"
+                class="ref-link">IETF RFC 9260 &rarr;</a>
+              <button class="btn-copy"
+                data-cite="Stewart, R., Tüxen, M., & Nielsen, K. (2022). Stream Control Transmission Protocol. RFC 9260. Internet Engineering Task Force (IETF). DOI: 10.17487/RFC9260.">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
@@ -473,11 +586,15 @@
             </div>
             <h3 class="ref-title">Stream Control Transmission Protocol (Edição de 2007)</h3>
             <p class="ref-details">
-              Stewart, R. (Ed.). Norma que unificou anos de experiência operacional e corrigiu os limites da RFC 2960 inicial, servindo de base histórica para as implementações nos núcleos de Linux e BSD.
+              Stewart, R. (Ed.). Norma que unificou anos de experiência operacional e corrigiu os limites da RFC 2960
+              inicial, servindo de base histórica para as implementações nos núcleos de Linux e BSD.
             </p>
             <div class="ref-actions">
-              <a href="https://datatracker.ietf.org/doc/html/rfc4960" target="_blank" rel="noopener noreferrer" class="ref-link">IETF RFC 4960 &rarr;</a>
-              <button class="btn-copy" data-cite="Stewart, R. (Ed.). (2007). Stream Control Transmission Protocol. RFC 4960. Internet Engineering Task Force (IETF).">Copiar Citação</button>
+              <a href="https://datatracker.ietf.org/doc/html/rfc4960" target="_blank" rel="noopener noreferrer"
+                class="ref-link">IETF RFC 4960 &rarr;</a>
+              <button class="btn-copy"
+                data-cite="Stewart, R. (Ed.). (2007). Stream Control Transmission Protocol. RFC 4960. Internet Engineering Task Force (IETF).">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
@@ -492,11 +609,16 @@
             </div>
             <h3 class="ref-title">Stream Control Transmission Protocol (Proposta Original SIGTRAN)</h3>
             <p class="ref-details">
-              Stewart, R., Xie, Q., Morneault, K., et al. (2000). Documento fundador desenvolvido no seio do IETF Signaling Transport Working Group (SIGTRAN) com o propósito original de transportar tráfego telefónico SS7 sobre redes IP.
+              Stewart, R., Xie, Q., Morneault, K., et al. (2000). Documento fundador desenvolvido no seio do IETF
+              Signaling Transport Working Group (SIGTRAN) com o propósito original de transportar tráfego telefónico SS7
+              sobre redes IP.
             </p>
             <div class="ref-actions">
-              <a href="https://datatracker.ietf.org/doc/html/rfc2960" target="_blank" rel="noopener noreferrer" class="ref-link">IETF RFC 2960 &rarr;</a>
-              <button class="btn-copy" data-cite="Stewart, R., Xie, Q., Morneault, K., Sharp, C., Schwarzbauer, H., Taylor, T., Rytina, I., Kalla, M., Zhang, L., & Paxson, V. (2000). Stream Control Transmission Protocol. RFC 2960. Internet Engineering Task Force (IETF).">Copiar Citação</button>
+              <a href="https://datatracker.ietf.org/doc/html/rfc2960" target="_blank" rel="noopener noreferrer"
+                class="ref-link">IETF RFC 2960 &rarr;</a>
+              <button class="btn-copy"
+                data-cite="Stewart, R., Xie, Q., Morneault, K., Sharp, C., Schwarzbauer, H., Taylor, T., Rytina, I., Kalla, M., Zhang, L., & Paxson, V. (2000). Stream Control Transmission Protocol. RFC 2960. Internet Engineering Task Force (IETF).">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
@@ -511,17 +633,23 @@
             </div>
             <h3 class="ref-title">An Introduction to the Stream Control Transmission Protocol (SCTP)</h3>
             <p class="ref-details">
-              Ong, L., & Yoakum, J. (2002). Guia informativo oficial que compara as propriedades funcionais do SCTP frente aos tradicionais TCP e UDP, destacando as vantagens do multi-homing e a erradicação do bloqueio de cabeça de fila (*Head-of-Line Blocking*).
+              Ong, L., & Yoakum, J. (2002). Guia informativo oficial que compara as propriedades funcionais do SCTP
+              frente aos tradicionais TCP e UDP, destacando as vantagens do multi-homing e a erradicação do bloqueio de
+              cabeça de fila (*Head-of-Line Blocking*).
             </p>
             <div class="ref-actions">
-              <a href="https://datatracker.ietf.org/doc/html/rfc3286" target="_blank" rel="noopener noreferrer" class="ref-link">IETF RFC 3286 &rarr;</a>
-              <button class="btn-copy" data-cite="Ong, L., & Yoakum, J. (2002). An Introduction to the Stream Control Transmission Protocol (SCTP). RFC 3286. Internet Engineering Task Force (IETF).">Copiar Citação</button>
+              <a href="https://datatracker.ietf.org/doc/html/rfc3286" target="_blank" rel="noopener noreferrer"
+                class="ref-link">IETF RFC 3286 &rarr;</a>
+              <button class="btn-copy"
+                data-cite="Ong, L., & Yoakum, J. (2002). An Introduction to the Stream Control Transmission Protocol (SCTP). RFC 3286. Internet Engineering Task Force (IETF).">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
 
         <!-- SCTP 5: Stewart & Xie Book -->
-        <div class="ref-item" data-search="sctp livro stewart xie stream control transmission protocol a reference guide addison-wesley">
+        <div class="ref-item"
+          data-search="sctp livro stewart xie stream control transmission protocol a reference guide addison-wesley">
           <div class="ref-icon icon-cyan"><span>BOOK</span></div>
           <div class="ref-body">
             <div class="ref-header">
@@ -530,17 +658,23 @@
             </div>
             <h3 class="ref-title">Stream Control Transmission Protocol (SCTP): A Reference Guide</h3>
             <p class="ref-details">
-              Stewart, R., & Xie, Q. (2001). A monografia essencial e autoritativa sobre o SCTP, escrita pelos seus próprios inventores, descrevendo em detalhe o design de sockets, controle de congestionamento e cenários de failover em redes com múltiplos endereços IP.
+              Stewart, R., & Xie, Q. (2001). A monografia essencial e autoritativa sobre o SCTP, escrita pelos seus
+              próprios inventores, descrevendo em detalhe o design de sockets, controle de congestionamento e cenários
+              de failover em redes com múltiplos endereços IP.
             </p>
             <div class="ref-actions">
-              <span class="ref-link" style="color: var(--text-muted);">Addison-Wesley Professional (ISBN 0-201-72186-4)</span>
-              <button class="btn-copy" data-cite="Stewart, R., & Xie, Q. (2001). Stream Control Transmission Protocol (SCTP): A Reference Guide. Addison-Wesley Professional.">Copiar Citação</button>
+              <span class="ref-link" style="color: var(--text-muted);">Addison-Wesley Professional (ISBN
+                0-201-72186-4)</span>
+              <button class="btn-copy"
+                data-cite="Stewart, R., & Xie, Q. (2001). Stream Control Transmission Protocol (SCTP): A Reference Guide. Addison-Wesley Professional.">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
 
         <!-- SCTP 6: RFC 3758 (PR-SCTP) -->
-        <div class="ref-item" data-search="sctp pr-sctp rfc 3758 partial reliability extension confianca parcial tempo real">
+        <div class="ref-item"
+          data-search="sctp pr-sctp rfc 3758 partial reliability extension confianca parcial tempo real">
           <div class="ref-icon icon-cyan"><span>RFC</span></div>
           <div class="ref-body">
             <div class="ref-header">
@@ -549,11 +683,16 @@
             </div>
             <h3 class="ref-title">SCTP Partial Reliability Extension (PR-SCTP)</h3>
             <p class="ref-details">
-              Stewart, R., Ramalho, M., Xie, Q., et al. (2004). Introduz a extensão que permite que uma aplicação defina limites de retransmissão e tempo de vida por mensagem. Torna o SCTP ideal para tráfego sensível ao tempo e multimídia interativa.
+              Stewart, R., Ramalho, M., Xie, Q., et al. (2004). Introduz a extensão que permite que uma aplicação defina
+              limites de retransmissão e tempo de vida por mensagem. Torna o SCTP ideal para tráfego sensível ao tempo e
+              multimídia interativa.
             </p>
             <div class="ref-actions">
-              <a href="https://datatracker.ietf.org/doc/html/rfc3758" target="_blank" rel="noopener noreferrer" class="ref-link">IETF RFC 3758 &rarr;</a>
-              <button class="btn-copy" data-cite="Stewart, R., Ramalho, M., Xie, Q., Tuexen, M., & Conrad, P. (2004). Stream Control Transmission Protocol (SCTP) Partial Reliability Extension. RFC 3758. Internet Engineering Task Force (IETF).">Copiar Citação</button>
+              <a href="https://datatracker.ietf.org/doc/html/rfc3758" target="_blank" rel="noopener noreferrer"
+                class="ref-link">IETF RFC 3758 &rarr;</a>
+              <button class="btn-copy"
+                data-cite="Stewart, R., Ramalho, M., Xie, Q., Tuexen, M., & Conrad, P. (2004). Stream Control Transmission Protocol (SCTP) Partial Reliability Extension. RFC 3758. Internet Engineering Task Force (IETF).">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
@@ -568,18 +707,25 @@
             </div>
             <h3 class="ref-title">WebRTC Data Channels & SCTP-Based Data Channel Protocol</h3>
             <p class="ref-details">
-              Jesup, R., Loreto, S., & Tuexen, M. (2021). Padroniza o encapsulamento seguro de SCTP sobre túneis DTLS/UDP em todos os navegadores modernos, viabilizando transferência de dados de baixa latência e canais bidirecionais ponto a ponto no WebRTC.
+              Jesup, R., Loreto, S., & Tuexen, M. (2021). Padroniza o encapsulamento seguro de SCTP sobre túneis
+              DTLS/UDP em todos os navegadores modernos, viabilizando transferência de dados de baixa latência e canais
+              bidirecionais ponto a ponto no WebRTC.
             </p>
             <div class="ref-actions">
-              <a href="https://datatracker.ietf.org/doc/html/rfc8831" target="_blank" rel="noopener noreferrer" class="ref-link">IETF RFC 8831 &rarr;</a>
-              <a href="https://datatracker.ietf.org/doc/html/rfc8832" target="_blank" rel="noopener noreferrer" class="ref-link">IETF RFC 8832 &rarr;</a>
-              <button class="btn-copy" data-cite="Jesup, R., Loreto, S., & Tuexen, M. (2021). WebRTC Data Channels. RFC 8831. Internet Engineering Task Force (IETF). DOI: 10.17487/RFC8831.">Copiar Citação</button>
+              <a href="https://datatracker.ietf.org/doc/html/rfc8831" target="_blank" rel="noopener noreferrer"
+                class="ref-link">IETF RFC 8831 &rarr;</a>
+              <a href="https://datatracker.ietf.org/doc/html/rfc8832" target="_blank" rel="noopener noreferrer"
+                class="ref-link">IETF RFC 8832 &rarr;</a>
+              <button class="btn-copy"
+                data-cite="Jesup, R., Loreto, S., & Tuexen, M. (2021). WebRTC Data Channels. RFC 8831. Internet Engineering Task Force (IETF). DOI: 10.17487/RFC8831.">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
 
         <!-- SCTP 8: 3GPP 4G/5G Control Plane -->
-        <div class="ref-item" data-search="sctp 3gpp 5g 4g lte ts 38.413 ts 36.413 ngap s1ap radio access network antenas gnodeb telecom">
+        <div class="ref-item"
+          data-search="sctp 3gpp 5g 4g lte ts 38.413 ts 36.413 ngap s1ap radio access network antenas gnodeb telecom">
           <div class="ref-icon icon-cyan"><span>3GPP</span></div>
           <div class="ref-body">
             <div class="ref-header">
@@ -588,11 +734,16 @@
             </div>
             <h3 class="ref-title">NG-RAN; NG Application Protocol (NGAP) & E-UTRAN S1AP</h3>
             <p class="ref-details">
-              Especificações do 3GPP que definem o SCTP como protocolo de transporte obrigatório na camada de sinalização do plano de controlo entre as antenas celulares (gNodeB / eNodeB) e o núcleo de rede móvel (5G Core AMF e 4G MME).
+              Especificações do 3GPP que definem o SCTP como protocolo de transporte obrigatório na camada de
+              sinalização do plano de controlo entre as antenas celulares (gNodeB / eNodeB) e o núcleo de rede móvel (5G
+              Core AMF e 4G MME).
             </p>
             <div class="ref-actions">
-              <a href="https://www.3gpp.org/DynaReport/38413.htm" target="_blank" rel="noopener noreferrer" class="ref-link">3GPP TS 38.413 Portal &rarr;</a>
-              <button class="btn-copy" data-cite="3GPP. (2023). NG-RAN; NG Application Protocol (NGAP). 3GPP Technical Specification TS 38.413 (Release 17). 3rd Generation Partnership Project.">Copiar Citação</button>
+              <a href="https://www.3gpp.org/DynaReport/38413.htm" target="_blank" rel="noopener noreferrer"
+                class="ref-link">3GPP TS 38.413 Portal &rarr;</a>
+              <button class="btn-copy"
+                data-cite="3GPP. (2023). NG-RAN; NG Application Protocol (NGAP). 3GPP Technical Specification TS 38.413 (Release 17). 3rd Generation Partnership Project.">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
@@ -606,15 +757,18 @@
       <div class="card-header border-purple">
         <div class="topic-meta">
           <span class="topic-tag tag-purple">Arquitetura de Agentes, Invocação de Ferramentas & IA</span>
-          <h2 class="topic-title">MCP — Model Context Protocol</h2>
-          <p class="topic-desc">Padrão aberto para integração segura entre LLMs e fontes de contexto/ferramentas, arquitetura de referência e pesquisas de vanguarda sobre injeção indireta de prompt e controlo de privilégios.</p>
+          <h2 class="topic-title">4. MCP — Model Context Protocol</h2>
+          <p class="topic-desc">Padrão aberto para integração segura entre LLMs e fontes de contexto/ferramentas,
+            arquitetura de referência e pesquisas de vanguarda sobre injeção indireta de prompt e controlo de
+            privilégios.</p>
         </div>
         <div class="badge-count">7 Fontes (Spec + Literatura Científica)</div>
       </div>
 
       <div class="references-list">
         <!-- MCP 1: Official Spec -->
-        <div class="ref-item" data-search="mcp model context protocol specification lf projects anthropic open standard json-rpc">
+        <div class="ref-item"
+          data-search="mcp model context protocol specification lf projects anthropic open standard json-rpc">
           <div class="ref-icon icon-purple"><span>SPEC</span></div>
           <div class="ref-body">
             <div class="ref-header">
@@ -623,17 +777,23 @@
             </div>
             <h3 class="ref-title">Model Context Protocol Specification</h3>
             <p class="ref-details">
-              LF Projects LLC & Anthropic, PBC. Especificação técnica oficial do protocolo MCP cobrindo ciclo de vida de conexão, descoberta dinâmica de ferramentas (tools), recursos de contexto (resources), prompts e comunicação JSON-RPC bidirecional.
+              LF Projects LLC & Anthropic, PBC. Especificação técnica oficial do protocolo MCP cobrindo ciclo de vida de
+              conexão, descoberta dinâmica de ferramentas (tools), recursos de contexto (resources), prompts e
+              comunicação JSON-RPC bidirecional.
             </p>
             <div class="ref-actions">
-              <a href="https://modelcontextprotocol.io/specification/latest" target="_blank" rel="noopener noreferrer" class="ref-link">modelcontextprotocol.io &rarr;</a>
-              <button class="btn-copy" data-cite="Model Context Protocol Specification. LF Projects LLC & Anthropic, PBC. https://modelcontextprotocol.io/specification/latest">Copiar Citação</button>
+              <a href="https://modelcontextprotocol.io/specification/latest" target="_blank" rel="noopener noreferrer"
+                class="ref-link">modelcontextprotocol.io &rarr;</a>
+              <button class="btn-copy"
+                data-cite="Model Context Protocol Specification. LF Projects LLC & Anthropic, PBC. https://modelcontextprotocol.io/specification/latest">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
 
         <!-- MCP 2: Anthropic Architectural Launch -->
-        <div class="ref-item" data-search="mcp anthropic 2024 introducing the model context protocol arquitetura agentes llm">
+        <div class="ref-item"
+          data-search="mcp anthropic 2024 introducing the model context protocol arquitetura agentes llm">
           <div class="ref-icon icon-purple"><span>BLOG</span></div>
           <div class="ref-body">
             <div class="ref-header">
@@ -642,55 +802,74 @@
             </div>
             <h3 class="ref-title">Introducing the Model Context Protocol</h3>
             <p class="ref-details">
-              Anthropic. (2024). Apresentação técnica dos objetivos de design do MCP, propondo a universalização dos conectores de contexto entre clientes de IA (IDE, desktop, assistentes) e servidores de ferramentas externas, eliminando integrações ponto-a-ponto fragmentadas.
+              Anthropic. (2024). Apresentação técnica dos objetivos de design do MCP, propondo a universalização dos
+              conectores de contexto entre clientes de IA (IDE, desktop, assistentes) e servidores de ferramentas
+              externas, eliminando integrações ponto-a-ponto fragmentadas.
             </p>
             <div class="ref-actions">
-              <a href="https://www.anthropic.com/news/model-context-protocol" target="_blank" rel="noopener noreferrer" class="ref-link">Comunicado de Engenharia Anthropic &rarr;</a>
-              <button class="btn-copy" data-cite="Anthropic. (2024). Introducing the Model Context Protocol. Anthropic Engineering Research.">Copiar Citação</button>
+              <a href="https://www.anthropic.com/news/model-context-protocol" target="_blank" rel="noopener noreferrer"
+                class="ref-link">Comunicado de Engenharia Anthropic &rarr;</a>
+              <button class="btn-copy"
+                data-cite="Anthropic. (2024). Introducing the Model Context Protocol. Anthropic Engineering Research.">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
 
         <!-- MCP 3: Hou et al. (ACM TOSEM 2026) -->
-        <div class="ref-item" data-search="hou x 2026 model context protocol mcp landscape security threats acm tosem seguranca">
+        <div class="ref-item"
+          data-search="hou x 2026 model context protocol mcp landscape security threats acm tosem seguranca">
           <div class="ref-icon icon-purple"><span>ACM</span></div>
           <div class="ref-body">
             <div class="ref-header">
               <span class="ref-code">ACM TOSEM (2026)</span>
               <span class="ref-type-badge badge-paper">Artigo em Revista Científica</span>
             </div>
-            <h3 class="ref-title">Model Context Protocol (MCP): Landscape, Security Threats, and Future Research Directions</h3>
+            <h3 class="ref-title">Model Context Protocol (MCP): Landscape, Security Threats, and Future Research
+              Directions</h3>
             <p class="ref-details">
-              Hou, X., Zhao, Y., Wang, S., & Lo, D. (2026). Estudo aprofundado sobre o ecossistema MCP emergente, categorizando vetores de ameaça, injeção de prompt indireta através de ferramentas e caminhos críticos para a segurança de agentes de IA.
+              Hou, X., Zhao, Y., Wang, S., & Lo, D. (2026). Estudo aprofundado sobre o ecossistema MCP emergente,
+              categorizando vetores de ameaça, injeção de prompt indireta através de ferramentas e caminhos críticos
+              para a segurança de agentes de IA.
             </p>
             <div class="ref-actions">
-              <a href="https://dl.acm.org/journal/tosem" target="_blank" rel="noopener noreferrer" class="ref-link">ACM Digital Library &rarr;</a>
-              <button class="btn-copy" data-cite="Hou, X., Zhao, Y., Wang, S., & Lo, D. (2026). Model Context Protocol (MCP): Landscape, Security Threats, and Future Research Directions. ACM Transactions on Software Engineering and Methodology (TOSEM).">Copiar Citação</button>
+              <a href="https://dl.acm.org/journal/tosem" target="_blank" rel="noopener noreferrer" class="ref-link">ACM
+                Digital Library &rarr;</a>
+              <button class="btn-copy"
+                data-cite="Hou, X., Zhao, Y., Wang, S., & Lo, D. (2026). Model Context Protocol (MCP): Landscape, Security Threats, and Future Research Directions. ACM Transactions on Software Engineering and Methodology (TOSEM).">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
 
         <!-- MCP 4: Hasan et al. (ACM TOSEM 2026) -->
-        <div class="ref-item" data-search="hasan m m 2026 model context protocol at first glance studying security maintainability acm tosem">
+        <div class="ref-item"
+          data-search="hasan m m 2026 model context protocol at first glance studying security maintainability acm tosem">
           <div class="ref-icon icon-purple"><span>ACM</span></div>
           <div class="ref-body">
             <div class="ref-header">
               <span class="ref-code">ACM TOSEM (2026)</span>
               <span class="ref-type-badge badge-paper">Artigo em Revista Científica</span>
             </div>
-            <h3 class="ref-title">Model Context Protocol (MCP) at First Glance: Studying Security and Maintainability</h3>
+            <h3 class="ref-title">Model Context Protocol (MCP) at First Glance: Studying Security and Maintainability
+            </h3>
             <p class="ref-details">
-              Hasan, M. M., et al. (2026). Análise empírica do design de software, métricas de manutenibilidade do código e robustez defensiva em servidores e clientes MCP implementados em ecossistemas reais.
+              Hasan, M. M., et al. (2026). Análise empírica do design de software, métricas de manutenibilidade do
+              código e robustez defensiva em servidores e clientes MCP implementados em ecossistemas reais.
             </p>
             <div class="ref-actions">
-              <a href="https://dl.acm.org/journal/tosem" target="_blank" rel="noopener noreferrer" class="ref-link">ACM Digital Library &rarr;</a>
-              <button class="btn-copy" data-cite="Hasan, M. M., et al. (2026). Model Context Protocol (MCP) at First Glance: Studying Security and Maintainability. ACM Transactions on Software Engineering and Methodology (TOSEM).">Copiar Citação</button>
+              <a href="https://dl.acm.org/journal/tosem" target="_blank" rel="noopener noreferrer" class="ref-link">ACM
+                Digital Library &rarr;</a>
+              <button class="btn-copy"
+                data-cite="Hasan, M. M., et al. (2026). Model Context Protocol (MCP) at First Glance: Studying Security and Maintainability. ACM Transactions on Software Engineering and Methodology (TOSEM).">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
 
         <!-- MCP 5: Li et al. (IEEE MASS 2025) -->
-        <div class="ref-item" data-search="li z 2025 we urgently need privilege management in mcp ieee mass privilegios seguranca">
+        <div class="ref-item"
+          data-search="li z 2025 we urgently need privilege management in mcp ieee mass privilegios seguranca">
           <div class="ref-icon icon-purple"><span>IEEE</span></div>
           <div class="ref-body">
             <div class="ref-header">
@@ -699,36 +878,49 @@
             </div>
             <h3 class="ref-title">We Urgently Need Privilege Management in MCP</h3>
             <p class="ref-details">
-              Li, Z., et al. (2025). Investigação das fragilidades de permissões em chamadas de ferramentas de agentes autônomos, propondo arquiteturas de controle de privilégio mínimo e isolamento em tempo de execução (*runtime isolation*).
+              Li, Z., et al. (2025). Investigação das fragilidades de permissões em chamadas de ferramentas de agentes
+              autônomos, propondo arquiteturas de controle de privilégio mínimo e isolamento em tempo de execução
+              (*runtime isolation*).
             </p>
             <div class="ref-actions">
-              <a href="https://ieeexplore.ieee.org/" target="_blank" rel="noopener noreferrer" class="ref-link">IEEE Xplore &rarr;</a>
-              <button class="btn-copy" data-cite="Li, Z., et al. (2025). We Urgently Need Privilege Management in MCP. In IEEE International Conference on Mobility, Sensing and Networking (IEEE MASS).">Copiar Citação</button>
+              <a href="https://ieeexplore.ieee.org/" target="_blank" rel="noopener noreferrer" class="ref-link">IEEE
+                Xplore &rarr;</a>
+              <button class="btn-copy"
+                data-cite="Li, Z., et al. (2025). We Urgently Need Privilege Management in MCP. In IEEE International Conference on Mobility, Sensing and Networking (IEEE MASS).">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
 
         <!-- MCP 6: Greshake et al. (Seminal Indirect Prompt Injection) -->
-        <div class="ref-item" data-search="mcp greshake 2023 indirect prompt injection aisec wisec acm compromising real world llm tools">
+        <div class="ref-item"
+          data-search="mcp greshake 2023 indirect prompt injection aisec wisec acm compromising real world llm tools">
           <div class="ref-icon icon-purple"><span>ACM</span></div>
           <div class="ref-body">
             <div class="ref-header">
               <span class="ref-code">ACM AISEC / WiSec (2023)</span>
               <span class="ref-type-badge badge-paper">Artigo Seminal de Segurança</span>
             </div>
-            <h3 class="ref-title">Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection</h3>
+            <h3 class="ref-title">Not what you've signed up for: Compromising Real-World LLM-Integrated Applications
+              with Indirect Prompt Injection</h3>
             <p class="ref-details">
-              Greshake, K., Abdelnabi, S., Mishra, S., Endres, C., Holz, T., & Fritz, M. (2023). O trabalho científico fundador que introduziu e analisou as ameaças de injeção indireta de prompt — o risco fundamental que afeta servidores MCP ao processar dados não-confiáveis oriundos de ferramentas externas.
+              Greshake, K., Abdelnabi, S., Mishra, S., Endres, C., Holz, T., & Fritz, M. (2023). O trabalho científico
+              fundador que introduziu e analisou as ameaças de injeção indireta de prompt — o risco fundamental que
+              afeta servidores MCP ao processar dados não-confiáveis oriundos de ferramentas externas.
             </p>
             <div class="ref-actions">
-              <a href="https://arxiv.org/abs/2302.12173" target="_blank" rel="noopener noreferrer" class="ref-link">Artigo arXiv / ACM &rarr;</a>
-              <button class="btn-copy" data-cite="Greshake, K., Abdelnabi, S., Mishra, S., Endres, C., Holz, T., & Fritz, M. (2023). Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection. In Proceedings of the 16th ACM Workshop on Artificial Intelligence and Security (AISEC '23). DOI: 10.1145/3605764.3623985.">Copiar Citação</button>
+              <a href="https://arxiv.org/abs/2302.12173" target="_blank" rel="noopener noreferrer"
+                class="ref-link">Artigo arXiv / ACM &rarr;</a>
+              <button class="btn-copy"
+                data-cite="Greshake, K., Abdelnabi, S., Mishra, S., Endres, C., Holz, T., & Fritz, M. (2023). Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection. In Proceedings of the 16th ACM Workshop on Artificial Intelligence and Security (AISEC '23). DOI: 10.1145/3605764.3623985.">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
 
         <!-- MCP 7: Schick et al. (Toolformer NeurIPS) -->
-        <div class="ref-item" data-search="mcp toolformer neurips schick 2023 language models teach themselves to use tools meta ai">
+        <div class="ref-item"
+          data-search="mcp toolformer neurips schick 2023 language models teach themselves to use tools meta ai">
           <div class="ref-icon icon-purple"><span>NeurIPS</span></div>
           <div class="ref-body">
             <div class="ref-header">
@@ -737,11 +929,16 @@
             </div>
             <h3 class="ref-title">Toolformer: Language Models Can Teach Themselves to Use Tools</h3>
             <p class="ref-details">
-              Schick, T., Dwivedi-Yu, J., Dessì, R., Raileanu, R., Lomeli, M., Zettlemoyer, L., Cancedda, N., & Scialom, T. (2023). O artigo basilar que demonstrou a capacidade de LLMs aprenderem autonomamente quando e como invocar APIs externas e ferramentas, fundamento concetual sobre o qual o protocolo MCP se apoia.
+              Schick, T., Dwivedi-Yu, J., Dessì, R., Raileanu, R., Lomeli, M., Zettlemoyer, L., Cancedda, N., & Scialom,
+              T. (2023). O artigo basilar que demonstrou a capacidade de LLMs aprenderem autonomamente quando e como
+              invocar APIs externas e ferramentas, fundamento concetual sobre o qual o protocolo MCP se apoia.
             </p>
             <div class="ref-actions">
-              <a href="https://proceedings.neurips.cc/paper_files/paper/2023/hash/d842425e40e79ad3ab017348d69be6db-Abstract-Conference.html" target="_blank" rel="noopener noreferrer" class="ref-link">NeurIPS Proceedings &rarr;</a>
-              <button class="btn-copy" data-cite="Schick, T., Dwivedi-Yu, J., Dessì, R., Raileanu, R., Lomeli, M., Zettlemoyer, L., Cancedda, N., & Scialom, T. (2023). Toolformer: Language Models Can Teach Themselves to Use Tools. Advances in Neural Information Processing Systems (NeurIPS 36).">Copiar Citação</button>
+              <a href="https://proceedings.neurips.cc/paper_files/paper/2023/hash/d842425e40e79ad3ab017348d69be6db-Abstract-Conference.html"
+                target="_blank" rel="noopener noreferrer" class="ref-link">NeurIPS Proceedings &rarr;</a>
+              <button class="btn-copy"
+                data-cite="Schick, T., Dwivedi-Yu, J., Dessì, R., Raileanu, R., Lomeli, M., Zettlemoyer, L., Cancedda, N., & Scialom, T. (2023). Toolformer: Language Models Can Teach Themselves to Use Tools. Advances in Neural Information Processing Systems (NeurIPS 36).">Copiar
+                Citação</button>
             </div>
           </div>
         </div>
@@ -774,10 +971,10 @@
     <div class="container footer-content">
       <p>Página de suporte bibliográfico para o poster técnico • Criada para consulta rápida e citações diretas.</p>
       <div class="footer-links">
-        <a href="#section-nfc">NFC</a> • 
-        <a href="#section-ospf">OSPF</a> • 
-        <a href="#section-sctp">SCTP</a> • 
-        <a href="#section-mcp">MCP</a>
+        <a href="#section-nfc">1. NFC</a> •
+        <a href="#section-ospf">2. OSPF</a> •
+        <a href="#section-sctp">3. SCTP</a> •
+        <a href="#section-mcp">4. MCP</a>
       </div>
     </div>
   </footer>
@@ -785,4 +982,5 @@
   <!-- Scripts -->
   <script src="app.js"></script>
 </body>
+
 </html>
