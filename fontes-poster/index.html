@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="pt-PT" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fontes & Referências do Poster</title>
+  <meta name="description" content="Página estática com as fontes bibliográficas, normas internacionais (ISO/IEC, JIS), RFCs da IETF e publicações científicas citadas no poster (NFC, OSPF, SCTP, MCP).">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient background glow elements -->
+  <div class="glow-orb orb-1" aria-hidden="true"></div>
+  <div class="glow-orb orb-2" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="container header-container">
+      <div class="header-brand">
+        <span class="badge-pill">
+          <span class="pulse-dot"></span>
+          Poster Científico & Tecnológico
+        </span>
+        <h1 class="header-title">Fontes & Referências Oficiais</h1>
+        <p class="header-subtitle">
+          Catálogo estruturado de normas internacionais, especificações IETF e literatura científica citadas no poster.
+        </p>
+      </div>
+
+      <div class="header-actions">
+        <button id="theme-toggle" class="btn btn-icon" title="Alternar tema claro/escuro" aria-label="Alternar tema">
+          <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+
+        <button id="btn-print" class="btn btn-secondary" onclick="window.print()" title="Imprimir ou exportar em PDF">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+            <rect x="6" y="14" width="12" height="8"></rect>
+          </svg>
+          <span>Imprimir / PDF</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Controls / Filter Bar -->
+  <section class="controls-section">
+    <div class="container">
+      <div class="controls-wrapper glass-panel">
+        <div class="search-box">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="search-input" placeholder="Pesquisar por norma, autor, RFC, protocolo..." autocomplete="off">
+          <button id="clear-search" class="btn-clear" aria-label="Limpar pesquisa">&times;</button>
+        </div>
+
+        <nav class="filter-tabs" aria-label="Filtro de tópicos">
+          <button class="filter-btn active" data-filter="all">Todos <span class="counter" id="count-all">4</span></button>
+          <button class="filter-btn" data-filter="nfc">NFC <span class="counter">3</span></button>
+          <button class="filter-btn" data-filter="ospf">OSPF <span class="counter">4</span></button>
+          <button class="filter-btn" data-filter="sctp">SCTP <span class="counter">4</span></button>
+          <button class="filter-btn" data-filter="mcp">MCP <span class="counter">4</span></button>
+        </nav>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content Area -->
+  <main class="container main-content">
+    
+    <!-- NFC Section -->
+    <article class="topic-card glass-panel" id="section-nfc" data-category="nfc">
+      <div class="card-header border-teal">
+        <div class="topic-meta">
+          <span class="topic-tag tag-teal">Comunicação Sem Fio / RFID</span>
+          <h2 class="topic-title">NFC — Near Field Communication</h2>
+          <p class="topic-desc">Padrões fundamentais de comunicação por indução em campo magnético de alta frequência (13.56 MHz).</p>
+        </div>
+        <div class="badge-count">3 Normas</div>
+      </div>
+
+      <div class="references-list">
+        <!-- Reference 1 -->
+        <div class="ref-item" data-search="nfc iso iec 18092 nfcip-1 interface protocol">
+          <div class="ref-icon icon-teal">
+            <span>ISO</span>
+          </div>
+          <div class="ref-body">
+            <div class="ref-header">
+              <span class="ref-code">ISO/IEC 18092:2023</span>
+              <span class="ref-type-badge">Padrão Internacional</span>
+            </div>
+            <h3 class="ref-title">Telecommunications and information exchange between systems — Near Field Communication — Interface and Protocol (NFCIP-1)</h3>
+            <p class="ref-details">
+              Define os modos de modulação, esquemas de codificação, velocidades de transferência e formato de quadros RF na frequência de 13,56 MHz para inicialização e comutação do NFCIP-1.
+            </p>
+            <div class="ref-actions">
+              <a href="https://www.iso.org/standard/83726.html" target="_blank" rel="noopener noreferrer" class="ref-link">
+                Aceder ISO.org &rarr;
+              </a>
+              <button class="btn-copy" data-cite="ISO/IEC 18092. Information technology — Telecommunications and information exchange between systems — Near Field Communication — Interface and Protocol (NFCIP-1).">
+                Copiar Citação
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reference 2 -->
+        <div class="ref-item" data-search="nfc iso iec 14443 a/b contactless proximity cards">
+          <div class="ref-icon icon-teal">
+            <span>ISO</span>
+          </div>
+          <div class="ref-body">
+            <div class="ref-header">
+              <span class="ref-code">ISO/IEC 14443 (Partes 1 a 4) Tipo A & B</span>
+              <span class="ref-type-badge">Padrão Internacional</span>
+            </div>
+            <h3 class="ref-title">Cards and security devices for personal identification — Contactless proximity objects</h3>
+            <p class="ref-details">
+              Especifica as características físicas, interface de sinal RF (Tipo A e Tipo B), procedimentos de inicialização/anticolisão e protocolo de transmissão em meia-duplex para cartões e dispositivos de proximidade.
+            </p>
+            <div class="ref-actions">
+              <a href="https://www.iso.org/standard/73596.html" target="_blank" rel="noopener noreferrer" class="ref-link">
+                Aceder ISO.org &rarr;
+              </a>
+              <button class="btn-copy" data-cite="ISO/IEC 14443. Cards and security devices for personal identification — Contactless proximity objects (Part 1-4: Type A and Type B).">
+                Copiar Citação
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reference 3 -->
+        <div class="ref-item" data-search="nfc jis x 6319-4 felica sony proximity ic card">
+          <div class="ref-icon icon-teal">
+            <span>JIS</span>
+          </div>
+          <div class="ref-body">
+            <div class="ref-header">
+              <span class="ref-code">JIS X 6319-4 (FeliCa)</span>
+              <span class="ref-type-badge">Padrão Industrial Japonês</span>
+            </div>
+            <h3 class="ref-title">Specification of implementation for integrated circuit(s) cards — Part 4: High speed proximity cards</h3>
+            <p class="ref-details">
+              Norma de cartões inteligentes sem contato de alta velocidade baseada na tecnologia Sony FeliCa (NFC-F), amplamente utilizada em bilhética de transportes públicos, pagamentos e micropagamentos.
+            </p>
+            <div class="ref-actions">
+              <a href="https://www.sony.net/Products/felica/" target="_blank" rel="noopener noreferrer" class="ref-link">
+                Especificação FeliCa &rarr;
+              </a>
+              <button class="btn-copy" data-cite="JIS X 6319-4. Specification of implementation for integrated circuit(s) cards — Part 4: High speed proximity cards (FeliCa). Japanese Industrial Standards Committee.">
+                Copiar Citação
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- OSPF Section -->
+    <article class="topic-card glass-panel" id="section-ospf" data-category="ospf">
+      <div class="card-header border-orange">
+        <div class="topic-meta">
+          <span class="topic-tag tag-orange">Protocolo de Roteamento IP (IGP)</span>
+          <h2 class="topic-title">OSPF — Open Shortest Path First</h2>
+          <p class="topic-desc">Evolução histórica do protocolo de estado de enlace (Link-State) pelo IETF IGP Working Group.</p>
+        </div>
+        <div class="badge-count">Linha Temporal (4 RFCs)</div>
+      </div>
+
+      <div class="timeline-container">
+        <!-- Timeline Item 1 -->
+        <div class="timeline-item" data-search="1989 ospfv1 rfc 1131 experimental base ietf">
+          <div class="timeline-node">
+            <span class="timeline-year">1989</span>
+          </div>
+          <div class="timeline-content">
+            <div class="ref-header">
+              <span class="ref-code">RFC 1131</span>
+              <span class="ref-type-badge badge-exp">Experimental</span>
+            </div>
+            <h3 class="ref-title">OSPFv1 na RFC 1131 — Base Experimental</h3>
+            <p class="ref-details">
+              Primeira especificação formal do OSPF proposta por John Moy no IETF, definindo a arquitetura básica de algoritmo SPF (Dijkstra) e troca de LSA em redes IP.
+            </p>
+            <div class="ref-actions">
+              <a href="https://datatracker.ietf.org/doc/html/rfc1131" target="_blank" rel="noopener noreferrer" class="ref-link">
+                IETF RFC 1131 &rarr;
+              </a>
+              <button class="btn-copy" data-cite="Moy, J. (1989). The OSPF Specification. RFC 1131. Internet Engineering Task Force (IETF).">
+                Copiar Citação
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Timeline Item 2 -->
+        <div class="timeline-item" data-search="1991 ospfv2 rfc 1247 john moy ipv4 robusta">
+          <div class="timeline-node">
+            <span class="timeline-year">1991</span>
+          </div>
+          <div class="timeline-content">
+            <div class="ref-header">
+              <span class="ref-code">RFC 1247</span>
+              <span class="ref-type-badge badge-std">Padrão Proposto</span>
+            </div>
+            <h3 class="ref-title">OSPFv2 na RFC 1247 (John Moy) — Versão Robusta para IPv4</h3>
+            <p class="ref-details">
+              Revisão estrutural que introduziu suporte a máscaras de sub-rede de tamanho variável (VLSM), autenticação aprimorada e maior resiliência em topologias heterogéneas.
+            </p>
+            <div class="ref-actions">
+              <a href="https://datatracker.ietf.org/doc/html/rfc1247" target="_blank" rel="noopener noreferrer" class="ref-link">
+                IETF RFC 1247 &rarr;
+              </a>
+              <button class="btn-copy" data-cite="Moy, J. (1991). OSPF Version 2. RFC 1247. Internet Engineering Task Force (IETF).">
+                Copiar Citação
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Timeline Item 3 -->
+        <div class="timeline-item" data-search="1998 ospfv2 consolidado rfc 2328 john moy std 54 ipv4">
+          <div class="timeline-node">
+            <span class="timeline-year">1998</span>
+          </div>
+          <div class="timeline-content">
+            <div class="ref-header">
+              <span class="ref-code">RFC 2328 (STD 54)</span>
+              <span class="ref-type-badge badge-full-std">Internet Standard</span>
+            </div>
+            <h3 class="ref-title">OSPFv2 Consolidado na RFC 2328 — Versão Atual para IPv4</h3>
+            <p class="ref-details">
+              Especificação definitiva e consolidada do OSPFv2 para redes IPv4. Elevação ao estatuto oficial de <strong>Internet Standard (STD 54)</strong>, amplamente implementado em roteadores globais.
+            </p>
+            <div class="ref-actions">
+              <a href="https://datatracker.ietf.org/doc/html/rfc2328" target="_blank" rel="noopener noreferrer" class="ref-link">
+                IETF RFC 2328 &rarr;
+              </a>
+              <button class="btn-copy" data-cite="Moy, J. (1998). OSPF Version 2. RFC 2328 (STD 54). Internet Engineering Task Force (IETF).">
+                Copiar Citação
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Timeline Item 4 -->
+        <div class="timeline-item" data-search="1999 ospfv3 rfc 2740 rfc 5340 coltun heggay moy ipv6">
+          <div class="timeline-node">
+            <span class="timeline-year">1999</span>
+          </div>
+          <div class="timeline-content">
+            <div class="ref-header">
+              <span class="ref-code">RFC 2740 (Atualizada por RFC 5340)</span>
+              <span class="ref-type-badge badge-std">Suporte IPv6</span>
+            </div>
+            <h3 class="ref-title">OSPFv3 (RFC 2740) — Suporte a IPv6</h3>
+            <p class="ref-details">
+              Adaptação do OSPF para suportar o endereçamento de 128 bits do IPv6, separando a topologia de enlace dos prefixos de rede e permitindo execução por enlace (per-link).
+            </p>
+            <div class="ref-actions">
+              <a href="https://datatracker.ietf.org/doc/html/rfc2740" target="_blank" rel="noopener noreferrer" class="ref-link">
+                IETF RFC 2740 &rarr;
+              </a>
+              <a href="https://datatracker.ietf.org/doc/html/rfc5340" target="_blank" rel="noopener noreferrer" class="ref-link">
+                RFC 5340 (Revisão) &rarr;
+              </a>
+              <button class="btn-copy" data-cite="Coltun, R., Ferguson, D., & Moy, J. (1999). OSPF for IPv6. RFC 2740. Internet Engineering Task Force (IETF).">
+                Copiar Citação
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- SCTP Section -->
+    <article class="topic-card glass-panel" id="section-sctp" data-category="sctp">
+      <div class="card-header border-cyan">
+        <div class="topic-meta">
+          <span class="topic-tag tag-cyan">Camada de Transporte Confiável</span>
+          <h2 class="topic-title">SCTP — Stream Control Transmission Protocol</h2>
+          <p class="topic-desc">Protocolo orientado a mensagens com suporte nativo a multi-homing e múltiplos fluxos lógicos independentes (multi-streaming).</p>
+        </div>
+        <div class="badge-count">4 RFCs Chave</div>
+      </div>
+
+      <div class="references-list">
+        <!-- Reference 1: Current standard RFC 9260 -->
+        <div class="ref-item" data-search="sctp rfc 9260 2022 stewart tuexen nielsen standard atual">
+          <div class="ref-icon icon-cyan">
+            <span>RFC</span>
+          </div>
+          <div class="ref-body">
+            <div class="ref-header">
+              <span class="ref-code">RFC 9260 (2022)</span>
+              <span class="ref-type-badge badge-full-std">Padrão Atual da Internet</span>
+            </div>
+            <h3 class="ref-title">Stream Control Transmission Protocol (Substitui RFC 4960)</h3>
+            <p class="ref-details">
+              Stewart, R., Tüxen, M., & Nielsen, K. Especificação técnica consolidada e atual do protocolo SCTP, incorporando todas as correções de segurança, tratamento de perda de pacotes e extensões modernas.
+            </p>
+            <div class="ref-actions">
+              <a href="https://datatracker.ietf.org/doc/html/rfc9260" target="_blank" rel="noopener noreferrer" class="ref-link">
+                IETF RFC 9260 &rarr;
+              </a>
+              <button class="btn-copy" data-cite="Stewart, R., Tüxen, M., & Nielsen, K. (2022). Stream Control Transmission Protocol. RFC 9260. Internet Engineering Task Force (IETF). DOI: 10.17487/RFC9260.">
+                Copiar Citação
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reference 2: RFC 4960 -->
+        <div class="ref-item" data-search="sctp rfc 4960 2007 stewart ietf">
+          <div class="ref-icon icon-cyan">
+            <span>RFC</span>
+          </div>
+          <div class="ref-body">
+            <div class="ref-header">
+              <span class="ref-code">RFC 4960 (2007)</span>
+              <span class="ref-type-badge">Padrão Anterior Consolidado</span>
+            </div>
+            <h3 class="ref-title">Stream Control Transmission Protocol (Edição de 2007)</h3>
+            <p class="ref-details">
+              Stewart, R. (Ed.). Especificação que substituiu a RFC 2960 original, definindo o handshake de 4 vias (cookie mechanism contra DoS/SYN flood) e entrega com preservação de fronteiras de mensagens.
+            </p>
+            <div class="ref-actions">
+              <a href="https://datatracker.ietf.org/doc/html/rfc4960" target="_blank" rel="noopener noreferrer" class="ref-link">
+                IETF RFC 4960 &rarr;
+              </a>
+              <button class="btn-copy" data-cite="Stewart, R. (Ed.). (2007). Stream Control Transmission Protocol. RFC 4960. Internet Engineering Task Force (IETF).">
+                Copiar Citação
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reference 3: RFC 2960 -->
+        <div class="ref-item" data-search="sctp rfc 2960 2000 stewart xie qiaong proposed standard original">
+          <div class="ref-icon icon-cyan">
+            <span>RFC</span>
+          </div>
+          <div class="ref-body">
+            <div class="ref-header">
+              <span class="ref-code">RFC 2960 (2000)</span>
+              <span class="ref-type-badge badge-exp">Especificação Inicial</span>
+            </div>
+            <h3 class="ref-title">Stream Control Transmission Protocol (Proposta Original)</h3>
+            <p class="ref-details">
+              Stewart, R., Xie, Q., Morneault, K., et al. Documento inaugural concebido pelo grupo SIGTRAN para transporte de sinalização telefónica (SS7) sobre redes IP.
+            </p>
+            <div class="ref-actions">
+              <a href="https://datatracker.ietf.org/doc/html/rfc2960" target="_blank" rel="noopener noreferrer" class="ref-link">
+                IETF RFC 2960 &rarr;
+              </a>
+              <button class="btn-copy" data-cite="Stewart, R., Xie, Q., Morneault, K., et al. (2000). Stream Control Transmission Protocol. RFC 2960. Internet Engineering Task Force (IETF).">
+                Copiar Citação
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reference 4: RFC 3286 -->
+        <div class="ref-item" data-search="sctp rfc 3286 2002 ong yoakum introducao informacional">
+          <div class="ref-icon icon-cyan">
+            <span>RFC</span>
+          </div>
+          <div class="ref-body">
+            <div class="ref-header">
+              <span class="ref-code">RFC 3286 (2002)</span>
+              <span class="ref-type-badge">Documento Informativo</span>
+            </div>
+            <h3 class="ref-title">An Introduction to the Stream Control Transmission Protocol (SCTP)</h3>
+            <p class="ref-details">
+              Ong, L., & Yoakum, J. Visão panorâmica dos recursos arquiteturais de alto nível do SCTP para projetistas de sistemas, comparando o SCTP com os protocolos TCP e UDP.
+            </p>
+            <div class="ref-actions">
+              <a href="https://datatracker.ietf.org/doc/html/rfc3286" target="_blank" rel="noopener noreferrer" class="ref-link">
+                IETF RFC 3286 &rarr;
+              </a>
+              <button class="btn-copy" data-cite="Ong, L., & Yoakum, J. (2002). An Introduction to the Stream Control Transmission Protocol (SCTP). RFC 3286. Internet Engineering Task Force (IETF).">
+                Copiar Citação
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- MCP Section -->
+    <article class="topic-card glass-panel" id="section-mcp" data-category="mcp">
+      <div class="card-header border-purple">
+        <div class="topic-meta">
+          <span class="topic-tag tag-purple">Arquitetura de Agentes & IA</span>
+          <h2 class="topic-title">MCP — Model Context Protocol</h2>
+          <p class="topic-desc">Protocolo aberto para integração padronizada e segura entre modelos de linguagem (LLMs) e ecossistemas de ferramentas/dados.</p>
+        </div>
+        <div class="badge-count">1 Especificação + 3 Artigos</div>
+      </div>
+
+      <div class="references-list">
+        <!-- MCP 1 -->
+        <div class="ref-item" data-search="mcp model context protocol specification lf projects anthropic open standard">
+          <div class="ref-icon icon-purple">
+            <span>SPEC</span>
+          </div>
+          <div class="ref-body">
+            <div class="ref-header">
+              <span class="ref-code">Especificação Oficial (Latest)</span>
+              <span class="ref-type-badge">Padrão Aberto</span>
+            </div>
+            <h3 class="ref-title">Model Context Protocol Specification</h3>
+            <p class="ref-details">
+              LF Projects LLC & Anthropic, PBC. Especificação técnica oficial do protocolo MCP cobrindo ciclo de vida de conexão, descoberta de ferramentas (tools), recursos de contexto (resources), prompts e comunicação JSON-RPC bidirecional.
+            </p>
+            <div class="ref-actions">
+              <a href="https://modelcontextprotocol.io/specification/latest" target="_blank" rel="noopener noreferrer" class="ref-link">
+                modelcontextprotocol.io &rarr;
+              </a>
+              <button class="btn-copy" data-cite="Model Context Protocol Specification. LF Projects LLC & Anthropic, PBC. https://modelcontextprotocol.io/specification/latest">
+                Copiar Citação
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- MCP 2 -->
+        <div class="ref-item" data-search="hou x 2026 model context protocol mcp landscape security threats acm tosem">
+          <div class="ref-icon icon-purple">
+            <span>ACM</span>
+          </div>
+          <div class="ref-body">
+            <div class="ref-header">
+              <span class="ref-code">ACM TOSEM (2026)</span>
+              <span class="ref-type-badge badge-paper">Artigo em Revista Científica</span>
+            </div>
+            <h3 class="ref-title">Model Context Protocol (MCP): Landscape, Security Threats, and Future Research Directions</h3>
+            <p class="ref-details">
+              Hou, X., et al. (2026). Estudo aprofundado sobre o ecossistema MCP emergente, categorizando vetores de ameaça, injeção de prompt indireta através de ferramentas e caminhos críticos para a segurança de agentes de IA.
+            </p>
+            <div class="ref-actions">
+              <a href="https://dl.acm.org/journal/tosem" target="_blank" rel="noopener noreferrer" class="ref-link">
+                ACM Digital Library &rarr;
+              </a>
+              <button class="btn-copy" data-cite="Hou, X., et al. (2026). Model Context Protocol (MCP): Landscape, Security Threats, and Future Research Directions. ACM Transactions on Software Engineering and Methodology (TOSEM).">
+                Copiar Citação
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- MCP 3 -->
+        <div class="ref-item" data-search="hasan m m 2026 model context protocol at first glance studying security maintainability acm tosem">
+          <div class="ref-icon icon-purple">
+            <span>ACM</span>
+          </div>
+          <div class="ref-body">
+            <div class="ref-header">
+              <span class="ref-code">ACM TOSEM (2026)</span>
+              <span class="ref-type-badge badge-paper">Artigo em Revista Científica</span>
+            </div>
+            <h3 class="ref-title">Model Context Protocol (MCP) at First Glance: Studying Security and Maintainability</h3>
+            <p class="ref-details">
+              Hasan, M. M., et al. (2026). Análise empírica do design, manutenibilidade do código e robustez defensiva em servidores e clientes MCP implementados em ambientes de produção.
+            </p>
+            <div class="ref-actions">
+              <a href="https://dl.acm.org/journal/tosem" target="_blank" rel="noopener noreferrer" class="ref-link">
+                ACM Digital Library &rarr;
+              </a>
+              <button class="btn-copy" data-cite="Hasan, M. M., et al. (2026). Model Context Protocol (MCP) at First Glance: Studying Security and Maintainability. ACM Transactions on Software Engineering and Methodology (TOSEM).">
+                Copiar Citação
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- MCP 4 -->
+        <div class="ref-item" data-search="li z 2025 we urgently need privilege management in mcp ieee mass">
+          <div class="ref-icon icon-purple">
+            <span>IEEE</span>
+          </div>
+          <div class="ref-body">
+            <div class="ref-header">
+              <span class="ref-code">IEEE MASS (2025)</span>
+              <span class="ref-type-badge badge-paper">Artigo em Conferência Internacional</span>
+            </div>
+            <h3 class="ref-title">We Urgently Need Privilege Management in MCP</h3>
+            <p class="ref-details">
+              Li, Z., et al. (2025). Investigação das fragilidades de permissões em chamadas de ferramentas de agentes autônomos, propondo arquiteturas de controle de privilégio mínimo e isolamento em runtime.
+            </p>
+            <div class="ref-actions">
+              <a href="https://ieeexplore.ieee.org/" target="_blank" rel="noopener noreferrer" class="ref-link">
+                IEEE Xplore &rarr;
+              </a>
+              <button class="btn-copy" data-cite="Li, Z., et al. (2025). We Urgently Need Privilege Management in MCP. In IEEE International Conference on Mobility, Sensing and Networking (IEEE MASS).">
+                Copiar Citação
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- No results container -->
+    <div id="no-results" class="no-results glass-panel hidden">
+      <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        <line x1="8" y1="11" x2="14" y2="11"></line>
+      </svg>
+      <h3>Nenhuma referência encontrada</h3>
+      <p>Tente outros termos de pesquisa como "RFC", "ISO", "Moy", "ACM" ou selecione outro tópico.</p>
+    </div>
+
+  </main>
+
+  <!-- Citation Copied Toast -->
+  <div id="toast" class="toast" role="status" aria-live="polite">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M20 6L9 17l-5-5"></path>
+    </svg>
+    <span>Citação copiada para a área de transferência!</span>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container footer-content">
+      <p>Página de suporte bibliográfico para o poster técnico • Criada para consulta rápida e citações diretas.</p>
+      <div class="footer-links">
+        <a href="#section-nfc">NFC</a> • 
+        <a href="#section-ospf">OSPF</a> • 
+        <a href="#section-sctp">SCTP</a> • 
+        <a href="#section-mcp">MCP</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="app.js"></script>
+</body>
+</html>
